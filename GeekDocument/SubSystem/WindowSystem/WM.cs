@@ -54,7 +54,7 @@ namespace GeekDocument.SubSystem.WindowSystem
         public static void ShowAskWindow(string message, Action<AskDialog, object?> action, object? obj,
             string yesText = "是", bool useCancel = true, TipLevel level = TipLevel.Info)
         {
-            AskDialog dialog = new()
+            AskDialog dialog = new AskDialog()
             {
                 Message = message,
                 Owner = Main,

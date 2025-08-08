@@ -1,5 +1,6 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using Newtonsoft.Json;
 
 namespace GeekDocument.SubSystem.ArchiveSystem
 {
@@ -32,7 +33,14 @@ namespace GeekDocument.SubSystem.ArchiveSystem
             archiveFile.MetaData.Tag = string.Join(",", document.TagList);
             // 设置块数据
             foreach (var block in document.BlockList)
-                archiveFile.BlockData.DataList.Add(block.ToJson());
+            {
+                BlockInfo blockInfo = new BlockInfo
+                {
+                    Type = block.Type.ToString(),
+                    SourceData = block.ToJson()
+                };
+                archiveFile.BlockData.DataList.Add(JsonConvert.SerializeObject(blockInfo));
+            }
             // 设置页面信息
             archiveFile.PageData.PageWidth = document.PageWidth.ToString();
             archiveFile.PageData.PageMargin = document.PageMargin.ToString();

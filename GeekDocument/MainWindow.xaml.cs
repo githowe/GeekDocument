@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem;
+using GeekDocument.SubSystem.ArchiveSystem.Define;
 using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
@@ -6,16 +7,10 @@ using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.ResourceSystem;
+using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using XLogic.Wpf.Window;
 using XLogic.WpfControl;
 
@@ -31,8 +26,12 @@ namespace GeekDocument
             Loaded += MainWindow_Loaded;
         }
 
+        #region 生命周期
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            WM.Main = this;
+
             // 恢复窗口状态并监听窗口缩放
             RecoverWindowState();
             ListenWindowResize();
@@ -49,6 +48,45 @@ namespace GeekDocument
 
             Control_TabBar.SelectChanged = TabBar_SelectChanged;
         }
+
+        #endregion
+
+        #region 公开方法
+
+        public void OpenDocument(string filePath)
+        {
+            // 读取文件内容
+            byte[] fileData = File.ReadAllBytes(filePath);
+            // 创建存档文件并加载文件内容
+            ArchiveFile archiveFile = new ArchiveFile();
+            try
+            {
+                archiveFile.LoadArchive(fileData);
+            }
+            catch (Exception)
+            {
+                WM.ShowErrorTip("加载文件内容失败");
+                return;
+            }
+            // 创建文档实例并加载存档
+            Document document = new Document();
+            try
+            {
+                document.LoadArchive(archiveFile);
+            }
+            catch (Exception)
+            {
+                WM.ShowErrorTip("加载存档失败");
+                return;
+            }
+            // 打开文档
+            OpenDocument(document, Path.GetFileNameWithoutExtension(filePath));
+            // 添加打开记录
+            CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
+            CacheManager.Instance.SaveCache();
+        }
+
+        #endregion
 
         #region 私有方法
 

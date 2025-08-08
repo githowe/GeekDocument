@@ -187,7 +187,7 @@ namespace GeekDocument.SubSystem.DocumentSystem
                 return;
             }
             // 打开文档
-            // WM.Main.OpenProject(sender.Instance.FullPath);
+            WM.Main.OpenDocument(sender.Instance.FullPath);
         }
 
         private void Item_MarkClick(RecentItem sender)

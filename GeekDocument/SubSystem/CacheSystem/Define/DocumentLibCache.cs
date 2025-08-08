@@ -2,7 +2,7 @@
 {
     public class DocumentLibCache
     {
-        public List<string> ExpandedFolderList { get; set; } = new();
+        public List<string> ExpandedFolderList { get; set; } = new List<string>();
 
         /// <summary>
         /// 判断指定的文件夹是否处于展开状态

@@ -104,6 +104,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 if (block == null) continue;
                 // 加载块数据
                 block.LoadJson(blockInfo.SourceData);
+                // 更新视图数据
+                block.UpdateViewData();
                 // 添加块
                 BlockList.Add(block);
             }
