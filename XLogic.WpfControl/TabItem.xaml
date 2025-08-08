@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="XLogic.WpfControl.TabItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XLogic.WpfControl"
+             mc:Ignorable="d" Margin="0,0,0,0">
+    <UserControl.Resources>
+        <Style x:Key="CloseItemButton" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="Transparent">
+                            <Image x:Name="Icon" Width="15" Height="15" Source="Image/Close_Item.png" Opacity="0.25"/>
+                        </Border>
+                        <!-- 触发器 -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Icon" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Icon" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid x:Name="MainGrid" MinWidth="100" Height="25" Background="Transparent"
+          MouseEnter="MainGrid_MouseEnter" MouseLeave="MainGrid_MouseLeave" MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="25"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="Mark" Background="#808080" Height="0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBlock x:Name="Block_Title" Text="标签标题" Foreground="#60FFFFFF" FontSize="12" VerticalAlignment="Center" Margin="7,0,-1,0"/>
+        <Button x:Name="Button_Close" Style="{StaticResource CloseItemButton}" Grid.Column="1" Visibility="Hidden" Click="Button_Close_Click"/>
+    </Grid>
+</UserControl>

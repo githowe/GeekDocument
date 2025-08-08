@@ -1,0 +1,170 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 选项卡 -->
+    <Style TargetType="{x:Type TabControl}">
+        <!-- 选项卡栏背景 -->
+        <Setter Property="Background" Value="#282828"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <!-- 外观 -->
+                    <Grid>
+                        <!-- 两行两列 -->
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="第一行" Height="Auto"/>
+                            <RowDefinition x:Name="第二行"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="第一列"/>
+                            <ColumnDefinition x:Name="第二列" Width="0"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- 选项卡标签栏 -->
+                        <TabPanel x:Name="标签栏" Background="{TemplateBinding Background}" Grid.Column="0" IsItemsHost="True"/>
+                        <!-- 选项卡内容 -->
+                        <Border x:Name="内容" Background="#141414" Grid.Column="0" Grid.Row="1">
+                            <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent"/>
+                        </Border>
+                    </Grid>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 底端 -->
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <!-- 调整位置 -->
+                            <Setter TargetName="标签栏" Property="Grid.Row" Value="1"/>
+                            <Setter TargetName="内容" Property="Grid.Row" Value="0"/>
+                            <!-- 调整行高 -->
+                            <Setter TargetName="第一行" Property="Height" Value="*"/>
+                            <Setter TargetName="第二行" Property="Height" Value="Auto"/>
+                        </Trigger>
+                        <!-- 左侧 -->
+                        <Trigger Property="TabStripPlacement" Value="Left">
+                            <!-- 调整位置 -->
+                            <Setter TargetName="标签栏" Property="Grid.Row"  Value="0"/>
+                            <Setter TargetName="标签栏" Property="Grid.Column" Value="0"/>
+                            <Setter TargetName="内容" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="内容" Property="Grid.Column" Value="1"/>
+                            <!-- 调整行高 -->
+                            <Setter TargetName="第一行" Property="Height" Value="*"/>
+                            <Setter TargetName="第二行" Property="Height" Value="0"/>
+                            <!-- 调整列宽 -->
+                            <Setter TargetName="第一列" Property="Width" Value="Auto"/>
+                            <Setter TargetName="第二列" Property="Width" Value="*"/>
+                        </Trigger>
+                        <!-- 右侧 -->
+                        <Trigger Property="TabStripPlacement" Value="Right">
+                            <!-- 调整位置 -->
+                            <Setter TargetName="标签栏" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="标签栏" Property="Grid.Column" Value="1"/>
+                            <Setter TargetName="内容" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="内容" Property="Grid.Column" Value="0"/>
+                            <!-- 调整行高 -->
+                            <Setter TargetName="第一行" Property="Height" Value="*"/>
+                            <Setter TargetName="第二行" Property="Height" Value="0"/>
+                            <!-- 调整列宽 -->
+                            <Setter TargetName="第一列" Property="Width" Value="*"/>
+                            <Setter TargetName="第二列" Property="Width" Value="Auto"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 无标签选项卡 -->
+    <Style x:Key="NoneItemTabControl" TargetType="{x:Type TabControl}">
+        <!-- 选项卡栏背景 -->
+        <Setter Property="Background" Value="#282828"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <!-- 外观 -->
+                    <Grid Background="#141414">
+                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 选项卡标签 -->
+    <Style TargetType="{x:Type TabItem}">
+        <!-- 禁用焦点样式 -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <!-- 对齐设备像素，防止选项卡标签之间产生缝隙 -->
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="#60FFFFFF"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <!-- 外观 -->
+                    <Grid x:Name="Grid" MinWidth="80" Height="25" Background="Transparent">
+                        <Grid x:Name="Mark" Background="#808080" Height="0" VerticalAlignment="Top"/>
+                        <ContentPresenter x:Name="Content" ContentSource="Header" Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="14,0"/>
+                    </Grid>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 鼠标悬停 -->
+                        <Trigger SourceName="Grid" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Grid" Property="Background" Value="#353535"/>
+                        </Trigger>
+                        <!-- 选中 -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Mark" Property="Height" Value="2"/>
+                            <Setter TargetName="Grid" Property="Background" Value="#1E1E1E"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 选项卡标签 -->
+    <Style x:Key="NormalTabItem" TargetType="{x:Type TabItem}">
+        <!-- 禁用焦点样式 -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <!-- 对齐设备像素，防止选项卡标签之间产生缝隙 -->
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="#60FFFFFF"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <!-- 外观 -->
+                    <Grid x:Name="Grid" MinWidth="60" Height="25" Background="Transparent">
+                        <Grid x:Name="Mark" Height="0" VerticalAlignment="Top"/>
+                        <ContentPresenter x:Name="Content" ContentSource="Header" Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="14,0"/>
+                    </Grid>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 鼠标悬停 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Grid" Property="Background" Value="#282828"/>
+                        </Trigger>
+                        <!-- 选中 -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Grid" Property="Background" Value="#141414"/>
+                            <Setter TargetName="Mark" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Offset="0" Color="#2ea080"/>
+                                        <GradientStop Offset="1" Color="#e0cb60"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Mark" Property="Height" Value="2"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

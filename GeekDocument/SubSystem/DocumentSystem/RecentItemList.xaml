@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="GeekDocument.SubSystem.DocumentSystem.RecentItemList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.DocumentSystem"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="MainGrid" MouseWheel="MainGrid_MouseWheel">
+        <Grid.Triggers>
+            <!-- 鼠标进入：显示滚动条 -->
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Duration="0:0:0.5" To="1" Storyboard.TargetName="ItemScrollBar" Storyboard.TargetProperty="Opacity"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <!-- 鼠标离开：隐藏滚动条 -->
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetName="ItemScrollBar" Storyboard.TargetProperty="Opacity" BeginTime="0:0:2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+        <!-- 项列表 -->
+        <StackPanel x:Name="Stack_ItemList">
+            <!-- 默认项 -->
+            <Grid x:Name="DefaultItem" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="60"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Background="White" Opacity="0.12"/>
+                <TextBlock Grid.Row="1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,1,0,0"
+                           Text="无最近编辑文档" Opacity="0.4"/>
+            </Grid>
+        </StackPanel>
+        <!-- 滚动条 -->
+        <ScrollBar x:Name="ItemScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="5" Opacity="0"
+                   SmallChange="1" ViewportSize="0" Minimum="0" Maximum="0"/>
+    </Grid>
+</UserControl>

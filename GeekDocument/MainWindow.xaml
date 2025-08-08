@@ -1,0 +1,59 @@
+﻿<xw:XMainWindow x:Class="GeekDocument.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeekDocument"
+        xmlns:xw="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
+        xmlns:xwc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+        xmlns:dls="clr-namespace:GeekDocument.SubSystem.DocLibSystem"
+        xmlns:escore="clr-namespace:GeekDocument.SubSystem.EditerSystem.Core"
+        xmlns:ds="clr-namespace:GeekDocument.SubSystem.DocumentSystem"
+        mc:Ignorable="d" Style="{StaticResource HighTitleWindow}"
+        FontFamily="Assets/Font/#新宋体" CustomIcon="Logo_16"
+        Title="极客文档" WindowStartupLocation="CenterScreen"
+        Height="720" Width="1280" MinHeight="540" MinWidth="960">
+    <Grid>
+        <Grid Margin="0,2,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftArea" Width="300" MinWidth="300" MaxWidth="500"/>
+                <ColumnDefinition x:Name="LeftSplit" Width="2"/>
+                <ColumnDefinition />
+                <ColumnDefinition x:Name="RightSplit" Width="2"/>
+                <ColumnDefinition x:Name="RightArea" Width="300"/>
+            </Grid.ColumnDefinitions>
+            <!-- 左 -->
+            <Grid x:Name="LeftPanel" Background="#262626" Grid.Column="0">
+                <TabControl x:Name="LeftTabControl">
+                    <TabItem x:Name="Header_DocLib" Header="文档库">
+                        <dls:DocLibPanel x:Name="Panel_DocLib"/>
+                    </TabItem>
+                    <TabItem x:Name="Header_DocStruct" Header="文档大纲">
+
+                    </TabItem>
+                </TabControl>
+            </Grid>
+            <GridSplitter x:Name="Splitter_Left" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"/>
+            <!-- 编辑器区域 -->
+            <Grid x:Name="EditerArea" Grid.Column="2">
+                <!-- 编辑器选项卡 -->
+                <Grid x:Name="Grid_Editer" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- 标签栏 -->
+                    <xwc:TabBar x:Name="Control_TabBar" Background="#282828"/>
+                    <!-- 编辑器选项卡 -->
+                    <TabControl x:Name="TabControl_Doc" Style="{StaticResource NoneItemTabControl}" Grid.Row="1"/>
+                </Grid>
+                <!-- 主页 -->
+                <ds:RecentItemPanel x:Name="Control_Home"/>
+            </Grid>
+            <!-- 右 -->
+            <Grid x:Name="RightPanel" Background="#262626" Grid.Column="4">
+                
+            </Grid>
+        </Grid>
+    </Grid>
+</xw:XMainWindow>

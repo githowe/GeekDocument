@@ -1,0 +1,171 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Font\simsun.ttc" />
+    <None Remove="Assets\Icon15\Book.png" />
+    <None Remove="Assets\Icon15\Document.png" />
+    <None Remove="Assets\Icon15\EmptyFolder.png" />
+    <None Remove="Assets\Icon15\File.png" />
+    <None Remove="Assets\Icon15\Files.png" />
+    <None Remove="Assets\Icon15\Folder.png" />
+    <None Remove="Assets\Icon15\Lib.png" />
+    <None Remove="Assets\Icon15\SelectPath.png" />
+    <None Remove="Assets\Icon15\SelectPath2.png" />
+    <None Remove="Assets\Icon16\CloseFile.png" />
+    <None Remove="Assets\Icon16\Copy.png" />
+    <None Remove="Assets\Icon16\Delete.png" />
+    <None Remove="Assets\Icon16\Export.png" />
+    <None Remove="Assets\Icon16\Import.png" />
+    <None Remove="Assets\Icon16\NewFile.png" />
+    <None Remove="Assets\Icon16\OpenFile.png" />
+    <None Remove="Assets\Icon16\OpenFolder.png" />
+    <None Remove="Assets\Icon16\Paste.png" />
+    <None Remove="Assets\Icon16\Redo.png" />
+    <None Remove="Assets\Icon16\Refresh.png" />
+    <None Remove="Assets\Icon16\Rename.png" />
+    <None Remove="Assets\Icon16\Save.png" />
+    <None Remove="Assets\Icon16\SaveAll.png" />
+    <None Remove="Assets\Icon16\SaveAs.png" />
+    <None Remove="Assets\Icon16\Setting.png" />
+    <None Remove="Assets\Icon16\Undo.png" />
+    <None Remove="Assets\Logo.png" />
+    <None Remove="Assets\Logo2.png" />
+    <None Remove="Assets\Logo_16.png" />
+    <None Remove="Assets\WindowIcon\NewFile.png" />
+    <None Remove="SubSystem\DocumentSystem\Image\Delete.png" />
+    <None Remove="SubSystem\DocumentSystem\Image\Folder.png" />
+    <None Remove="SubSystem\DocumentSystem\Image\Mark.png" />
+    <None Remove="SubSystem\DocumentSystem\Image\Marked.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\AlignBoth.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\AlignCenter.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\AlignLeft.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\AlignRight.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Banner.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Blod.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\CNPunctuation.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Code.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Color.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Emoji.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H0.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H1.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H2.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H3.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H4.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H5.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\H6.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Image.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Italic.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Link.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\List.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Quote.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Redo.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Table.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Text.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Title.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\ToLeft.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\ToRight.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\UnderLine.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Undo.png" />
+    <None Remove="SubSystem\WindowSystem\Image\Break.png" />
+    <None Remove="SubSystem\WindowSystem\Image\Error.png" />
+    <None Remove="SubSystem\WindowSystem\Image\Info.png" />
+    <None Remove="SubSystem\WindowSystem\Image\Warning.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XLogic.AppFrame\XLogic.AppFrame.csproj" />
+    <ProjectReference Include="..\XLogic.Base\XLogic.Base.csproj" />
+    <ProjectReference Include="..\XLogic.Windows\XLogic.Windows.csproj" />
+    <ProjectReference Include="..\XLogic.WpfControl\XLogic.WpfControl.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyleEx\XLogic.WpfStyleEx.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyle\XLogic.WpfStyle.csproj" />
+    <ProjectReference Include="..\XLogic.Wpf\XLogic.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Font\simsun.ttc" />
+    <Resource Include="Assets\Icon15\Book.png" />
+    <Resource Include="Assets\Icon15\Document.png" />
+    <Resource Include="Assets\Icon15\EmptyFolder.png" />
+    <Resource Include="Assets\Icon15\File.png" />
+    <Resource Include="Assets\Icon15\Files.png" />
+    <Resource Include="Assets\Icon15\Folder.png" />
+    <Resource Include="Assets\Icon15\Lib.png" />
+    <Resource Include="Assets\Icon15\SelectPath.png" />
+    <Resource Include="Assets\Icon15\SelectPath2.png" />
+    <Resource Include="Assets\Icon16\CloseFile.png" />
+    <Resource Include="Assets\Icon16\Copy.png" />
+    <Resource Include="Assets\Icon16\Delete.png" />
+    <Resource Include="Assets\Icon16\Export.png" />
+    <Resource Include="Assets\Icon16\Import.png" />
+    <Resource Include="Assets\Icon16\NewFile.png" />
+    <Resource Include="Assets\Icon16\OpenFile.png" />
+    <Resource Include="Assets\Icon16\OpenFolder.png" />
+    <Resource Include="Assets\Icon16\Paste.png" />
+    <Resource Include="Assets\Icon16\Redo.png" />
+    <Resource Include="Assets\Icon16\Refresh.png" />
+    <Resource Include="Assets\Icon16\Rename.png" />
+    <Resource Include="Assets\Icon16\Save.png" />
+    <Resource Include="Assets\Icon16\SaveAll.png" />
+    <Resource Include="Assets\Icon16\SaveAs.png" />
+    <Resource Include="Assets\Icon16\Setting.png" />
+    <Resource Include="Assets\Icon16\Undo.png" />
+    <Resource Include="Assets\Logo.png" />
+    <Resource Include="Assets\Logo_16.png" />
+    <Resource Include="Assets\WindowIcon\NewFile.png" />
+    <Resource Include="SubSystem\DocumentSystem\Image\Delete.png" />
+    <Resource Include="SubSystem\DocumentSystem\Image\Folder.png" />
+    <Resource Include="SubSystem\DocumentSystem\Image\Mark.png" />
+    <Resource Include="SubSystem\DocumentSystem\Image\Marked.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\AlignBoth.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\AlignCenter.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\AlignLeft.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\AlignRight.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Banner.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Blod.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\CNPunctuation.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Code.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Color.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Emoji.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H0.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H1.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H2.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H3.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H4.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H5.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\H6.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Image.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Italic.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Link.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\List.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Quote.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Redo.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Table.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Text.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Title.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\ToLeft.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\ToRight.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\UnderLine.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Undo.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\Break.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\Error.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\Info.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\Warning.png" />
+  </ItemGroup>
+
+</Project>

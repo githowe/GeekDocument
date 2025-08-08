@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XLogic.WpfControl\XLogic.WpfControl.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyle\XLogic.WpfStyle.csproj" />
+  </ItemGroup>
+
+</Project>

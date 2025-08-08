@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Image\Close_Item.png" />
+    <None Remove="Styles\Image\Expand.png" />
+    <None Remove="Styles\Image\Furl.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XLogic.Windows\XLogic.Windows.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyle\XLogic.WpfStyle.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Image\Close_Item.png" />
+    <Resource Include="Styles\Image\Expand.png" />
+    <Resource Include="Styles\Image\Furl.png" />
+  </ItemGroup>
+
+</Project>

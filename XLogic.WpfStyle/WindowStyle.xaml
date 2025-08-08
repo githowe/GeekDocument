@@ -1,0 +1,474 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 主窗口 -->
+    <Style x:Key="MainWindow" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 文本渲染模式：亚像素 -->
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="4" CaptionHeight="46" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame" BorderThickness="0">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="50"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#282828" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="132"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Logo2.png" Width="106"/>
+                                <Grid Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True"/>
+                                <!-- 标签栏 -->
+                                <Grid x:Name="TabBarBox" Grid.Column="1" WindowChrome.IsHitTestVisibleInChrome="True"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="MinButton" Width="50" Height="50" Style="{StaticResource MinButtonStyle}"/>
+                                    <Button x:Name="MaxButton" Width="50" Height="50" Style="{StaticResource MaxButtonStyle}"/>
+                                    <Button x:Name="CloseButton" Width="50" Height="50" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1" Background="#282828">
+                                <AdornerDecorator>
+                                    <ContentPresenter/>
+                                </AdornerDecorator>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 窗口最大化时 -->
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <!-- 绑定内边距 -->
+                            <Setter TargetName="WindowFrame" Property="Padding" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=WindowBorderWdith}"/>
+                            <!-- 修改最大化按钮样式 -->
+                            <Setter TargetName="MaxButton" Property="Style" Value="{StaticResource MidButtonStyle}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 主对话框 -->
+    <Style x:Key="MainDialog" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 禁用窗口缩放 -->
+        <Setter Property="ResizeMode" Value="CanMinimize"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="0" CaptionHeight="30" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#323232" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="40"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Main.png" Width="20"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="MinButton" Width="40" Style="{StaticResource MinButtonStyle}"/>
+                                    <Button x:Name="CloseButton" Width="40" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <!-- 客户区边框 -->
+                                <Border Background="#1E1E1E">
+                                    <!-- 客户区内容 -->
+                                    <AdornerDecorator>
+                                        <ContentPresenter/>
+                                    </AdornerDecorator>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 普通对话框 -->
+    <Style x:Key="NormalDialog" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 禁用窗口缩放 -->
+        <Setter Property="ResizeMode" Value="NoResize"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="0" CaptionHeight="30" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#323232" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="30"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Dialog.png" Width="16"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="CloseButton" Width="30" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <!-- 客户区边框 -->
+                                <Border Background="#1E1E1E" BorderThickness="1,0,1,1" BorderBrush="#323232">
+                                    <!-- 客户区内容 -->
+                                    <AdornerDecorator>
+                                        <ContentPresenter/>
+                                    </AdornerDecorator>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 无边线对话框 -->
+    <Style x:Key="NoBorderDialog" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 禁用窗口缩放 -->
+        <Setter Property="ResizeMode" Value="NoResize"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="0" CaptionHeight="30" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#323232" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="30"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Dialog.png" Width="16"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="CloseButton" Width="30" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <!-- 客户区内容 -->
+                                <AdornerDecorator>
+                                    <ContentPresenter/>
+                                </AdornerDecorator>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 可缩放对话框 -->
+    <Style x:Key="ResizeDialog" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 禁用窗口缩放 -->
+        <Setter Property="ResizeMode" Value="CanResize"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="4,0" CaptionHeight="30" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#323232" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="30"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Dialog.png" Width="16"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="CloseButton" Width="30" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <!-- 客户区边框 -->
+                                <Border Background="#1E1E1E" BorderThickness="1,0,1,1" BorderBrush="#323232">
+                                    <!-- 客户区内容 -->
+                                    <AdornerDecorator>
+                                        <ContentPresenter/>
+                                    </AdornerDecorator>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ResizeDialog2" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="5" CaptionHeight="25" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid Grid.Row="0" Background="#323232" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconArea" Width="30"/>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 图标 -->
+                                <Image x:Name="WindowIcon" Source="Image/Dialog.png" Width="16"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+                                <!-- 按钮 -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <Button x:Name="MinButton" Width="30" Style="{StaticResource MinButtonStyle}"/>
+                                    <Button x:Name="MaxButton" Width="30" Style="{StaticResource MaxButtonStyle}"/>
+                                    <Button x:Name="CloseButton" Width="30" Style="{StaticResource CloseButtonStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <AdornerDecorator>
+                                    <ContentPresenter/>
+                                </AdornerDecorator>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 窗口最大化时 -->
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <!-- 绑定内边距 -->
+                            <Setter TargetName="WindowFrame" Property="Padding" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=WindowBorderWdith}"/>
+                            <!-- 修改最大化按钮样式 -->
+                            <Setter TargetName="MaxButton" Property="Style" Value="{StaticResource MidButtonStyle}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 提示对话框 -->
+    <Style x:Key="TipDialog" TargetType="Window">
+        <!-- 字号 -->
+        <Setter Property="FontSize" Value="12"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#1e1e1e"/>
+        <!-- 文本显示模式：屏幕 -->
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!-- 禁用窗口缩放 -->
+        <Setter Property="ResizeMode" Value="NoResize"/>
+        <!-- WindowChrome -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="0" CaptionHeight="0" CornerRadius="0"/>
+            </Setter.Value>
+        </Setter>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!-- 窗口外边框 -->
+                    <Border x:Name="WindowFrame">
+                        <!-- 窗口内框架 -->
+                        <Grid>
+                            <!-- 分区 -->
+                            <Grid.RowDefinitions>
+                                <!-- 标题栏 -->
+                                <RowDefinition Height="30"/>
+                                <!-- 客户区 -->
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!-- 第一块：标题栏 -->
+                            <Grid x:Name="TitleBar" Grid.Row="0" Background="#1E1E1E" RenderOptions.EdgeMode="Aliased">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 标题边框 -->
+                                <Border x:Name="TitleBorder" Background="#1E1E1E" BorderThickness="1,1,1,0" BorderBrush="#323232" Grid.ColumnSpan="2"/>
+                                <!-- 标题 -->
+                                <TextBlock Text="{TemplateBinding Title}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,9,0,0"/>
+                                <!-- 按钮 -->
+                                <Button x:Name="CloseButton" Width="29" Height="29" Style="{StaticResource CloseButtonStyle2}" Margin="0,1,1,0"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1" WindowChrome.IsHitTestVisibleInChrome="True"/>
+                            </Grid>
+                            <!-- 第二块：客户区 -->
+                            <Grid Grid.Row="1">
+                                <!-- 客户区边框 -->
+                                <Border x:Name="ClientBorder" Background="#1E1E1E" BorderThickness="1,0,1,1" BorderBrush="#323232">
+                                    <!-- 客户区内容 -->
+                                    <AdornerDecorator>
+                                        <ContentPresenter/>
+                                    </AdornerDecorator>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

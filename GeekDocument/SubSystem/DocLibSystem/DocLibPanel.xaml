@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="GeekDocument.SubSystem.DocLibSystem.DocLibPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.DocLibSystem"
+             xmlns:xc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+             xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!-- 工具栏 -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="30" Background="#1E1E1E">
+            <Button x:Name="Tool_Refresh" Style="{StaticResource ToolBarButton}" ToolTip="刷新" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/Refresh.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Rename" Style="{StaticResource ToolBarButton}" ToolTip="重命名" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/Rename.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_OpenFolder" Style="{StaticResource ToolBarButton}" ToolTip="打开所在文件夹" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/OpenFolder.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Copy" Style="{StaticResource ToolBarButton}" ToolTip="复制" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/Copy.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Paste" Style="{StaticResource ToolBarButton}" ToolTip="粘贴" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/Paste.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Delete" Style="{StaticResource ToolBarButton}" ToolTip="删除" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/Delete.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        <xc:TreeView x:Name="DocTree" Background="Transparent" Grid.Row="1"/>
+    </Grid>
+</UserControl>

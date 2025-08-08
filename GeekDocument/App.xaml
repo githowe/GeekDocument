@@ -1,0 +1,22 @@
+﻿<Application x:Class="GeekDocument.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GeekDocument"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/AllConvert.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/WindowStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/TabControlStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ScrollBarStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ToolTipStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/TextBoxStyle.xaml"/>
+
+                <ResourceDictionary Source="/XLogic.WpfStyleEx;component/FrameLabelStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyleEx;component/WindowStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
