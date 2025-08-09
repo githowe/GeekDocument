@@ -5,6 +5,7 @@ using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
 using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.ResourceSystem;
 using GeekDocument.SubSystem.WindowSystem;
@@ -84,6 +85,8 @@ namespace GeekDocument
             // 添加打开记录
             CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
             CacheManager.Instance.SaveCache();
+            // 添加已打开的文档
+            DocManager.Instance.AddOpenedDocument(document, filePath);
         }
 
         #endregion
@@ -245,6 +248,10 @@ namespace GeekDocument
                 case "NewFile":
                     NewDocument();
                     break;
+                // 打开文档
+                case "OpenFile":
+                    OpenDocument();
+                    break;
             }
         }
 
@@ -284,7 +291,25 @@ namespace GeekDocument
                 // 添加打开记录
                 CacheManager.Instance.Cache.DocumentManager.AddRecentDocument($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
                 CacheManager.Instance.SaveCache();
+                // 添加已打开的文档
+                DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
             }
+        }
+
+        /// <summary>
+        /// 打开文档
+        /// </summary>
+        private void OpenDocument()
+        {
+            string filePath = FM.Instance.OpenReadDocumentDialog();
+            if (filePath == "") return;
+
+            if (DocManager.Instance.DocumentOpened(filePath))
+            {
+                WM.ShowErrorTip($"文档“{Path.GetFileName(filePath)}”已打开");
+                return;
+            }
+            OpenDocument(filePath);
         }
 
         /// <summary>

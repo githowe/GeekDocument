@@ -32,6 +32,20 @@ namespace GeekDocument.SubSystem.DocumentSystem
             return folderPath ?? Options.Instance.System.DefaultPath;
         }
 
+        /// <summary>
+        /// 添加已打开的文档
+        /// </summary>
+        public void AddOpenedDocument(Document document, string path)
+        {
+            _documentList.Add(document);
+            _documentPathList.Add(path);
+        }
+
+        /// <summary>
+        /// 判断文档是否已打开
+        /// </summary>
+        public bool DocumentOpened(string path) => _documentPathList.Contains(path);
+
         #endregion
 
         #region 私有方法
@@ -40,7 +54,8 @@ namespace GeekDocument.SubSystem.DocumentSystem
 
         #region 字段
 
-        private List<Document> _documentList = new List<Document>();
+        private readonly List<Document> _documentList = new List<Document>();
+        private readonly List<string> _documentPathList = new List<string>();
 
         #endregion
     }

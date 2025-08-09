@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using XLogic.Base;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using GeekDocument.SubSystem.DocumentSystem;
 
 namespace GeekDocument.SubSystem.FileSystem
 {
@@ -20,6 +21,9 @@ namespace GeekDocument.SubSystem.FileSystem
 
         public void Init()
         {
+            // 文档格式
+            _document.TypeList.Add(new TypeInfo("极客文档", "gocx"));
+            _document.TypeList.Add(new TypeInfo("文本文件", "txt"));
             // 图片格式
             _image.TypeList.Add(new TypeInfo("便携网络图片", "png"));
             _image.TypeList.Add(new TypeInfo("位图", "bmp"));
@@ -45,6 +49,27 @@ namespace GeekDocument.SubSystem.FileSystem
             return "";
         }
 
+        /// <summary>
+        /// 打开读取文档对话框
+        /// </summary>
+        public string OpenReadDocumentDialog()
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog
+            {
+                Title = "打开文档",
+                InitialDirectory = DocManager.Instance.GetRecentDocumentPath(),
+            };
+            dialog.Filters.Add(new CommonFileDialogFilter("极客文档", "gdoc"));
+            dialog.Filters.Add(new CommonFileDialogFilter("纯文本", "txt;ini;cfg;json;mk"));
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                return dialog.FileName;
+            }
+            return "";
+        }
+
+        /// <summary>文档文件</summary>
+        private readonly FileFilter _document = new FileFilter();
         /// <summary>图片文件</summary>
         private readonly FileFilter _image = new FileFilter();
     }
