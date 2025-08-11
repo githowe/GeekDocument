@@ -30,6 +30,33 @@
         </Grid.RowDefinitions>
         <!-- 工具栏 -->
         <StackPanel Orientation="Horizontal" Background="#1E1E1E" Grid.Row="0">
+            <Button x:Name="Tool_Save" Style="{StaticResource ToolBarButton}" ToolTip="保存" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Save.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_SaveAs" Style="{StaticResource ToolBarButton}" ToolTip="另存为" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/SaveAs.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Export" Style="{StaticResource ToolBarButton}" ToolTip="导出" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Export.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Undo" Style="{StaticResource ToolBarButton}" ToolTip="撤销" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Undo.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Redo" Style="{StaticResource ToolBarButton}" ToolTip="重做" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Redo.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
             <Button x:Name="Tool_List" Style="{StaticResource ToolBarButton}" ToolTip="插入列表" Width="30" Height="30">
                 <Button.Content>
                     <Image Source="Image/List.png" Height="16" Width="16"/>
@@ -63,6 +90,12 @@
             <Button x:Name="Tool_Link" Style="{StaticResource ToolBarButton}" ToolTip="插入链接" Width="30" Height="30">
                 <Button.Content>
                     <Image Source="Image/Link.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Doc" Style="{StaticResource ToolBarButton}" ToolTip="插入文档" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Document.png" Height="16" Width="16"/>
                 </Button.Content>
             </Button>
             <wc:ToolSplitBar/>

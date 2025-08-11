@@ -47,7 +47,7 @@ namespace XLogic.WpfControl
         public void UpdateItem()
         {
             UpdateBackground();
-            Mark.Height = Selected ? 2 : 0;
+            UpdateForeground();
         }
 
         #endregion
@@ -84,9 +84,15 @@ namespace XLogic.WpfControl
 
         private void UpdateBackground()
         {
-            MainGrid.Background = _default;
-            if (_isMouseHover) MainGrid.Background = _hover;
-            if (Selected) MainGrid.Background = _selected;
+            Grid_Back.Background = _default;
+            if (_isMouseHover) Grid_Back.Background = _hover;
+            if (Selected) Grid_Back.Background = _selected;
+        }
+
+        private void UpdateForeground()
+        {
+            Block_Title.Foreground = _textDefault;
+            if (Selected) Block_Title.Foreground = _textSelected;
         }
 
         #endregion
@@ -102,6 +108,9 @@ namespace XLogic.WpfControl
         private readonly Brush _hover = new SolidColorBrush(Color.FromArgb(255, 53, 53, 53));
         /// <summary>选中时背景</summary>
         private readonly Brush _selected = new SolidColorBrush(Color.FromArgb(255, 30, 30, 30));
+
+        private readonly Brush _textDefault = new SolidColorBrush(Color.FromArgb(96, 255, 255, 255));
+        private readonly Brush _textSelected = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
 
         private string _header = "标签标题";
 

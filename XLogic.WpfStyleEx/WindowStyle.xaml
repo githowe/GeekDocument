@@ -16,7 +16,7 @@
         <!-- WindowChrome -->
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
-                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="4" CaptionHeight="31" CornerRadius="0"/>
+                <WindowChrome GlassFrameThickness="0,1,0,0" UseAeroCaptionButtons="False" ResizeBorderThickness="4" CaptionHeight="32" CornerRadius="0"/>
             </Setter.Value>
         </Setter>
         <!-- 模板 -->
@@ -37,7 +37,7 @@
                             <!-- 第一块：标题栏 -->
                             <Grid Grid.Row="0" Background="#282828" RenderOptions.EdgeMode="Aliased">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition x:Name="IconArea" Width="40"/>
+                                    <ColumnDefinition Width="0"/>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
@@ -47,20 +47,19 @@
                                 <Grid Grid.Column="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <!-- 工具栏 -->
                                     <xc:ToolBar x:Name="TopToolBar" ToolWidth="36" ToolHeight="36" HorizontalAlignment="Left" WindowChrome.IsHitTestVisibleInChrome="True"/>
-                                    <!-- 标题 -->
-                                    <TextBlock x:Name="TextTitle" Text="{TemplateBinding Title}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Visibility="Collapsed"/>
+                                    <!-- 标签栏 -->
+                                    <xc:TabBar x:Name="TopTabBar" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
                                 </Grid>
                                 <!-- 按钮 -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
-                                    <Button x:Name="FoldLeft" Width="36" Style="{StaticResource FlodButtonLeft}" ToolTip="左面板"/>
-                                    <Button x:Name="FoldRight" Width="36" Style="{StaticResource FlodButtonRight}" ToolTip="右面板"/>
-                                    <Button x:Name="MinButton" Width="48" Style="{StaticResource MinButtonStyle}"/>
-                                    <Button x:Name="MaxButton" Width="48" Style="{StaticResource MaxButtonStyle}"/>
-                                    <Button x:Name="CloseButton" Width="48" Style="{StaticResource CloseButtonStyle}"/>
+                                    <Button x:Name="MenuButton" Width="36" Style="{StaticResource MenuButtonStyle}"/>
+                                    <Button x:Name="MinButton" Width="36" Style="{StaticResource MinButtonStyle}"/>
+                                    <Button x:Name="MaxButton" Width="36" Style="{StaticResource MaxButtonStyle}"/>
+                                    <Button x:Name="CloseButton" Width="36" Style="{StaticResource CloseButtonStyle}"/>
                                 </StackPanel>
                             </Grid>
                             <!-- 第二块：客户区 -->

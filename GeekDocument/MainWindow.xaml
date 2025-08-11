@@ -24,28 +24,15 @@
             </Grid.ColumnDefinitions>
             <!-- 左 -->
             <Grid x:Name="LeftPanel" Background="#262626" Grid.Column="0">
-                <TabControl x:Name="LeftTabControl">
-                    <TabItem x:Name="Header_DocLib" Header="文档库">
-                        <dls:DocLibPanel x:Name="Panel_DocLib"/>
-                    </TabItem>
-                    <TabItem x:Name="Header_DocStruct" Header="文档大纲">
-
-                    </TabItem>
-                </TabControl>
+                <dls:DocLibPanel x:Name="Panel_DocLib"/>
             </Grid>
             <GridSplitter x:Name="Splitter_Left" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"/>
             <!-- 编辑器区域 -->
             <Grid x:Name="EditerArea" Grid.Column="2">
                 <!-- 编辑器选项卡 -->
                 <Grid x:Name="Grid_Editer" Visibility="Collapsed">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <!-- 标签栏 -->
-                    <xwc:TabBar x:Name="Control_TabBar" Background="#282828"/>
                     <!-- 编辑器选项卡 -->
-                    <TabControl x:Name="TabControl_Doc" Style="{StaticResource NoneItemTabControl}" Grid.Row="1"/>
+                    <TabControl x:Name="TabControl_Doc" Style="{StaticResource NoneItemTabControl}"/>
                 </Grid>
                 <!-- 主页 -->
                 <ds:RecentItemPanel x:Name="Control_Home"/>

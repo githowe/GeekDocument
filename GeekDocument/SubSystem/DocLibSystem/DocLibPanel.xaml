@@ -20,6 +20,11 @@
                     <Image Source="../../Assets/Icon16/Refresh.png" Height="16" Width="16"/>
                 </Button.Content>
             </Button>
+            <Button x:Name="Tool_NewFolder" Style="{StaticResource ToolBarButton}" ToolTip="新建文件夹" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="../../Assets/Icon16/NewFolder.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
             <wc:ToolSplitBar/>
             <Button x:Name="Tool_Rename" Style="{StaticResource ToolBarButton}" ToolTip="重命名" Width="30" Height="30">
                 <Button.Content>

@@ -39,15 +39,12 @@ namespace GeekDocument
             // 恢复面板状态并监听面板缩放
             RecoverPanelState();
             ListenPanelResize();
-            // 添加布局控制
-            AddLayoutControl();
 
             InitToolBar();
+            InitTabBar();
 
             Panel_DocLib.Init();
             Panel_DocLib.LoadDocumentLib();
-
-            Control_TabBar.SelectChanged = TabBar_SelectChanged;
         }
 
         #endregion
@@ -162,34 +159,6 @@ namespace GeekDocument
             };
         }
 
-        /// <summary>
-        /// 添加布局控制
-        /// </summary>
-        private void AddLayoutControl()
-        {
-            if (GetTemplateChild("FoldLeft") is System.Windows.Controls.Button foldLeft)
-                foldLeft.Click += FoldLeft_Click;
-            if (GetTemplateChild("FoldRight") is System.Windows.Controls.Button foldRight)
-                foldRight.Click += FoldRight_Click;
-        }
-
-        private void FoldLeft_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindowCache cache = CacheManager.Instance.Cache.MainWindow;
-
-            // 切换面板显隐
-            LeftPanel.Visibility = LeftPanel.IsVisible ? Visibility.Collapsed : Visibility.Visible;
-            bool panelVisible = LeftPanel.IsVisible;
-            // 切换区域显隐
-            LeftArea.MinWidth = panelVisible ? 300 : 0;
-            LeftArea.Width = panelVisible ? new GridLength(cache.LeftPanelWidth) : _zeroLength;
-            // 切换分割线显隐
-            LeftSplit.Width = panelVisible ? _splitLength : _zeroLength;
-
-            cache.LeftPanelHided = !panelVisible;
-            CacheManager.Instance.SaveCache();
-        }
-
         private void FoldRight_Click(object sender, RoutedEventArgs e)
         {
             MainWindowCache cache = CacheManager.Instance.Cache.MainWindow;
@@ -215,23 +184,27 @@ namespace GeekDocument
             if (GetTemplateChild("TopToolBar") is ToolBar bar)
             {
                 bar.ToolStyle = (Style)FindResource("ToolBarButton");
-                bar.AddSplit(new Thickness(0, 5, 5, 5));
+                // bar.AddSplit(new Thickness(0, 5, 5, 5));
+                bar.AddTool(GetToolIcon("Lib"), "DocLib", "文档库");
+                bar.AddSplit();
                 bar.AddTool(GetToolIcon("NewFile"), "NewFile", "新建文档");
                 bar.AddTool(GetToolIcon("OpenFile"), "OpenFile", "打开文档");
-                bar.AddTool(GetToolIcon("Save"), "Save", "保存文档");
-                bar.AddTool(GetToolIcon("SaveAll"), "SaveAll", "保存全部文档");
-                bar.AddTool(GetToolIcon("SaveAs"), "SaveAs", "另存为文档");
-                bar.AddTool(GetToolIcon("CloseFile"), "CloseFile", "关闭文档");
+                bar.AddTool(GetToolIcon("SaveAll"), "SaveAll", "保存全部");
                 bar.AddSplit();
-                bar.AddTool(GetToolIcon("Undo"), "Undo", "撤销");
-                bar.AddTool(GetToolIcon("Redo"), "Redo", "重做");
-                bar.AddSplit();
-                bar.AddTool(GetToolIcon("Import"), "Import", "导入");
-                bar.AddTool(GetToolIcon("Export"), "Export", "导出");
-                bar.AddSplit();
-                bar.AddTool(GetToolIcon("Setting"), "Setting", "设置");
                 // 监听工具栏
                 bar.ToolClick += ToolBar_ToolClick;
+            }
+        }
+
+        /// <summary>
+        /// 初始化标签栏
+        /// </summary>
+        private void InitTabBar()
+        {
+            if (GetTemplateChild("TopTabBar") is TabBar tabBar)
+            {
+                _tabBar = tabBar;
+                _tabBar.SelectChanged = TabBar_SelectChanged;
             }
         }
 
@@ -244,6 +217,10 @@ namespace GeekDocument
         {
             switch (name)
             {
+                // 文档库
+                case "DocLib":
+                    SwitchDocumentLib();
+                    break;
                 // 新建文档
                 case "NewFile":
                     NewDocument();
@@ -253,6 +230,26 @@ namespace GeekDocument
                     OpenDocument();
                     break;
             }
+        }
+
+        /// <summary>
+        /// 切换文档库显隐
+        /// </summary>
+        private void SwitchDocumentLib()
+        {
+            MainWindowCache cache = CacheManager.Instance.Cache.MainWindow;
+
+            // 切换面板显隐
+            LeftPanel.Visibility = LeftPanel.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+            bool panelVisible = LeftPanel.IsVisible;
+            // 切换区域显隐
+            LeftArea.MinWidth = panelVisible ? 300 : 0;
+            LeftArea.Width = panelVisible ? new GridLength(cache.LeftPanelWidth) : _zeroLength;
+            // 切换分割线显隐
+            LeftSplit.Width = panelVisible ? _splitLength : _zeroLength;
+
+            cache.LeftPanelHided = !panelVisible;
+            CacheManager.Instance.SaveCache();
         }
 
         /// <summary>
@@ -331,10 +328,10 @@ namespace GeekDocument
             editer.Init();
             editerItem.Content = editer;
             // 新建选项卡标签并关联至选项卡
-            TabItem tabItem = Control_TabBar.AddTabItem(docName);
+            TabItem tabItem = _tabBar.AddTabItem(docName);
             tabItem.ItemInstance = editerItem;
             // 选择新建的选项卡标签
-            Control_TabBar.UpdateSelect(tabItem);
+            _tabBar.UpdateSelect(tabItem);
             // 选择选项卡
             editerItem.IsSelected = true;
             // 加载文档
@@ -347,10 +344,7 @@ namespace GeekDocument
 
         private void TabBar_SelectChanged(TabItem? tabItem)
         {
-            if (tabItem == null)
-            {
-                return;
-            }
+            if (tabItem == null) return;
 
             if (tabItem.ItemInstance != null)
                 tabItem.ItemInstance.IsSelected = true;
@@ -359,6 +353,8 @@ namespace GeekDocument
         #endregion
 
         #region 字段
+
+        private TabBar _tabBar;
 
         private GridLength _zeroLength = new GridLength(0);
         private GridLength _splitLength = new GridLength(2);

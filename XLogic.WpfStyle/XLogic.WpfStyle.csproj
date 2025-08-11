@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="Image\Button_Close.png" />
     <None Remove="Image\Button_Max.png" />
+    <None Remove="Image\Button_Menu.png" />
     <None Remove="Image\Button_Min.png" />
     <None Remove="Image\Button_Normal.png" />
     <None Remove="Image\Close2.png" />
@@ -23,6 +24,7 @@
   <ItemGroup>
     <Resource Include="Image\Button_Close.png" />
     <Resource Include="Image\Button_Max.png" />
+    <Resource Include="Image\Button_Menu.png" />
     <Resource Include="Image\Button_Min.png" />
     <Resource Include="Image\Button_Normal.png" />
     <Resource Include="Image\Close2.png" />
