@@ -109,7 +109,7 @@ namespace XLogic.WpfControl
         /// <summary>选中时背景</summary>
         private readonly Brush _selected = new SolidColorBrush(Color.FromArgb(255, 30, 30, 30));
 
-        private readonly Brush _textDefault = new SolidColorBrush(Color.FromArgb(96, 255, 255, 255));
+        private readonly Brush _textDefault = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
         private readonly Brush _textSelected = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
 
         private string _header = "标签标题";

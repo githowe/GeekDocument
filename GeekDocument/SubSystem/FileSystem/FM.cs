@@ -52,20 +52,19 @@ namespace GeekDocument.SubSystem.FileSystem
         /// <summary>
         /// 打开读取文档对话框
         /// </summary>
-        public string OpenReadDocumentDialog()
+        public List<string> OpenReadDocumentDialog()
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog
             {
                 Title = "打开文档",
                 InitialDirectory = DocManager.Instance.GetRecentDocumentPath(),
+                Multiselect = true,
             };
             dialog.Filters.Add(new CommonFileDialogFilter("极客文档", "gdoc"));
             dialog.Filters.Add(new CommonFileDialogFilter("纯文本", "txt;ini;cfg;json;mk"));
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                return dialog.FileName;
-            }
-            return "";
+                return dialog.FileNames.ToList();
+            return [];
         }
 
         /// <summary>文档文件</summary>

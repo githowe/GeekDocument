@@ -298,15 +298,18 @@ namespace GeekDocument
         /// </summary>
         private void OpenDocument()
         {
-            string filePath = FM.Instance.OpenReadDocumentDialog();
-            if (filePath == "") return;
+            List<string> pathList = FM.Instance.OpenReadDocumentDialog();
+            if (pathList.Count == 0) return;
 
-            if (DocManager.Instance.DocumentOpened(filePath))
+            foreach (var path in pathList)
             {
-                WM.ShowErrorTip($"文档“{Path.GetFileName(filePath)}”已打开");
-                return;
+                if (DocManager.Instance.DocumentOpened(path))
+                {
+                    WM.ShowErrorTip($"文档“{Path.GetFileName(path)}”已打开");
+                    continue;
+                }
+                OpenDocument(path);
             }
-            OpenDocument(filePath);
         }
 
         /// <summary>
