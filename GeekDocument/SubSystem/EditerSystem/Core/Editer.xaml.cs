@@ -1,20 +1,9 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.OptionSystem;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using XLogic.Base.Ex;
 using Page = GeekDocument.SubSystem.EditerSystem.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core
@@ -50,17 +39,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             };
             List<Block> blockList = new List<Block>();
             // 读取文本文件
-            foreach (var item in File.ReadAllLines("D:/示例文档2.txt"))
+            foreach (var item in File.ReadAllLines("D:/示例文档3.txt"))
             {
                 BlockText blockText = new BlockText
                 {
                     Content = item,
+                    LineSpace = 4,
                     // FontFamily = fontList.RandomElement(),
                 };
                 blockText.UpdateViewData();
                 blockList.Add(blockText);
             }
             _page.LoadBlock(blockList);
+            InitScrollBar();
         }
 
         /// <summary>
@@ -70,6 +61,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         {
             Document = document;
             _page.LoadBlock(document.BlockList);
+            InitScrollBar();
         }
 
         #endregion
@@ -87,6 +79,49 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             PageBox.Children.Add(_page);
             _page.UpdateLayout();
             _page.Init();
+        }
+
+        /// <summary>
+        /// 初始化滚动条
+        /// </summary>
+        private void InitScrollBar()
+        {
+            // 设置滚动条范围
+            PageScrollBar.ViewportSize = DocArea.ActualHeight;
+            PageScrollBar.Maximum = _page.PageHeight - DocArea.ActualHeight;
+            // 监听滚动条、滚轮与高度变化
+            PageScrollBar.ValueChanged += PageScrollBar_ValueChanged;
+            MainGrid.MouseWheel += MainGrid_MouseWheel;
+            DocArea.SizeChanged += DocArea_SizeChanged;
+            _page.PageHeightChanged = Page_PageHeightChanged;
+        }
+
+        #endregion
+
+        #region 控件事件
+
+        private void PageScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _page.PageOffset = (int)PageScrollBar.Value;
+        }
+
+        private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            PageScrollBar.Value -= e.Delta / 120 * 64;
+        }
+
+        private void DocArea_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.HeightChanged)
+            {
+                PageScrollBar.ViewportSize = DocArea.ActualHeight;
+                PageScrollBar.Maximum = _page.PageHeight - DocArea.ActualHeight;
+            }
+        }
+
+        private void Page_PageHeightChanged()
+        {
+            PageScrollBar.Maximum = _page.PageHeight - DocArea.ActualHeight;
         }
 
         #endregion

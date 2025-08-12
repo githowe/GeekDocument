@@ -36,13 +36,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         protected override void OnUpdate()
         {
             int y = 0;
+            // 遍历行
             foreach (var line in Block.ViewData)
             {
                 // 显示行线
                 if (Options.Instance.View.ShowRowLine)
                 {
-                    double line_y = y + Block.FontSize + Block.LineSpace / 2;
-                    _dc.DrawLine(_rowLinePen, new Point(0, line_y), new Point(Options.Instance.Page.PageWidth, line_y));
+                    double y1 = y + 0.5;
+                    double y2 = y + Block.FontSize - 0.5;
+                    _dc.DrawLine(_rowLinePen, new Point(0, y1), new Point(Options.Instance.Page.PageWidth, y1));
+                    _dc.DrawLine(_rowLinePen, new Point(0, y2), new Point(Options.Instance.Page.PageWidth, y2));
                 }
                 // 绘制文本行
                 DrawTextLine(line, y);
@@ -82,7 +85,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// <summary>文本笔刷</summary>
         private Color _textColor = Color.FromRgb(255, 255, 255);
         /// <summary>行线画笔</summary>
-        private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 2);
+        private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);
 
         #endregion
     }

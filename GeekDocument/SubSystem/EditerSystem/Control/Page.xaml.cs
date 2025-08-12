@@ -1,6 +1,7 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.OptionSystem;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control
@@ -9,11 +10,27 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
     {
         public Page() => InitializeComponent();
 
+        /// <summary>页面高度</summary>
+        public int PageHeight { get; private set; } = 0;
+
+        /// <summary>页面垂直偏移</summary>
+        public int PageOffset
+        {
+            get => _pageOffset;
+            set
+            {
+                _pageOffset = value;
+                BlockCanvas.Margin = new Thickness(0, -_pageOffset + 16, 0, 0);
+            }
+        }
+
+        public Action? PageHeightChanged { get; set; } = null;
+
         #region 公开方法
 
         public void Init()
         {
-
+            InitBack();
         }
 
         /// <summary>
@@ -29,13 +46,64 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
                 BlockCanvas.Children.Add(layer);
                 _blockLayerList.Add(layer);
             }
-            // 绘制块
+            // 绘制块并更新页面高度
             DrawBlock();
+            UpdatePageHeight();
+            PageOffset = 0;
+            // 更新背景
+            UpdateBack();
+        }
+
+        /// <summary>
+        /// 更新页面高度
+        /// </summary>
+        public void UpdatePageHeight()
+        {
+            int height = 0;
+            // 累加块高度
+            foreach (var blockLayer in _blockLayerList)
+                height += blockLayer.BlockHeight;
+            // 累加块间距
+            height += (_blockLayerList.Count - 1) * Options.Instance.Page.BlockInterval;
+            // 累加页面上下内边距
+            height += Options.Instance.Page.PageMargin.Top + Options.Instance.Page.PageMargin.Bottom;
+            // 累加页面上下外边距
+            height += 32;
+
+            BlockCanvas.Height = height - 32;
+
+            PageHeight = height;
+            PageHeightChanged?.Invoke();
         }
 
         #endregion
 
         #region 私有方法
+
+        /// <summary>
+        /// 初始化背景
+        /// </summary>
+        private void InitBack()
+        {
+            _backLayer = new BackLayer();
+            _backLayer.Init();
+            BlockCanvas.Children.Add(_backLayer);
+        }
+
+        /// <summary>
+        /// 更新背景
+        /// </summary>
+        private void UpdateBack()
+        {
+            PageOption pageOption = Options.Instance.Page;
+            _backLayer.PageWidth = pageOption.PageWidth + pageOption.PageMargin.Left + pageOption.PageMargin.Right;
+            _backLayer.PageHeight = PageHeight - 32;
+            _backLayer.TopMargin = pageOption.PageMargin.Top;
+            _backLayer.BottomMargin = pageOption.PageMargin.Bottom;
+            _backLayer.LeftMargin = pageOption.PageMargin.Left;
+            _backLayer.RightMargin = pageOption.PageMargin.Right;
+            _backLayer.Update();
+        }
 
         /// <summary>
         /// 生成块图层
@@ -99,8 +167,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
 
         #region 字段
 
+        private BackLayer _backLayer;
         /// <summary>块图层列表</summary>
         private readonly List<BlockLayer> _blockLayerList = new List<BlockLayer>();
+        private int _pageOffset = 0;
 
         #endregion
     }

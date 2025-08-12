@@ -184,7 +184,7 @@
             </Button>
         </StackPanel>
         <!-- 文档区域 -->
-        <Grid x:Name="DocArea" Background="#242424" Grid.Row="1" Cursor="IBeam" Width="1000" UseLayoutRounding="True">
+        <Grid x:Name="DocArea" Background="Transparent" Grid.Row="1" Cursor="IBeam" Width="1000" UseLayoutRounding="True" ClipToBounds="True">
             <Grid x:Name="PageBox" IsHitTestVisible="False"/>
             <Grid x:Name="LayerBox" IsHitTestVisible="False"/>
         </Grid>
