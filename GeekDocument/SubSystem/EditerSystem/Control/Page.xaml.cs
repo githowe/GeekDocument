@@ -10,6 +10,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
     {
         public Page() => InitializeComponent();
 
+        /// <summary>块列表</summary>
+        public List<BlockLayer> BlockList => _blockLayerList;
+
         /// <summary>页面高度</summary>
         public int PageHeight { get; private set; } = 0;
 
@@ -74,6 +77,23 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
 
             PageHeight = height;
             PageHeightChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 获取第一个块图层
+        /// </summary>
+        public BlockLayer? GetFirstBlock()
+        {
+            if (_blockLayerList.Count == 0) return null;
+            return _blockLayerList[0];
+        }
+
+        /// <summary>
+        /// 设置当前块图层
+        /// </summary>
+        public void SetCurrentBlock(BlockLayer layer)
+        {
+            _currentBlockLayer = layer;
         }
 
         #endregion
@@ -167,9 +187,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
 
         #region 字段
 
+        /// <summary>背景图层</summary>
         private BackLayer _backLayer;
         /// <summary>块图层列表</summary>
         private readonly List<BlockLayer> _blockLayerList = new List<BlockLayer>();
+
+        /// <summary>当前块图层</summary>
+        private BlockLayer? _currentBlockLayer = null;
+
         private int _pageOffset = 0;
 
         #endregion

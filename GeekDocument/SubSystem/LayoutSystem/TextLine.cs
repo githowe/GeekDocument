@@ -166,6 +166,21 @@ namespace GeekDocument.SubSystem.LayoutSystem
             }
         }
 
+        /// <summary>
+        /// 获取字符索引范围
+        /// </summary>
+        public (int, int) GetCharIndexRange()
+        {
+            int first = 0;
+            int last = 0;
+
+            if (WordList.Count == 0) return (first, last);
+            first = WordList[0].CharIndexList[0];
+            last = WordList[WordList.Count - 1].CharIndexList.Last();
+
+            return (first, last);
+        }
+
         #endregion
 
         #region 私有方法

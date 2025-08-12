@@ -7,9 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\AppIcon.png" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\Book.png" />
     <None Remove="Assets\Icon15\Document.png" />
@@ -85,6 +87,10 @@
     <None Remove="SubSystem\WindowSystem\Image\Error.png" />
     <None Remove="SubSystem\WindowSystem\Image\Info.png" />
     <None Remove="SubSystem\WindowSystem\Image\Warning.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\AppIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>

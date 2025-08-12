@@ -22,6 +22,9 @@ public class Word
     /// <summary>字形图片列表</summary>
     public List<GlyphImage> GlyphImageList { get; set; } = new List<GlyphImage>();
 
+    /// <summary>多个字符</summary>
+    public bool MultiChar => GlyphImageList.Count > 1;
+
     /// <summary>字号</summary>
     public double Size { get; set; } = 0;
 
@@ -62,5 +65,16 @@ public class Word
         // 更新字形图片列表和宽度
         GlyphImageList = imageList;
         Width = width;
+    }
+
+    public List<double> GetXList(double start_x)
+    {
+        List<double> result = new List<double>();
+        foreach (var item in GlyphImageList)
+        {
+            result.Add(start_x);
+            start_x += item.GlyphWidth;
+        }
+        return result;
     }
 }

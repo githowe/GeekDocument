@@ -62,7 +62,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
         }
 
-        private readonly Pen _borderPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 140, 140, 140)), 1);
-        private readonly Pen _markLine = new Pen(Brushes.White, 1);
+        private readonly Pen _borderPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)), 1);
+        private readonly Pen _markLine = new Pen(new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)), 1);
     }
 }

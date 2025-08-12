@@ -339,6 +339,7 @@ namespace GeekDocument
             editerItem.IsSelected = true;
             // 加载文档
             editer.LoadDocument(document);
+            // editer.LoadDocument();
         }
 
         #endregion
