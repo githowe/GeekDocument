@@ -13,6 +13,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
         /// <summary>块列表</summary>
         public List<BlockLayer> BlockList => _blockLayerList;
 
+        /// <summary>悬停块</summary>
+        public BlockLayer? HoveredBlock => _hoveredBlockLayer;
+
         /// <summary>页面高度</summary>
         public int PageHeight { get; private set; } = 0;
 
@@ -94,6 +97,43 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
         public void SetCurrentBlock(BlockLayer layer)
         {
             _currentBlockLayer = layer;
+        }
+
+        /// <summary>
+        /// 更新悬停的块：是否悬停只判断纵坐标
+        /// </summary>
+        public void UpdateHoveredBlock(Point mousePoint)
+        {
+            _hoveredBlockLayer = null;
+            if (_blockLayerList.Count == 0) throw new Exception("页面没有块图层");
+
+            // 纵坐标位于第一个块之上
+            if (mousePoint.Y < _blockRectDict[_blockLayerList[0]].Top)
+            {
+                _hoveredBlockLayer = _blockLayerList[0];
+                return;
+            }
+            // 纵坐标位于最后一个块之后
+            if (mousePoint.Y >= _blockRectDict[_blockLayerList[_blockLayerList.Count - 1]].Bottom)
+            {
+                _hoveredBlockLayer = _blockLayerList.Last();
+                return;
+            }
+            // 遍历块
+            int blockInterval = Options.Instance.Page.BlockInterval;
+            foreach (var block in _blockLayerList)
+            {
+                Rect rect = _blockRectDict[block];
+                // 纵坐标向上偏移一半的块间距
+                rect.Y -= blockInterval / 2;
+                // 高度增加一个块间距
+                rect.Height += blockInterval;
+                if (mousePoint.Y >= rect.Top && mousePoint.Y < rect.Bottom)
+                {
+                    _hoveredBlockLayer = block;
+                    break;
+                }
+            }
         }
 
         #endregion
@@ -178,6 +218,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
                 Canvas.SetTop(layer, y);
                 // 更新块图层，在此方法中绘制块内容
                 layer.Update();
+                // 记录块区域
+                _blockRectDict[layer] = new Rect(x, y, ActualWidth, layer.BlockHeight);
                 // 累加纵坐标
                 y += layer.BlockHeight + Options.Instance.Page.BlockInterval;
             }
@@ -189,10 +231,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
 
         /// <summary>背景图层</summary>
         private BackLayer _backLayer;
+
         /// <summary>块图层列表</summary>
         private readonly List<BlockLayer> _blockLayerList = new List<BlockLayer>();
+        /// <summary>块区域表</summary>
+        private readonly Dictionary<BlockLayer, Rect> _blockRectDict = new Dictionary<BlockLayer, Rect>();
 
-        /// <summary>当前块图层</summary>
+        /// <summary>悬停块图层。记录鼠标悬停的块图层</summary>
+        private BlockLayer? _hoveredBlockLayer = null;
+        /// <summary>当前块图层。接收键盘事件</summary>
         private BlockLayer? _currentBlockLayer = null;
 
         private int _pageOffset = 0;

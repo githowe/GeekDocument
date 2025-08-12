@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Core;
+using System.Windows;
 using XLogic.Wpf.Drawing;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
@@ -23,5 +24,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// 移动光标至末尾
         /// </summary>
         public virtual void MoveIBeamToEnd() { }
+
+        /// <summary>
+        /// 获取鼠标悬停区域
+        /// </summary>
+        public virtual Rect GetHoveredRect(Point mousePoint) { return new Rect(); }
+
+        /// <summary>
+        /// 移动光标
+        /// </summary>
+        public virtual double MoveIBeam(Point mousePoint) => 0;
     }
 }

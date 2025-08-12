@@ -2,6 +2,7 @@
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,6 +20,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public override int BlockHeight => Block.GetViewHeight();
 
         #endregion
+
+        public override string ToString() => Block.Content;
 
         #region 生命周期
 
@@ -45,6 +48,78 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             _charIndex = Block.Content.Length;
             SyncIBeam();
+        }
+
+        public override Rect GetHoveredRect(Point mousePoint)
+        {
+            if (Block.Content.Length == 0)
+            {
+                _hitedLine = null;
+                return new Rect(0, Canvas.GetTop(this), ActualWidth, Block.FontSize);
+            }
+
+            // 行起始纵坐标 = 第一行纵坐标 - 行间距 / 2
+            double start_y = 0 - Block.LineSpace / 2 + Canvas.GetTop(this);
+            // 行区域高度 = 行高 + 行间距
+            double lineRectHeight = Block.FontSize + Block.LineSpace;
+
+            int lineCount = Block.ViewData.Count;
+            List<double> yList = new List<double>();
+            for (int index = 0; index < lineCount; index++)
+                yList.Add(start_y + index * lineRectHeight);
+            yList.Add(start_y + lineCount * lineRectHeight);
+            // 计算命中区间
+            int hitedIndex = yList.GetHitedRange(mousePoint.Y);
+            // 更新命中行
+            _hitedLine = Block.ViewData[hitedIndex];
+            // 将区间范围限制在行高范围内
+            double hitedY1 = yList[hitedIndex] + Block.LineSpace / 2;
+            double hitedY2 = yList[hitedIndex + 1] - Block.LineSpace / 2;
+            // 返回焦点区域
+            return new Rect(0, hitedY1, ActualWidth, hitedY2 - hitedY1);
+        }
+
+        public override double MoveIBeam(Point mousePoint)
+        {
+            if (_hitedLine == null) return 0;
+
+            double start_x = Canvas.GetLeft(this);
+            // 字符横坐标列表
+            List<double> xList = new List<double>();
+            // 字符索引列表
+            List<int> charIndexList = new List<int>();
+            // 遍历字
+            int x_index = 0;
+            foreach (var word in _hitedLine.WordList)
+            {
+                // 获取字的起始坐标
+                double word_x = start_x + _hitedLine.XList[x_index];
+                // 添加横坐标
+                if (word.MultiChar) xList.AddRange(word.GetXList(word_x));
+                else xList.Add(word_x);
+                // 添加字符索引
+                charIndexList.AddRange(word.CharIndexList);
+                x_index++;
+            }
+            // 添加末尾横坐标：末尾字横坐标 + 末尾字宽度
+            double last_x = start_x + _hitedLine.XList.Last() + _hitedLine.WordList.Last().Width;
+            xList.Add(last_x);
+            // 添加末尾索引，以便将光标定位至末尾
+            int lastCharIndex = charIndexList.Last();
+            charIndexList.Add(lastCharIndex + 1);
+            // 计算命中区间索引
+            int hitedIndex = xList.GetHitedRange(mousePoint.X);
+            // 计算命中横坐标
+            double hitedx1 = xList[hitedIndex];
+            double hitedx2 = xList[hitedIndex + 1];
+            double center = hitedx1 + (hitedx2 - hitedx1) / 2;
+            double hitedx = mousePoint.X < center ? hitedx1 : hitedx2;
+            if (mousePoint.X >= center) hitedIndex++;
+            // 更新字符索引
+            _charIndex = charIndexList[hitedIndex];
+            Trace.WriteLine("字符索引：" + _charIndex);
+            // 返回命中横坐标
+            return hitedx;
         }
 
         #endregion
@@ -198,6 +273,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);
 
         private int _charIndex = 0;
+
+        private TextLine? _hitedLine = null;
 
         #endregion
     }

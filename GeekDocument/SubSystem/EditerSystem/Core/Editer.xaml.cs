@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using XLogic.Base.Ex;
 using Page = GeekDocument.SubSystem.EditerSystem.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core
@@ -55,8 +56,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
                 blockList.Add(blockText);
             }
             _page.LoadBlock(blockList);
-            // 设置块的编辑器实例
-            foreach (var item in _page.BlockList) item.Editer = this;
             // 初始化编辑系统
             InitEditSystem();
         }
@@ -70,8 +69,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             Document = document;
             // 加载块
             _page.LoadBlock(document.BlockList);
-            // 设置块的编辑器实例
-            foreach (var item in _page.BlockList) item.Editer = this;
             // 初始化编辑系统
             InitEditSystem();
         }
@@ -112,6 +109,43 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
 
         #endregion
 
+        #region 工具方法
+
+        /// <summary>
+        /// 更新悬停块
+        /// </summary>
+        public void UpdateHoveredBlock()
+        {
+            Point mousePoint = Mouse.GetPosition(DocArea);
+            mousePoint.Y += PageScrollBar.Value - 16;
+            _page.UpdateHoveredBlock(mousePoint);
+        }
+
+        /// <summary>
+        /// 移动光标至鼠标位置
+        /// </summary>
+        public void MoveIBeamToMousePoint()
+        {
+            if (_page.HoveredBlock == null) return;
+
+            Point mousePoint = Mouse.GetPosition(DocArea);
+            mousePoint.Y += PageScrollBar.Value - 16;
+            // 设置命中块为悬停块
+            _page.SetCurrentBlock(_page.HoveredBlock);
+            // 获取悬停区域
+            Rect rect = _page.HoveredBlock.GetHoveredRect(mousePoint);
+            // 移动光标至鼠标坐标处，返回实际光标横坐标
+            double x = _page.HoveredBlock.MoveIBeam(mousePoint);
+            // 光标纵坐标为悬停区域顶部
+            double y = rect.Top;
+            // 更新光标
+            _markLayer.IBeamPoint = new Point((int)x, y);
+            _markLayer.LineHeight = rect.Height;
+            _markLayer.Update();
+        }
+
+        #endregion
+
         #region 私有方法
 
         private void InitPage()
@@ -142,6 +176,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// </summary>
         private void InitEditSystem()
         {
+            // 设置块的编辑器实例
+            foreach (var item in _page.BlockList) item.Editer = this;
             // 初始化滚动条
             InitScrollBar();
             // 启动光标闪烁
@@ -156,6 +192,23 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
                 _page.SetCurrentBlock(firstBlock);
                 firstBlock.MoveIBeamToHead();
             }
+            // 初始化编辑工具
+            InitTool();
+        }
+
+        /// <summary>
+        /// 初始化工具
+        /// </summary>
+        private void InitTool()
+        {
+            // 创建并初始化工具
+            _editTool = new EditTool(this);
+            _editTool.Init();
+            // 监听文档区域鼠标事件
+            DocArea.MouseDown += DocArea_MouseDown;
+            DocArea.MouseMove += DocArea_MouseMove;
+            DocArea.MouseUp += DocArea_MouseUp;
+            DocArea.MouseLeave += DocArea_MouseLeave;
         }
 
         /// <summary>
@@ -191,15 +244,29 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
 
         #region 控件事件
 
-        private void PageScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            _page.PageOffset = (int)PageScrollBar.Value;
-            _markLayer.Offset = (int)PageScrollBar.Value;
-        }
-
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             PageScrollBar.Value -= e.Delta / 120 * 64;
+        }
+
+        private void DocArea_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _editTool.OnMouseDown(e.ChangedButton);
+        }
+
+        private void DocArea_MouseMove(object sender, MouseEventArgs e)
+        {
+            _editTool.OnMouseMove();
+        }
+
+        private void DocArea_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _editTool.OnMouseUp(e.ChangedButton);
+        }
+
+        private void DocArea_MouseLeave(object sender, MouseEventArgs e)
+        {
+
         }
 
         private void DocArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -209,6 +276,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
                 PageScrollBar.ViewportSize = DocArea.ActualHeight;
                 PageScrollBar.Maximum = _page.PageHeight - DocArea.ActualHeight;
             }
+        }
+
+        private void PageScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _page.PageOffset = (int)PageScrollBar.Value;
+            _markLayer.Offset = (int)PageScrollBar.Value;
         }
 
         private void Page_PageHeightChanged()
@@ -226,6 +299,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
 
         private bool _ibeamVisible = true;
         private readonly DispatcherTimer _blinkTimer = new DispatcherTimer();
+
+        private EditTool _editTool;
 
         #endregion
     }
