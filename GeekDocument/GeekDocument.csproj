@@ -41,9 +41,7 @@
     <None Remove="Assets\Icon16\SaveAs.png" />
     <None Remove="Assets\Icon16\Setting.png" />
     <None Remove="Assets\Icon16\Undo.png" />
-    <None Remove="Assets\Logo.png" />
     <None Remove="Assets\Logo2.png" />
-    <None Remove="Assets\Logo_16.png" />
     <None Remove="Assets\WindowIcon\NewFile.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Delete.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Folder.png" />
@@ -140,8 +138,6 @@
     <Resource Include="Assets\Icon16\Setting.png" />
     <Resource Include="Assets\Icon16\Undo.png" />
     <Resource Include="Assets\Icon16\Lib.png" />
-    <Resource Include="Assets\Logo.png" />
-    <Resource Include="Assets\Logo_16.png" />
     <Resource Include="Assets\WindowIcon\NewFile.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Delete.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Folder.png" />

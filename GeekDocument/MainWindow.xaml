@@ -10,7 +10,7 @@
         xmlns:escore="clr-namespace:GeekDocument.SubSystem.EditerSystem.Core"
         xmlns:ds="clr-namespace:GeekDocument.SubSystem.DocumentSystem"
         mc:Ignorable="d" Style="{StaticResource HighTitleWindow}"
-        FontFamily="Assets/Font/#新宋体" CustomIcon="Logo_16"
+        FontFamily="Assets/Font/#新宋体"
         Title="极客文档" WindowStartupLocation="CenterScreen"
         Height="720" Width="1280" MinHeight="540" MinWidth="960">
     <Grid>
@@ -19,8 +19,8 @@
                 <ColumnDefinition x:Name="LeftArea" Width="300" MinWidth="300" MaxWidth="500"/>
                 <ColumnDefinition x:Name="LeftSplit" Width="2"/>
                 <ColumnDefinition />
-                <ColumnDefinition x:Name="RightSplit" Width="2"/>
-                <ColumnDefinition x:Name="RightArea" Width="300"/>
+                <ColumnDefinition x:Name="RightSplit" Width="0"/>
+                <ColumnDefinition x:Name="RightArea" Width="0"/>
             </Grid.ColumnDefinitions>
             <!-- 左 -->
             <Grid x:Name="LeftPanel" Background="#262626" Grid.Column="0">
