@@ -178,6 +178,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         }
 
         /// <summary>
+        /// 移除块实例。该方法仅移除块实例，不进行任何后续操作
+        /// </summary>
+        public void RemoveBlockInstance(BlockLayer layer) => _page.RemoveBlockInstance(layer);
+
+        /// <summary>
+        /// 设置当前块
+        /// </summary>
+        public void SetCurrentBlock(BlockLayer layer) => _page.SetCurrentBlock(layer);
+
+        /// <summary>
         /// 获取块索引
         /// </summary>
         public int GetBlockIndex(BlockLayer layer) => _page.BlockList.IndexOf(layer);

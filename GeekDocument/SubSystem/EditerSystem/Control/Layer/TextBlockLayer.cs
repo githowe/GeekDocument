@@ -15,7 +15,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
     {
         #region 属性
 
-        /// <summary>块实例</summary>
+        /// <summary>文本块实例</summary>
         public BlockText Block { get; set; }
 
         public override int BlockHeight => Block.GetViewHeight();
@@ -44,6 +44,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         #endregion
 
+        #region 公开方法
+
+        /// <summary>
+        /// 追加文本
+        /// </summary>
+        public void AppendText(string text)
+        {
+            // 拼接文本
+            Block.Content = Block.Content + text;
+            // 更新视图数据与视图
+            Block.UpdateViewData();
+            Update();
+        }
+
+        #endregion
+
         #region BlockLayer 方法
 
         public override void MoveIBeamToHead()
@@ -55,6 +71,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public override void MoveIBeamToEnd()
         {
             _charIndex = Block.Content.Length;
+            SyncIBeam();
+        }
+
+        public override void MoveIBeamTo(int index)
+        {
+            _charIndex = index;
             SyncIBeam();
         }
 
@@ -179,7 +201,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override void 合并块()
         {
-            
+            // 获取上一个块
+            TextBlockLayer? prevBlock = Editer.GetPrevBlock(this) as TextBlockLayer;
+            if (prevBlock == null) return;
+            // 记录上一个块的长度
+            int prevLength = prevBlock.Block.Content.Length;
+            // 将当前块的内容添加至上一个块
+            prevBlock.AppendText(Block.Content);
+            // 移除当前块实例
+            Editer.RemoveBlockInstance(this);
+            // 将上一个块设为当前块
+            Editer.SetCurrentBlock(prevBlock);
+            // 移动光标
+            prevBlock.MoveIBeamTo(prevLength);
         }
 
         #endregion

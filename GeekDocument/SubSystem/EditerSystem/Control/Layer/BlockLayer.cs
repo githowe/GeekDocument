@@ -30,6 +30,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public virtual void MoveIBeamToEnd() { }
 
         /// <summary>
+        /// 移动光标至指定索引处
+        /// </summary>
+        public virtual void MoveIBeamTo(int index) { }
+
+        /// <summary>
         /// 获取鼠标悬停区域
         /// </summary>
         public virtual Rect GetHoveredRect(Point mousePoint) { return new Rect(); }

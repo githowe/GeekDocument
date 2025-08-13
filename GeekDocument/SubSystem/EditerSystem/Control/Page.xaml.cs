@@ -115,10 +115,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             height += 32;
             // 更新画布高度
             BlockCanvas.Height = height - 32;
+            // 更新页面高度
+            PageHeight = height;
             // 更新背景
             UpdateBack();
 
-            PageHeight = height;
             PageHeightChanged?.Invoke();
         }
 
@@ -213,6 +214,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             UpdateBlockPoint();
             // 更新页面高度
             UpdatePageHeight();
+        }
+
+        /// <summary>
+        /// 移除块实例
+        /// </summary>
+        public void RemoveBlockInstance(BlockLayer layer)
+        {
+            BlockCanvas.Children.Remove(layer);
+            _blockLayerList.Remove(layer);
         }
 
         /// <summary>
