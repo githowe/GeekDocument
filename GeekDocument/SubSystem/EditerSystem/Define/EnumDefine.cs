@@ -82,6 +82,7 @@
         Home,
         End,
 
+        Backspace,
         Delete,
         Enter,
     }

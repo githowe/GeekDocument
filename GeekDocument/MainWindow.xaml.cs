@@ -11,6 +11,7 @@ using GeekDocument.SubSystem.ResourceSystem;
 using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using XLogic.Wpf.Window;
 using XLogic.WpfControl;
@@ -45,6 +46,17 @@ namespace GeekDocument
 
             Panel_DocLib.Init();
             Panel_DocLib.LoadDocumentLib();
+
+            KeyDown += MainWindow_KeyDown;
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            // 处理系统按键
+            HandleSystemKey(e);
+            if (e.Handled) return;
+            // 处理编辑器按键
+            HandleEditerKey(e);
         }
 
         #endregion
@@ -253,6 +265,46 @@ namespace GeekDocument
         }
 
         /// <summary>
+        /// 处理系统按键：新建、打开、保存全部
+        /// </summary>
+        private void HandleSystemKey(KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.N)
+                {
+                    e.Handled = true;
+                    NewDocument();
+                }
+                else if (e.Key == Key.O)
+                {
+                    e.Handled = true;
+                    OpenDocument();
+                }
+            }
+            else if (Keyboard.Modifiers == (ModifierKeys.Shift | ModifierKeys.Control))
+            {
+                if (e.Key == Key.S)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 处理编辑器按键：删除、回车、复制、粘贴、剪切、撤销、重做等
+        /// </summary>
+        private void HandleEditerKey(KeyEventArgs e)
+        {
+            // 无编辑器，忽略按键
+            if (TabControl_Doc.Items.Count == 0) return;
+            // 获取当前选中的选项卡
+            if (TabControl_Doc.SelectedItem is TabContrlItem selectedItem)
+                if (selectedItem.Content is Editer editer)
+                    editer.HandleKeyDown(e.Key);
+        }
+
+        /// <summary>
         /// 新建文档
         /// </summary>
         private void NewDocument()
@@ -338,8 +390,8 @@ namespace GeekDocument
             // 选择选项卡
             editerItem.IsSelected = true;
             // 加载文档
-            editer.LoadDocument(document);
-            // editer.LoadDocument();
+            // editer.LoadDocument(document);
+            editer.LoadDocument();
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Core;
+﻿using GeekDocument.SubSystem.EditerSystem.Control.LayerTool;
+using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
@@ -21,7 +22,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         #endregion
 
+        #region object 方法
+
         public override string ToString() => Block.Content;
+
+        #endregion
 
         #region 生命周期
 
@@ -32,6 +37,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             byte blue = byte.Parse(Block.Color.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
             _textColor = Color.FromRgb(red, green, blue);
             _rowLinePen.Freeze();
+
+            _stateTree.Layer = this;
+            _stateTree.Init();
         }
 
         #endregion
@@ -81,9 +89,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override double MoveIBeam(Point mousePoint)
         {
-            if (_hitedLine == null) return 0;
-
             double start_x = Canvas.GetLeft(this);
+
+            if (_hitedLine == null) return start_x + Block.FirstLineIndent;
+
             // 字符横坐标列表
             List<double> xList = new List<double>();
             // 字符索引列表
@@ -122,6 +131,57 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             return hitedx;
         }
 
+        public override void HandleEditKey(EditKey key) => _stateTree.HandleEditKey(key);
+
+        #endregion
+
+        #region 状态树接口
+
+        public bool IsEmpty => Block.Content == "";
+
+        public int CharIndex => _charIndex;
+
+        public int TextLength => Block.Content.Length;
+
+        public void 删除字符()
+        {
+            // 删除字符
+            Block.Content = Block.Content.Remove(_charIndex - 1, 1);
+            // 前移字符索引
+            _charIndex--;
+            // 更新视图数据与视图
+            Block.UpdateViewData();
+            Update();
+            // 同步光标
+            SyncIBeam();
+        }
+
+        public void 创建空文本块()
+        {
+
+        }
+
+        public void 创建文本块()
+        {
+
+        }
+
+        public override bool 能否合并()
+        {
+            // 获取上一个块
+            BlockLayer? prevBlock = Editer.GetPrevBlock(this);
+            if (prevBlock == null) return false;
+            // 与上一个块类型不同
+            if (Block.Type != prevBlock.SourceBlock.Type) return false;
+
+            return true;
+        }
+
+        public override void 合并块()
+        {
+            
+        }
+
         #endregion
 
         #region 内部方法
@@ -129,6 +189,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         protected override void OnUpdate()
         {
             int y = 0;
+            // 没有行时，绘制空行线
+            if (Block.ViewData.Count == 0 && Options.Instance.View.ShowRowLine)
+            {
+                double y1 = y + 0.5;
+                double y2 = y + Block.FontSize - 0.5;
+                _dc.DrawLine(_rowLinePen, new Point(0, y1), new Point(Options.Instance.Page.PageWidth, y1));
+                _dc.DrawLine(_rowLinePen, new Point(0, y2), new Point(Options.Instance.Page.PageWidth, y2));
+                return;
+            }
             // 遍历行
             foreach (var line in Block.ViewData)
             {
@@ -185,7 +254,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 没有文本时：将光标定位在第一行开头
             if (Block.Content.Length == 0)
             {
-                Editer.MoveIBeam(Block.FirstLineIndent, top, Block.FontSize);
+                double start_x = Canvas.GetLeft(this);
+                Editer.MoveIBeam((int)start_x + Block.FirstLineIndent, top, Block.FontSize);
                 return;
             }
 
@@ -275,6 +345,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         private int _charIndex = 0;
 
         private TextLine? _hitedLine = null;
+
+        private readonly STTextBlock _stateTree = new STTextBlock();
 
         #endregion
     }

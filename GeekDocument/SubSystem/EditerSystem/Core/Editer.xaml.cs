@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using XLogic.Base.Ex;
 using Page = GeekDocument.SubSystem.EditerSystem.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core
@@ -73,6 +72,124 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             InitEditSystem();
         }
 
+        /// <summary>
+        /// 处理按键按下
+        /// </summary>
+        public void HandleKeyDown(Key key)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.None)
+            {
+                switch (key)
+                {
+                    case Key.Back:
+                        _page.HandleEditKey(EditKey.Backspace);
+                        _page.UpdateBlockPoint();
+                        _page.UpdatePageHeight();
+                        break;
+                    case Key.Delete:
+                        _page.HandleEditKey(EditKey.Delete);
+                        break;
+                    case Key.Enter:
+                        _page.HandleEditKey(EditKey.Enter);
+                        break;
+                    case Key.Up:
+                        _page.HandleEditKey(EditKey.Up);
+                        break;
+                    case Key.Down:
+                        _page.HandleEditKey(EditKey.Down);
+                        break;
+                    case Key.Left:
+                        _page.HandleEditKey(EditKey.Left);
+                        break;
+                    case Key.Right:
+                        _page.HandleEditKey(EditKey.Right);
+                        break;
+                    case Key.Home:
+                        _page.HandleEditKey(EditKey.Home);
+                        break;
+                    case Key.End:
+                        _page.HandleEditKey(EditKey.End);
+                        break;
+                }
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                switch (key)
+                {
+                    case Key.A:
+                        break;
+                    case Key.X:
+                        break;
+                    case Key.C:
+                        break;
+                    case Key.V:
+                        break;
+                    case Key.Z:
+                        break;
+                    case Key.Y:
+                        break;
+                    case Key.Enter:
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 有上一个块
+        /// </summary>
+        public bool HasPrevBlock(BlockLayer layer)
+        {
+            int index = _page.BlockList.IndexOf(layer);
+            return index > 0;
+        }
+
+        /// <summary>
+        /// 有下一个块
+        /// </summary>
+        public bool HasNextBlock(BlockLayer layer)
+        {
+            int index = _page.BlockList.IndexOf(layer);
+            return index < _page.BlockList.Count - 1;
+        }
+
+        /// <summary>
+        /// 获取上一个块
+        /// </summary>
+        public BlockLayer? GetPrevBlock(BlockLayer layer) => _page.GetPrevBlock(layer);
+
+        /// <summary>
+        /// 获取下一个块
+        /// </summary>
+        public BlockLayer? GetNextBlock(BlockLayer layer) => _page.GetNextBlock(layer);
+
+        /// <summary>
+        /// 移除块
+        /// </summary>
+        public void RemoveBlock(BlockLayer layer)
+        {
+            // 获取上一个块
+            BlockLayer? prevBlock = _page.GetPrevBlock(layer);
+            // 移除当前块
+            _page.RemoveBlock(layer);
+            // 将上一个块设为当前块
+            _page.SetCurrentBlock(prevBlock);
+            // 移动光标至上一个块末尾
+            prevBlock.MoveIBeamToEnd();
+        }
+
+        /// <summary>
+        /// 获取块索引
+        /// </summary>
+        public int GetBlockIndex(BlockLayer layer) => _page.BlockList.IndexOf(layer);
+
+        /// <summary>
+        /// 插入块
+        /// </summary>
+        public void InsertBlock(Block block, int index)
+        {
+
+        }
+
         #endregion
 
         #region 光标控制
@@ -105,6 +222,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             _blinkTimer.Stop();
             _ibeamVisible = true;
             _markLayer.Update();
+        }
+
+        /// <summary>
+        /// 移动光标至上一个块
+        /// </summary>
+        public void MoveIBeamToPrevBlock(BlockLayer layer)
+        {
+
+        }
+
+        /// <summary>
+        /// 移动光标至下一个块
+        /// </summary>
+        public void MoveIBeamToNextBlock(BlockLayer layer)
+        {
+
         }
 
         #endregion
@@ -155,7 +288,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             int docWidth = pageOptoin.PageWidth + pageOptoin.PageMargin.Left + pageOptoin.PageMargin.Right;
             DocArea.Width = docWidth;
             // 新建页面添加至文档区域
-            _page = new Page();
+            _page = new Page { Editer = this };
             PageBox.Children.Add(_page);
             _page.UpdateLayout();
             _page.Init();
@@ -192,7 +325,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
                 _page.SetCurrentBlock(firstBlock);
                 firstBlock.MoveIBeamToHead();
             }
-            // 初始化编辑工具
+            // 初始化编辑工具、状态树
             InitTool();
         }
 

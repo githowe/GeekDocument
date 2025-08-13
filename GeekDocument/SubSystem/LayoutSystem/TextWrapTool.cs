@@ -10,6 +10,8 @@ namespace GeekDocument.SubSystem.LayoutSystem
         private TextWrapTool() { }
         public static TextWrapTool Instance { get; } = new TextWrapTool();
 
+        public int FirstLineIndent { get; set; } = 0;
+
         public void WrapText(List<Word> wordList, List<TextLine> lineList, int lineWidth, LineAlignType alignType = LineAlignType.Justify, bool singleLine = false)
         {
             // 创建字队列
@@ -28,7 +30,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 {
                     // 只有两端对齐模式允许压缩字间距
                     bool allowCompress = alignType == LineAlignType.Justify;
-                    TextLine? line = wordQueue.GenerateLine(lineWidth, lineList.Count == 0, allowCompress, prevLine);
+                    TextLine? line = wordQueue.GenerateLine(lineWidth, lineList.Count == 0, allowCompress, prevLine, FirstLineIndent);
                     if (line != null && !line.EmptyLine)
                     {
                         lineList.Add(line);

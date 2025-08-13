@@ -29,7 +29,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
         /// 生成行
         ///     从字列表中逐个获取字并拼接成行，直到取完
         /// </summary>
-        public TextLine? GenerateLine(double lineWidth, bool firstLine, bool allowCompress, TextLine? prevLine)
+        public TextLine? GenerateLine(double lineWidth, bool firstLine, bool allowCompress, TextLine? prevLine, int firstLineIndent)
         {
             // 已取完
             if (_wordIndex >= WordList.Count) return null;
@@ -41,7 +41,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 FirstLine = firstLine
             };
             // 设置首行缩进并初始化
-            if (firstLine) line.Indent = Options.Instance.Paragraph.FirstLineIndent;
+            if (firstLine) line.Indent = firstLineIndent;
             line.Init();
             // 循环取字，拼接成行
             while (_wordIndex < WordList.Count)

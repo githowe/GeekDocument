@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
+using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.OptionSystem;
 using System.Windows;
@@ -8,7 +9,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
 {
     public partial class Page : UserControl
     {
+        #region 构造方法
+
         public Page() => InitializeComponent();
+
+        #endregion
+
+        #region 属性
+
+        /// <summary>编辑器实例</summary>
+        public Editer Editer { get; set; }
 
         /// <summary>块列表</summary>
         public List<BlockLayer> BlockList => _blockLayerList;
@@ -30,7 +40,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             }
         }
 
+        #endregion
+
+        #region 事件
+
         public Action? PageHeightChanged { get; set; } = null;
+
+        #endregion
 
         #region 公开方法
 
@@ -61,6 +77,28 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
         }
 
         /// <summary>
+        /// 更新块坐标
+        /// </summary>
+        public void UpdateBlockPoint()
+        {
+            var pageOption = Options.Instance.Page;
+            // 起始坐标
+            int x = pageOption.PageMargin.Left;
+            int y = pageOption.PageMargin.Top;
+            // 遍历块图层
+            foreach (var layer in _blockLayerList)
+            {
+                // 设置块坐标
+                Canvas.SetLeft(layer, x);
+                Canvas.SetTop(layer, y);
+                // 记录块区域
+                _blockRectDict[layer] = new Rect(x, y, ActualWidth, layer.BlockHeight);
+                // 累加纵坐标
+                y += layer.BlockHeight + pageOption.BlockInterval;
+            }
+        }
+
+        /// <summary>
         /// 更新页面高度
         /// </summary>
         public void UpdatePageHeight()
@@ -75,8 +113,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             height += Options.Instance.Page.PageMargin.Top + Options.Instance.Page.PageMargin.Bottom;
             // 累加页面上下外边距
             height += 32;
-
+            // 更新画布高度
             BlockCanvas.Height = height - 32;
+            // 更新背景
+            UpdateBack();
 
             PageHeight = height;
             PageHeightChanged?.Invoke();
@@ -136,6 +176,59 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             }
         }
 
+        /// <summary>
+        /// 获取上一个块
+        /// </summary>
+        public BlockLayer? GetPrevBlock(BlockLayer layer)
+        {
+            int index = _blockLayerList.IndexOf(layer);
+            if (index == -1) return null;
+            int prevIndex = index - 1;
+            if (prevIndex < 0) return null;
+            return _blockLayerList[prevIndex];
+        }
+
+        /// <summary>
+        /// 获取下一个块
+        /// </summary>
+        public BlockLayer? GetNextBlock(BlockLayer layer)
+        {
+            int index = _blockLayerList.IndexOf(layer);
+            if (index == -1) return null;
+            int nextIndex = index + 1;
+            if (nextIndex >= _blockLayerList.Count) return null;
+            return _blockLayerList[nextIndex];
+        }
+
+        /// <summary>
+        /// 移除块
+        /// </summary>
+        public void RemoveBlock(BlockLayer layer)
+        {
+            // 移除控件
+            BlockCanvas.Children.Remove(layer);
+            // 移除实例
+            _blockLayerList.Remove(layer);
+            // 更新图层坐标
+            UpdateBlockPoint();
+            // 更新页面高度
+            UpdatePageHeight();
+        }
+
+        /// <summary>
+        /// 处理编辑键
+        /// </summary>
+        public void HandleEditKey(EditKey key)
+        {
+            if (_currentBlockLayer == null) return;
+
+            // 停止光标闪烁
+            Editer.StopBlinkIBeam();
+            _currentBlockLayer.HandleEditKey(key);
+            // 启动光标闪烁
+            Editer.StartBlinkIBeam();
+        }
+
         #endregion
 
         #region 私有方法
@@ -176,7 +269,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             {
                 case BlockType.Text:
                     if (block is BlockText blockText)
-                        layer = new TextBlockLayer { Block = blockText };
+                        layer = new TextBlockLayer { SourceBlock = blockText, Block = blockText };
                     break;
                 case BlockType.SplitLine:
                     break;

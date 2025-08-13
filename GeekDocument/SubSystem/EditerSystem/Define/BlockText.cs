@@ -68,6 +68,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         public override void UpdateViewData()
         {
+            _lineList.Clear();
             // 生成字列表
             List<Word> wordList = WordSpliter.Instance.ToWordList(Content);
             // 更新字的字形图片
@@ -89,6 +90,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 }
             }
             // 生成文本行
+            TextWrapTool.Instance.FirstLineIndent = FirstLineIndent;
             TextWrapTool.Instance.WrapText(wordList, _lineList, Options.Instance.Page.PageWidth, Align);
             // 更新视图高度
             if (_lineList.Count == 0) _viewHeight = FontSize;
