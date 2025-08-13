@@ -1,4 +1,4 @@
-# GeekDocument(极客文档)
+![Logo](https://raw.githubusercontent.com/githowe/GeekDocument/refs/heads/master/Preview/Logo.png)
 
 主界面
 ![主界面](https://raw.githubusercontent.com/githowe/GeekDocument/refs/heads/master/Preview/Editer_01.png)
