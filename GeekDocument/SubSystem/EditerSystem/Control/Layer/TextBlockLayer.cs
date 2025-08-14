@@ -180,12 +180,50 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public void 创建空文本块()
         {
-
+            // 获取自身索引
+            int blockIndex = Editer.GetBlockIndex(this);
+            // 创建文本块并继承当前块的属性
+            BlockText block = new BlockText
+            {
+                FontFamily = Block.FontFamily,
+                FontSize = Block.FontSize,
+                Color = Block.Color,
+                TStyle = Block.TStyle,
+                Align = Block.Align,
+                LineSpace = Block.LineSpace,
+                FirstLineIndent = Block.FirstLineIndent
+            };
+            block.UpdateViewData();
+            // 插入块
+            Editer.InsertBlock(block, blockIndex + 1);
         }
 
         public void 创建文本块()
         {
+            // 获取并删除从当前光标至末尾的文本
+            string tailText = Block.Content.Substring(_charIndex);
+            Block.Content = Block.Content.Substring(0, _charIndex);
+            // 更新视图数据与视图
+            Block.UpdateViewData();
+            Update();
 
+            // 获取自身索引
+            int blockIndex = Editer.GetBlockIndex(this);
+            // 创建文本块并继承当前块的属性
+            BlockText block = new BlockText
+            {
+                Content = tailText,
+                FontFamily = Block.FontFamily,
+                FontSize = Block.FontSize,
+                Color = Block.Color,
+                TStyle = Block.TStyle,
+                Align = Block.Align,
+                LineSpace = Block.LineSpace,
+                FirstLineIndent = Block.FirstLineIndent
+            };
+            block.UpdateViewData();
+            // 插入块
+            Editer.InsertBlock(block, blockIndex + 1);
         }
 
         public override bool 能否合并()

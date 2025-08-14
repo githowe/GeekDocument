@@ -197,7 +197,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// </summary>
         public void InsertBlock(Block block, int index)
         {
-
+            BlockLayer layer = _page.CreateBlockLayer(block, index);
+            layer.Editer = this;
+            _page.SetCurrentBlock(layer);
+            layer.MoveIBeamToHead();
         }
 
         #endregion

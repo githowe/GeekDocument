@@ -226,6 +226,26 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
         }
 
         /// <summary>
+        /// 在指定索引处创建块图层
+        /// </summary>
+        public BlockLayer CreateBlockLayer(Block block, int index)
+        {
+            BlockLayer? layer = GenerateBlockLayer(block);
+            if (layer == null) throw new Exception("创建块图层失败！");
+
+            BlockCanvas.Children.Insert(index, layer);
+            _blockLayerList.Insert(index, layer);
+            layer.Update();
+
+            // 更新块坐标
+            UpdateBlockPoint();
+            // 更新页面高度
+            UpdatePageHeight();
+
+            return layer;
+        }
+
+        /// <summary>
         /// 处理编辑键
         /// </summary>
         public void HandleEditKey(EditKey key)
