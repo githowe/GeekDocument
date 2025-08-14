@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using XLogic.Base.Ex;
 using Page = GeekDocument.SubSystem.EditerSystem.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core
@@ -242,7 +243,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// </summary>
         public void MoveIBeamToPrevBlock(BlockLayer layer)
         {
-
+            // 获取上一个块
+            BlockLayer? prevBlock = _page.GetPrevBlock(layer);
+            if (prevBlock == null) return;
+            // 将上一个块设置为当前块
+            _page.SetCurrentBlock(prevBlock);
+            // 移动光标至上一个块的末尾
+            prevBlock?.MoveIBeamToEnd();
         }
 
         /// <summary>
@@ -250,8 +257,50 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// </summary>
         public void MoveIBeamToNextBlock(BlockLayer layer)
         {
-
+            // 获取下一个块
+            BlockLayer? nextBlock = _page.GetNextBlock(layer);
+            if (nextBlock == null) return;
+            // 将下一个块设置为当前块
+            _page.SetCurrentBlock(nextBlock);
+            // 移动光标至下一个块的开头
+            nextBlock?.MoveIBeamToHead();
         }
+
+        /// <summary>
+        /// 移动光标至前块最后一行
+        /// </summary>
+        public void MoveIBeamToPrevLine(BlockLayer layer)
+        {
+            BlockLayer? prevBlock = _page.GetPrevBlock(layer);
+            if (prevBlock == null) return;
+            _page.SetCurrentBlock(prevBlock);
+            prevBlock.MoveIBeamToLastLine(_page.IBeamX);
+        }
+
+        /// <summary>
+        /// 移动光标至后块第一行
+        /// </summary>
+        public void MoveIBeamToNextLine(BlockLayer layer)
+        {
+            BlockLayer? nextBlock = _page.GetNextBlock(layer);
+            if (nextBlock == null) return;
+            _page.SetCurrentBlock(nextBlock);
+            nextBlock.MoveIBeamToFirstLine(_page.IBeamX);
+        }
+
+        /// <summary>
+        /// 更新光标横坐标
+        /// </summary>
+        public void UpdateIBeamX()
+        {
+            _page.IBeamX = (int)_markLayer.IBeamPoint.X;
+            Console.WriteLine($"光标横坐标：{_page.IBeamX}");
+        }
+
+        /// <summary>
+        /// 获取光标横坐标
+        /// </summary>
+        public int GetIBeamX() => _page.IBeamX;
 
         #endregion
 
@@ -288,6 +337,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             _markLayer.IBeamPoint = new Point((int)x, y);
             _markLayer.LineHeight = rect.Height;
             _markLayer.Update();
+            // 记录光标横坐标
+            _page.IBeamX = (int)_markLayer.IBeamPoint.X;
+            Console.WriteLine($"光标横坐标：{_page.IBeamX}");
         }
 
         #endregion
@@ -338,6 +390,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
                 _page.SetCurrentBlock(firstBlock);
                 firstBlock.MoveIBeamToHead();
             }
+            // 记录光标横坐标
+            _page.IBeamX = (int)_markLayer.IBeamPoint.X;
+            Console.WriteLine($"光标横坐标：{_page.IBeamX}");
             // 初始化编辑工具、状态树
             InitTool();
         }

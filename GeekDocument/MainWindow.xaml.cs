@@ -390,8 +390,8 @@ namespace GeekDocument
             // 选择选项卡
             editerItem.IsSelected = true;
             // 加载文档
-            // editer.LoadDocument(document);
-            editer.LoadDocument();
+            editer.LoadDocument(document);
+            // editer.LoadDocument();
         }
 
         #endregion

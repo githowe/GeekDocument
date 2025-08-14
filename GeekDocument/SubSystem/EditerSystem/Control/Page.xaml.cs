@@ -40,6 +40,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             }
         }
 
+        /// <summary>光标横坐标：尽可能确保上下移动光标时保持横坐标不变</summary>
+        public int IBeamX { get; set; } = 0;
+
         #endregion
 
         #region 事件
@@ -298,8 +301,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control
             switch (block.Type)
             {
                 case BlockType.Text:
-                    if (block is BlockText blockText)
-                        layer = new TextBlockLayer { SourceBlock = blockText, Block = blockText };
+                    layer = new TextBlockLayer { SourceBlock = block, Block = (BlockText)block };
                     break;
                 case BlockType.SplitLine:
                     break;

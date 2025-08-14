@@ -30,6 +30,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public virtual void MoveIBeamToEnd() { }
 
         /// <summary>
+        /// 移动光标至第一行
+        /// </summary>
+        public virtual void MoveIBeamToFirstLine(double mouse_x) { }
+
+        /// <summary>
+        /// 移动光标至最后一行
+        /// </summary>
+        public virtual void MoveIBeamToLastLine(double mouse_x) { }
+
+        /// <summary>
         /// 移动光标至指定索引处
         /// </summary>
         public virtual void MoveIBeamTo(int index) { }
@@ -55,11 +65,27 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public bool HasNextBlock => Editer.HasNextBlock(this);
 
-        public void 删除块() => Editer.RemoveBlock(this);
+        public void 删除块()
+        {
+            Editer.RemoveBlock(this);
+            Editer.UpdateIBeamX();
+        }
 
-        public void 移动光标至前块末尾() => Editer.MoveIBeamToPrevBlock(this);
+        public void 移动光标至前块末尾()
+        {
+            Editer.MoveIBeamToPrevBlock(this);
+            Editer.UpdateIBeamX();
+        }
 
-        public void 移动光标至后块开头() => Editer.MoveIBeamToNextBlock(this);
+        public void 移动光标至后块开头()
+        {
+            Editer.MoveIBeamToNextBlock(this);
+            Editer.UpdateIBeamX();
+        }
+
+        public void 移动光标至前块最后一行() => Editer.MoveIBeamToPrevLine(this);
+
+        public void 移动光标至后块第一行() => Editer.MoveIBeamToNextLine(this);
 
         public virtual bool 能否合并() { return false; }
 

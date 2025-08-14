@@ -3,7 +3,6 @@ using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -72,6 +71,24 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             _charIndex = Block.Content.Length;
             SyncIBeam();
+        }
+
+        public override void MoveIBeamToFirstLine(double mouse_x)
+        {
+            _hitedLine = null;
+            if (Block.ViewData.Count > 0) _hitedLine = Block.ViewData[0];
+            double y = GetLineY(_hitedLine);
+            double x = MoveIBeam(new Point(mouse_x, 0));
+            Editer.MoveIBeam((int)x, (int)y, Block.FontSize);
+        }
+
+        public override void MoveIBeamToLastLine(double mouse_x)
+        {
+            _hitedLine = null;
+            if (Block.ViewData.Count > 0) _hitedLine = Block.ViewData.Last();
+            double y = GetLineY(_hitedLine);
+            double x = MoveIBeam(new Point(mouse_x, 0));
+            Editer.MoveIBeam((int)x, (int)y, Block.FontSize);
         }
 
         public override void MoveIBeamTo(int index)
@@ -148,7 +165,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (mousePoint.X >= center) hitedIndex++;
             // 更新字符索引
             _charIndex = charIndexList[hitedIndex];
-            Trace.WriteLine("字符索引：" + _charIndex);
+            Console.WriteLine("字符索引：" + _charIndex);
             // 返回命中横坐标
             return hitedx;
         }
@@ -165,6 +182,61 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public int TextLength => Block.Content.Length;
 
+        public bool HasPrevLine
+        {
+            get
+            {
+                if (_hitedLine == null) return false;
+                int index = Block.ViewData.IndexOf(_hitedLine);
+                return index > 0;
+            }
+        }
+
+        public bool HasNextLine
+        {
+            get
+            {
+                if (_hitedLine == null) return false;
+                int index = Block.ViewData.IndexOf(_hitedLine);
+                return index < Block.ViewData.Count - 1;
+            }
+        }
+
+        public void 上移光标()
+        {
+            int index = Block.ViewData.IndexOf(_hitedLine);
+            _hitedLine = Block.ViewData[index - 1];
+            // 获取命中行的纵坐标
+            double y = GetLineY(_hitedLine);
+            // 模拟鼠标点击以确定光标横坐标
+            double x = MoveIBeam(new Point(Editer.GetIBeamX(), 0));
+            // 移动光标
+            Editer.MoveIBeam((int)x, (int)y, Block.FontSize);
+        }
+
+        public void 下移光标()
+        {
+            int index = Block.ViewData.IndexOf(_hitedLine);
+            _hitedLine = Block.ViewData[index + 1];
+            double y = GetLineY(_hitedLine);
+            double x = MoveIBeam(new Point(Editer.GetIBeamX(), 0));
+            Editer.MoveIBeam((int)x, (int)y, Block.FontSize);
+        }
+
+        public void 左移光标()
+        {
+            _charIndex--;
+            SyncIBeam();
+            Editer.UpdateIBeamX();
+        }
+
+        public void 右移光标()
+        {
+            _charIndex++;
+            SyncIBeam();
+            Editer.UpdateIBeamX();
+        }
+
         public void 删除字符()
         {
             // 删除字符
@@ -176,6 +248,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Update();
             // 同步光标
             SyncIBeam();
+            Editer.UpdateIBeamX();
         }
 
         public void 创建空文本块()
@@ -196,6 +269,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             block.UpdateViewData();
             // 插入块
             Editer.InsertBlock(block, blockIndex + 1);
+            Editer.UpdateIBeamX();
         }
 
         public void 创建文本块()
@@ -224,6 +298,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             block.UpdateViewData();
             // 插入块
             Editer.InsertBlock(block, blockIndex + 1);
+            Editer.UpdateIBeamX();
         }
 
         public override bool 能否合并()
@@ -252,6 +327,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Editer.SetCurrentBlock(prevBlock);
             // 移动光标
             prevBlock.MoveIBeamTo(prevLength);
+            Editer.UpdateIBeamX();
         }
 
         #endregion
@@ -403,6 +479,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             xList.Add(x);
 
             return xList;
+        }
+
+        /// <summary>
+        /// 获取指定行的纵坐标
+        /// </summary>
+        private double GetLineY(TextLine? line)
+        {
+            double top = Canvas.GetTop(this);
+            if (line == null) return top;
+            int lineIndex = Block.ViewData.IndexOf(line);
+            return top + lineIndex * (Block.FontSize + Block.LineSpace);
         }
 
         #endregion
