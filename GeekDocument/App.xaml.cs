@@ -19,7 +19,7 @@ namespace GeekDocument
             Kernel32Interop.AllocConsole();
 
             // 创建必要文件夹
-            string requiredFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer) + "\\GeekDocument\\";
+            string requiredFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GeekDocument\\";
             if (!Directory.Exists(requiredFolder)) Directory.CreateDirectory(requiredFolder);
             // 初始化系统数据
             Options.Instance.Init();
