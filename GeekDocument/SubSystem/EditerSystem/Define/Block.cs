@@ -9,7 +9,7 @@
         /// <summary>
         /// 更新视图数据
         /// </summary>
-        public abstract void UpdateViewData();
+        public abstract void UpdateViewData(int blockWidth);
 
         /// <summary>
         /// 获取视图高度

@@ -138,7 +138,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
     {
         public string PageWidth { get; set; } = "0";
 
-        public string PageMargin { get; set; } = "0";
+        public string Padding { get; set; } = "0";
 
         public void LoadPageData(byte[] byteData)
         {
@@ -146,7 +146,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
             List<string>? listData = JsonConvert.DeserializeObject<List<string>>(jsonData);
             if (listData == null || listData.Count < 2) throw new Exception("无效的页面数据");
             PageWidth = listData[0];
-            PageMargin = listData[1];
+            Padding = listData[1];
         }
 
         public byte[] ToByteArray()
@@ -154,7 +154,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
             List<string> listData = new List<string>
             {
                 PageWidth,
-                PageMargin
+                Padding
             };
             string jsonData = JsonConvert.SerializeObject(listData);
             return Encoding.UTF8.GetBytes(jsonData);

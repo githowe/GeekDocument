@@ -86,4 +86,12 @@
         Delete,
         Enter,
     }
+
+    public enum RemoveMode
+    {
+        /// <summary>退格。移除前面的</summary>
+        Backspace,
+        /// <summary>删除。移除后面的</summary>
+        Delete,
+    }
 }

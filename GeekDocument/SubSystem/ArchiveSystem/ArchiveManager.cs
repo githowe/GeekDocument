@@ -43,7 +43,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem
             }
             // 设置页面信息
             archiveFile.PageData.PageWidth = document.PageWidth.ToString();
-            archiveFile.PageData.PageMargin = document.PageMargin.ToString();
+            archiveFile.PageData.Padding = document.Padding.ToString();
             // 设置资源数据
             {
                 // 资源大小

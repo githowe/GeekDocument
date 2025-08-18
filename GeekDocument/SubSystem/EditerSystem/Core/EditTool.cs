@@ -1,16 +1,18 @@
-﻿using XLogic.Wpf.Behavior;
+﻿using GeekDocument.SubSystem.EditerSystem.Core.Component;
+using XLogic.Wpf.Behavior;
 using XLogic.Wpf.Tool;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core;
 
-public class EditTool : ToolBase<Editer>
+public class EditTool : ToolBase<InteractionComponent>
 {
-    public EditTool(Editer host) : base(host) { }
+    public EditTool(InteractionComponent host) : base(host) { }
 
     public override void Init()
     {
         移动();
         点击页面();
+        滚轮();
     }
 
     public override void OnLeftButtonDown(BehaviorArgs? args = null)
@@ -24,7 +26,7 @@ public class EditTool : ToolBase<Editer>
         {
             ResetTree();
             // 更新悬停块
-            _host.UpdateHoveredBlock();
+            // _host.UpdateHoveredBlock();
         });
         Finish();
     }
@@ -35,8 +37,8 @@ public class EditTool : ToolBase<Editer>
         {
             // 停止光标闪烁
             _host.StopBlinkIBeam();
-            // 移动光标至鼠标位置
-            _host.MoveIBeamToMousePoint();
+            // 处理鼠标按下
+            _host.HandleMouseDown();
         });
         NewNode(Behaviors.LeftUp, (_) =>
         {
@@ -53,6 +55,17 @@ public class EditTool : ToolBase<Editer>
         {
             ResetTree();
             _host.StartBlinkIBeam();
+        });
+        Finish();
+    }
+
+    private void 滚轮()
+    {
+        NewTree(Behaviors.Wheel, (e) =>
+        {
+            ResetTree();
+            // 处理鼠标滚轮
+            _host.HandleMouseWheel(((MouseWheelBehaviorArgs)e).WheelArgs);
         });
         Finish();
     }

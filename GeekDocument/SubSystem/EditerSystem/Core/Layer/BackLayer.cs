@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using XLogic.Wpf.Drawing;
 
-namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
+namespace GeekDocument.SubSystem.EditerSystem.Core.Layer
 {
     /// <summary>
     /// 背景图层。绘制边框与裁剪标记

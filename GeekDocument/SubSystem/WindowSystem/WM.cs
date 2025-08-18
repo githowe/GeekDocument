@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Media;
 using System.Windows;
-using System.Windows.Documents;
-using XLogic.Wpf.Window;
 
 namespace GeekDocument.SubSystem.WindowSystem
 {

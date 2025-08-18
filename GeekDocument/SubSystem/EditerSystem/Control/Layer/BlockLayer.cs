@@ -1,5 +1,4 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Core;
-using GeekDocument.SubSystem.EditerSystem.Define;
+﻿using GeekDocument.SubSystem.EditerSystem.Define;
 using System.Windows;
 using XLogic.Wpf.Drawing;
 
@@ -10,14 +9,23 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
     /// </summary>
     public abstract class BlockLayer : SingleBoard
     {
-        /// <summary>编辑器实例</summary>
-        public Editer Editer { get; set; }
+        #region 属性
+
+        /// <summary>页面实例</summary>
+        public IPage Page { get; set; }
 
         /// <summary>块实例</summary>
         public Block SourceBlock { get; set; }
 
+        /// <summary>块宽度：外部设置</summary>
+        public int BlockWidth { get; set; } = 0;
+
         /// <summary>块高度：根据内容动态生成</summary>
         public abstract int BlockHeight { get; }
+
+        #endregion
+
+        #region 光标接口
 
         /// <summary>
         /// 移动光标至开头
@@ -40,52 +48,40 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public virtual void MoveIBeamToLastLine(double mouse_x) { }
 
         /// <summary>
-        /// 移动光标至指定索引处
+        /// 移动光标至索引
         /// </summary>
-        public virtual void MoveIBeamTo(int index) { }
+        public virtual void MoveIBeamToIndex(int index) { }
 
         /// <summary>
-        /// 获取鼠标悬停区域
+        /// 移动光标至坐标
         /// </summary>
-        public virtual Rect GetHoveredRect(Point mousePoint) { return new Rect(); }
+        public virtual void MoveIBeamToPoint(Point point) { }
 
-        /// <summary>
-        /// 移动光标
-        /// </summary>
-        public virtual double MoveIBeam(Point mousePoint) => 0;
+        #endregion
 
         /// <summary>
         /// 处理编辑键
         /// </summary>
         public virtual void HandleEditKey(EditKey key) { }
 
+        /// <summary>
+        /// 输入文本
+        /// </summary>
+        public virtual void InputText(string text) { }
+
         #region 状态树接口
 
-        public bool HasPrevBlock => Editer.HasPrevBlock(this);
+        public bool HasPrevBlock => Page.有上一个块(this);
 
-        public bool HasNextBlock => Editer.HasNextBlock(this);
+        public bool HasNextBlock => Page.有下一个块(this);
 
-        public void 删除块()
-        {
-            Editer.RemoveBlock(this);
-            Editer.UpdateIBeamX();
-        }
+        public void 移动光标至前块末尾() => Page.移动光标至前块末尾(this);
 
-        public void 移动光标至前块末尾()
-        {
-            Editer.MoveIBeamToPrevBlock(this);
-            Editer.UpdateIBeamX();
-        }
+        public void 移动光标至后块开头() => Page.移动光标至后块开头(this);
 
-        public void 移动光标至后块开头()
-        {
-            Editer.MoveIBeamToNextBlock(this);
-            Editer.UpdateIBeamX();
-        }
+        public void 移动光标至前块最后一行() => Page.移动光标至前块最后一行(this);
 
-        public void 移动光标至前块最后一行() => Editer.MoveIBeamToPrevLine(this);
-
-        public void 移动光标至后块第一行() => Editer.MoveIBeamToNextLine(this);
+        public void 移动光标至后块第一行() => Page.移动光标至后块第一行(this);
 
         public virtual bool 能否合并() { return false; }
 

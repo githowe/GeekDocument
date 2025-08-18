@@ -1,5 +1,4 @@
 ﻿using GeekDocument.SubSystem.LayoutSystem;
-using GeekDocument.SubSystem.OptionSystem;
 using Newtonsoft.Json;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define
@@ -66,7 +65,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         #endregion
 
-        public override void UpdateViewData()
+        public override void UpdateViewData(int blockWidth)
         {
             _lineList.Clear();
             // 生成字列表
@@ -91,7 +90,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
             }
             // 生成文本行
             TextWrapTool.Instance.FirstLineIndent = FirstLineIndent;
-            TextWrapTool.Instance.WrapText(wordList, _lineList, Options.Instance.Page.PageWidth, Align);
+            TextWrapTool.Instance.WrapText(wordList, _lineList, blockWidth, Align);
             // 更新视图高度
             if (_lineList.Count == 0) _viewHeight = FontSize;
             else _viewHeight = _lineList.Count * FontSize + LineSpace * (_lineList.Count - 1);

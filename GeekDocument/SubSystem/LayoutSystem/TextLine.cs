@@ -42,6 +42,17 @@ namespace GeekDocument.SubSystem.LayoutSystem
 
         #endregion
 
+        #region object 方法
+
+        public override string ToString()
+        {
+            string result = "";
+            foreach (var word in WordList) result += word.Text;
+            return result;
+        }
+
+        #endregion
+
         #region 公开方法
 
         /// <summary>
@@ -61,10 +72,6 @@ namespace GeekDocument.SubSystem.LayoutSystem
             // 无法容纳新字
             if (_currentWidth + word.Width > LineWidth)
             {
-                // 因为尾部的空格在两端对齐时会被忽略掉，所以为了保证正确拉伸或压缩
-                // 尾部空格无需判断能否通过压缩来容纳，直接返回False
-                if (word.WordType == WordType.Space) return false;
-                // 允许压缩
                 if (allowCompress)
                 {
                     double 超宽 = _currentWidth + word.Width - LineWidth;
@@ -120,7 +127,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
             if (Align == LineAlignType.Justify)
             {
                 // 计算实际行宽
-                double realLineWidth = _currentWidth - GetRightSpaceWidth();
+                double realLineWidth = _currentWidth - GetRightSpaceWidth() - GetLastWordInterval();
                 // 拉伸宽度 = 行宽 - 实际行宽
                 double stretchWidth = LineWidth - realLineWidth;
 
@@ -137,9 +144,18 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 {
                     int 空格数量 = GetSpaceCount() - GetRightSpaceCount();
                     double 压缩量 = -stretchWidth / 空格数量;
-                    // 调整空格的宽度
+                    // 调整空格的宽度，右端空格除外
+                    int 已压缩 = 0;
                     foreach (var item in WordList)
-                        if (item.WordType == WordType.Space) item.Width -= 压缩量;
+                    {
+                        if (item.WordType == WordType.Space)
+                        {
+                            item.Width -= 压缩量;
+                            已压缩++;
+                        }
+                        // 压缩完全部空格，退出循环
+                        if (已压缩 == 空格数量) break;
+                    }
                     // 遍历字，调整横坐标
                     foreach (var word in WordList)
                     {
@@ -197,7 +213,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
         }
 
         /// <summary>
-        /// 获取空格宽度
+        /// 获取空格宽度。取第一个空格的宽度即可
         /// </summary>
         private double GetSpaceWidth()
         {
@@ -225,6 +241,19 @@ namespace GeekDocument.SubSystem.LayoutSystem
         }
 
         /// <summary>
+        /// 获取最后一个非空格的右间距
+        /// </summary>
+        private double GetLastWordInterval()
+        {
+            for (int index = WordList.Count - 1; index >= 0; index--)
+            {
+                Word word = WordList[index];
+                if (word.WordType != WordType.Space) return word.Interval;
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// 获取右端空格数量
         /// </summary>
         private int GetRightSpaceCount()
@@ -240,6 +269,19 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 else break;
             }
             return count;
+        }
+
+        /// <summary>
+        /// 获取最后一个非空格
+        /// </summary>
+        private Word GetLastWord()
+        {
+            for (int index = WordList.Count - 1; index >= 0; index--)
+            {
+                Word word = WordList[index];
+                if (word.WordType != WordType.Space) return word;
+            }
+            throw new Exception("该行无有效字符");
         }
 
         #endregion

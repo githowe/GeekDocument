@@ -48,6 +48,7 @@ namespace GeekDocument
             Panel_DocLib.LoadDocumentLib();
 
             KeyDown += MainWindow_KeyDown;
+            TextInput += MainWindow_TextInput;
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -57,6 +58,16 @@ namespace GeekDocument
             if (e.Handled) return;
             // 处理编辑器按键
             HandleEditerKey(e);
+        }
+
+        private void MainWindow_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            // 无编辑器，忽略
+            if (TabControl_Doc.Items.Count == 0) return;
+            // 获取当前选中的选项卡
+            if (TabControl_Doc.SelectedItem is TabContrlItem selectedItem)
+                if (selectedItem.Content is Editer editer)
+                    editer.HandleTextInput(e.Text);
         }
 
         #endregion
@@ -241,6 +252,8 @@ namespace GeekDocument
                 case "OpenFile":
                     OpenDocument();
                     break;
+                case "SaveAll":
+                    break;
             }
         }
 
@@ -269,6 +282,7 @@ namespace GeekDocument
         /// </summary>
         private void HandleSystemKey(KeyEventArgs e)
         {
+            // 按下了“Ctrl”
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
                 if (e.Key == Key.N)
@@ -282,6 +296,7 @@ namespace GeekDocument
                     OpenDocument();
                 }
             }
+            // 按下了“Ctrl + Shift”
             else if (Keyboard.Modifiers == (ModifierKeys.Shift | ModifierKeys.Control))
             {
                 if (e.Key == Key.S)
@@ -301,7 +316,7 @@ namespace GeekDocument
             // 获取当前选中的选项卡
             if (TabControl_Doc.SelectedItem is TabContrlItem selectedItem)
                 if (selectedItem.Content is Editer editer)
-                    editer.HandleKeyDown(e.Key);
+                    editer.HandleKeyDown(e);
         }
 
         /// <summary>
@@ -317,7 +332,7 @@ namespace GeekDocument
                 Document document = new Document
                 {
                     PageWidth = Options.Instance.Page.PageWidth,
-                    PageMargin = Options.Instance.Page.PageMargin,
+                    Padding = Options.Instance.Page.PageMargin,
                 };
                 // 添加标题块
                 BlockText title = new BlockText
@@ -325,7 +340,7 @@ namespace GeekDocument
                     Content = dialog.DocumentName,
                     FontSize = 32,
                 };
-                title.UpdateViewData();
+                title.UpdateViewData(document.PageWidth);
                 document.BlockList.Add(title);
                 // 在磁盘中新建文件
                 FileStream fileStream = File.Create($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
@@ -391,7 +406,6 @@ namespace GeekDocument
             editerItem.IsSelected = true;
             // 加载文档
             editer.LoadDocument(document);
-            // editer.LoadDocument();
         }
 
         #endregion

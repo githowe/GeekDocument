@@ -39,8 +39,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         /// <summary>页宽度</summary>
         public int PageWidth { get; set; } = 0;
 
-        /// <summary>页边距</summary>
-        public PageMargin PageMargin { get; set; } = new PageMargin();
+        /// <summary>内边距</summary>
+        public PageThickness Padding { get; set; } = new PageThickness();
 
         public Dictionary<int, DocumentRes> ResourceDict { get; set; } = new Dictionary<int, DocumentRes>();
 
@@ -64,7 +64,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
             LoadBlockList(archive.BlockData.DataList);
             // 加载页面信息
             PageWidth = int.Parse(archive.PageData.PageWidth);
-            PageMargin = new PageMargin(archive.PageData.PageMargin);
+            Padding = new PageThickness(archive.PageData.Padding);
             // 加载资源数据
             {
                 int offset = 0;
@@ -104,8 +104,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 if (block == null) continue;
                 // 加载块数据
                 block.LoadJson(blockInfo.SourceData);
-                // 更新视图数据
-                block.UpdateViewData();
                 // 添加块
                 BlockList.Add(block);
             }

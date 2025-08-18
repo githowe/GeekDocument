@@ -102,7 +102,7 @@ namespace GeekDocument.SubSystem.OptionSystem
             System.DefaultPathIndex = optionFile.DefaultPathIndex;
             Page.PageWidth = optionFile.PageWidth;
             string[] margin = optionFile.PageMargin.Split(',');
-            Page.PageMargin = new PageMargin
+            Page.PageMargin = new PageThickness
             {
                 Left = int.Parse(margin[0]),
                 Top = int.Parse(margin[1]),

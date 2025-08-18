@@ -1,13 +1,13 @@
 ﻿namespace GeekDocument.SubSystem.OptionSystem
 {
     /// <summary>
-    /// 页边距
+    /// 页边线
     /// </summary>
-    public class PageMargin
+    public class PageThickness
     {
-        public PageMargin() { }
+        public PageThickness() { }
 
-        public PageMargin(int margin)
+        public PageThickness(int margin)
         {
             Left = margin;
             Right = margin;
@@ -15,7 +15,7 @@
             Bottom = margin;
         }
 
-        public PageMargin(string margin)
+        public PageThickness(string margin)
         {
             string[] array = margin.Split(',');
             if (array.Length != 4) return;
@@ -25,13 +25,19 @@
             Bottom = int.Parse(array[3]);
         }
 
-        public int Left { get; set; } = 20;
+        public int Left { get; set; } = 32;
 
-        public int Right { get; set; } = 20;
+        public int Right { get; set; } = 32;
 
-        public int Top { get; set; } = 20;
+        public int Top { get; set; } = 32;
 
-        public int Bottom { get; set; } = 20;
+        public int Bottom { get; set; } = 32;
+
+        /// <summary>横向线宽</summary>
+        public int Horizontal => Left + Right;
+
+        /// <summary>纵向线宽</summary>
+        public int Vertical => Top + Bottom;
 
         public override string ToString() => $"{Left},{Right},{Top},{Bottom}";
     }

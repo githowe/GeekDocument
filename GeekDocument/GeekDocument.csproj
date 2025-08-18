@@ -59,6 +59,7 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Document.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Emoji.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Export.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Function.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\H0.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\H1.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\H2.png" />
@@ -70,6 +71,8 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Italic.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Link.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\List.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Pi.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Pi2.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Quote.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Redo.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Save.png" />
@@ -155,6 +158,7 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\Document.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Emoji.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Export.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Function.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\H1.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\H2.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\H3.png" />
@@ -164,6 +168,7 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\Italic.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Link.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\List.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Pi.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Quote.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Redo.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Save.png" />
