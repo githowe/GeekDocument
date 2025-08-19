@@ -214,6 +214,8 @@ namespace GeekDocument
                 bar.AddTool(GetToolIcon("OpenFile"), "OpenFile", "打开文档");
                 bar.AddTool(GetToolIcon("SaveAll"), "SaveAll", "保存全部");
                 bar.AddSplit();
+                bar.AddTool(GetToolIcon("Setting"), "Setting", "系统选项");
+                bar.AddSplit();
                 // 监听工具栏
                 bar.ToolClick += ToolBar_ToolClick;
             }
@@ -253,6 +255,10 @@ namespace GeekDocument
                     OpenDocument();
                     break;
                 case "SaveAll":
+                    
+                    break;
+                case "Setting":
+                    WM.ShowAppOptionDialog();
                     break;
             }
         }

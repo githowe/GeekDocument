@@ -4,50 +4,6 @@ using System.IO;
 namespace GeekDocument.SubSystem.OptionSystem
 {
     /// <summary>
-    /// 选项文件
-    /// </summary>
-    public class OptionFile
-    {
-        /// <summary>文档库列表</summary>
-        public List<DocumentLib> LibPathList { get; set; } = new List<DocumentLib>();
-
-        /// <summary>默认路径索引</summary>
-        public int DefaultPathIndex { get; set; } = 0;
-
-        /// <summary>页面宽度</summary>
-        public int PageWidth { get; set; } = 800;
-
-        /// <summary>页边距</summary>
-        public string PageMargin { get; set; } = "32,32,32,32";
-
-        /// <summary>块间距</summary>
-        public int BlockInterval { get; set; } = 16;
-
-        /// <summary>显示行线</summary>
-        public bool ShowRowLine { get; set; } = false;
-
-        /// <summary>显示段落标记</summary>
-        public bool ShowParagraphMark { get; set; } = false;
-
-        /// <summary>首行缩进。单位：像素</summary>
-        public int FirstLineIndent { get; set; } = 32;
-
-        public void Init()
-        {
-            // 创建默认文档库
-            string defaultLibPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GeekDocument\\DocLib\\";
-            if (!Directory.Exists(defaultLibPath)) Directory.CreateDirectory(defaultLibPath);
-            // 添加默认文档库路径
-            DocumentLib documentLib = new DocumentLib
-            {
-                Name = "极客文档",
-                Path = defaultLibPath
-            };
-            LibPathList.Add(documentLib);
-        }
-    }
-
-    /// <summary>
     /// 选项管理器
     /// </summary>
     public class Options
@@ -63,9 +19,9 @@ namespace GeekDocument.SubSystem.OptionSystem
 
         public PageOption Page { get; set; } = new PageOption();
 
-        public ViewOption View { get; set; } = new ViewOption();
-
         public ParagraphOption Paragraph { get; set; } = new ParagraphOption();
+
+        public ViewOption View { get; set; } = new ViewOption();
 
         public void Init()
         {

@@ -56,7 +56,7 @@
                                 </Grid>
                                 <!-- 按钮 -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" WindowChrome.IsHitTestVisibleInChrome="True">
-                                    <Button x:Name="MenuButton" Width="36" Style="{StaticResource MenuButtonStyle}"/>
+                                    <Button x:Name="MenuButton" Width="36" Style="{StaticResource MenuButtonStyle}" Visibility="Collapsed"/>
                                     <Button x:Name="MinButton" Width="36" Style="{StaticResource MinButtonStyle}"/>
                                     <Button x:Name="MaxButton" Width="36" Style="{StaticResource MaxButtonStyle}"/>
                                     <Button x:Name="CloseButton" Width="36" Style="{StaticResource CloseButtonStyle}"/>

@@ -1,0 +1,43 @@
+﻿<xw:XDialog x:Class="GeekDocument.SubSystem.OptionSystem.OptionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeekDocument.SubSystem.OptionSystem"
+        xmlns:op="clr-namespace:GeekDocument.SubSystem.OptionSystem.Panel"
+        xmlns:xw="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
+        xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
+        FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/Setting"
+        Title="系统选项" SizeToContent="Height" Width="640"
+        Loaded="XDialog_Loaded">
+    <Grid>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer Height="400" Style="{StaticResource ListBoxSV}">
+                <StackPanel Orientation="Vertical">
+                    <wc:LineLabel Text="界面颜色" Height="25"/>
+                    <op:UIThemePanel x:Name="Panel_UITheme"/>
+                    <wc:LineLabel Text="文档库" Height="25"/>
+                    <op:LibOptionPanel x:Name="Panel_LibOption"/>
+                    <wc:LineLabel Text="页面选项" Height="25"/>
+                    <op:PageOptionPanel x:Name="Panel_PageOption"/>
+                    <wc:LineLabel Text="段落选项" Height="25"/>
+                    <op:ParagraphOptionPanel x:Name="Panel_ParagraphOption"/>
+                    <wc:LineLabel Text="视图选项" Height="25"/>
+                    <op:ViewOptionPanel x:Name="Panel_ViewOption"/>
+                </StackPanel>
+            </ScrollViewer>
+            <Grid Background="#20FFFFFF" Grid.Row="1" Height="1"/>
+            <StackPanel Grid.Row="2" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.ColumnSpan="3">
+                <Button x:Name="Yes" Content="确定" Style="{StaticResource ConfirmButton}" IsDefault="True" Width="120"/>
+                <Button x:Name="Cancel" Content="取消" Style="{StaticResource CancelButton}" IsCancel="True" Width="120" Margin="10,0,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</xw:XDialog>

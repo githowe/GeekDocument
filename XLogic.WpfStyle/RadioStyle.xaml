@@ -89,45 +89,4 @@
         </Setter>
     </Style>
 
-    <!-- 单选按钮样式 -->
-    <Style TargetType="{x:Type RadioButton}">
-        <!-- 焦点样式 -->
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <!-- 背景色 -->
-        <Setter Property="Background" Value="#141414"/>
-        <!-- 前景色 -->
-        <Setter Property="Foreground" Value="White"/>
-        <!-- 模板 -->
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RadioButton}">
-                    <Grid x:Name="templateRoot" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                        <Border x:Name="MainBorder" BorderThickness="2" BorderBrush="#141414">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,-1,0"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="HasContent" Value="True">
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#a0a0a0"/>
-                            <Setter Property="Foreground" Value="#141414"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.2"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#a0a0a0"/>
-                            <Setter Property="Foreground" Value="#141414"/>
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Background" Value="#a0a0a0"/>
-                            <Setter Property="Foreground" Value="#141414"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
 </ResourceDictionary>

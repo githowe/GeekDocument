@@ -11,8 +11,10 @@
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/WindowStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/TabControlStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/ScrollBarStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/ToolTipStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ToggleStyle.xaml"/>
 
                 <ResourceDictionary Source="/XLogic.WpfStyleEx;component/FrameLabelStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyleEx;component/WindowStyle.xaml"/>

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="GeekDocument.SubSystem.OptionSystem.Panel.ViewOptionPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.OptionSystem.Panel"
+             xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+             mc:Ignorable="d" d:FontFamily="NSimSun"
+             HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid>
+        <Grid Margin="10">
+            <CheckBox Content="显示边距标记" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True"/>
+            <CheckBox Content="显示行线" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160,0,0,0"/>
+        </Grid>
+    </Grid>
+</UserControl>

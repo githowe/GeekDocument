@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="GeekDocument.SubSystem.OptionSystem.Panel.LibItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.OptionSystem.Panel"
+             mc:Ignorable="d" d:FontFamily="NSimSun"
+             d:DesignWidth="500" Height="25">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="2"/>
+        </Grid.ColumnDefinitions>
+        <Grid Background="#3c3c3c" Grid.Column="1">
+            <TextBlock x:Name="Block_Title" Text="标题" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0"/>
+        </Grid>
+        <Grid Background="#3c3c3c" Grid.Column="3">
+            <TextBlock x:Name="Block_Path" Text="C:\Users\12460\Documents\GeekDocument\DocLib" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0"/>
+        </Grid>
+    </Grid>
+</UserControl>

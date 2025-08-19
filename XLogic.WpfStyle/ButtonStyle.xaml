@@ -621,4 +621,91 @@
         </Setter>
     </Style>
 
+    <!-- 单选按钮样式 -->
+    <Style TargetType="{x:Type RadioButton}">
+        <!-- 焦点样式 -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="#141414"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- 鼠标悬停 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#fed267"/>
+                            <Setter Property="Foreground" Value="#141414"/>
+                        </Trigger>
+                        <!-- 鼠标按下 -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#fed267"/>
+                            <Setter Property="Foreground" Value="#141414"/>
+                        </Trigger>
+                        <!-- 已选中 -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="#fed267"/>
+                            <Setter Property="Foreground" Value="#141414"/>
+                        </Trigger>
+                        <!-- 已禁用 -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 复选框样式 -->
+    <Style x:Key="OnOff" TargetType="CheckBox">
+        <!-- 禁用焦点 -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <!-- 高度 -->
+        <Setter Property="Height" Value="19"/>
+        <!-- 背景色 -->
+        <Setter Property="Background" Value="Transparent"/>
+        <!-- 前景色 -->
+        <Setter Property="Foreground" Value="White"/>
+        <!-- 模板 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <!-- 外观 -->
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!-- 图标 -->
+                        <Image x:Name="Icon" Source="Image/CheckBox_Off.png" Width="30"/>
+                        <!-- 文本 -->
+                        <ContentPresenter Grid.Column="2" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    </Grid>
+                    <!-- 触发器 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 鼠标悬停 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Icon" Property="Source" Value="Image/CheckBox_Hover.png"/>
+                        </Trigger>
+                        <!-- 选中 -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Icon" Property="Source" Value="Image/CheckBox_On.png"/>
+                        </Trigger>
+                        <!-- 禁用 -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

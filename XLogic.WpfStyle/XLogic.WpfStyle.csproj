@@ -14,10 +14,11 @@
     <None Remove="Image\Button_Menu.png" />
     <None Remove="Image\Button_Min.png" />
     <None Remove="Image\Button_Normal.png" />
+    <None Remove="Image\CheckBox_Hover.png" />
+    <None Remove="Image\CheckBox_Off.png" />
+    <None Remove="Image\CheckBox_On.png" />
     <None Remove="Image\Close2.png" />
     <None Remove="Image\Left.png" />
-    <None Remove="Image\Logo.png" />
-    <None Remove="Image\Logo2.png" />
     <None Remove="Image\Right.png" />
   </ItemGroup>
 
@@ -27,10 +28,11 @@
     <Resource Include="Image\Button_Menu.png" />
     <Resource Include="Image\Button_Min.png" />
     <Resource Include="Image\Button_Normal.png" />
+    <Resource Include="Image\CheckBox_Hover.png" />
+    <Resource Include="Image\CheckBox_Off.png" />
+    <Resource Include="Image\CheckBox_On.png" />
     <Resource Include="Image\Close2.png" />
     <Resource Include="Image\Left.png" />
-    <Resource Include="Image\Logo.png" />
-    <Resource Include="Image\Logo2.png" />
     <Resource Include="Image\Right.png" />
   </ItemGroup>
 

@@ -1,5 +1,8 @@
-﻿using System.Media;
+﻿using GeekDocument.SubSystem.OptionSystem;
+using System.Media;
 using System.Windows;
+using XLogic.Wpf.Window;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace GeekDocument.SubSystem.WindowSystem
 {
@@ -72,5 +75,28 @@ namespace GeekDocument.SubSystem.WindowSystem
             };
             dialog.ShowDialog();
         }
+
+        /// <summary>
+        /// 显示单例窗口
+        /// </summary>
+        public static void ShowSingletonWindow<T>() where T : XDialog, new()
+        {
+            if (!_windowDict.ContainsKey(typeof(T)))
+            {
+                T window = new T() { Owner = Main };
+                _windowDict.Add(typeof(T), window);
+                window.Closed += (_, _) => _windowDict.Remove(typeof(T));
+                window.Show();
+            }
+            else _windowDict[typeof(T)].Activate();
+        }
+
+        /// <summary>
+        /// 显示应用选项对话框
+        /// </summary>
+        public static void ShowAppOptionDialog() => ShowSingletonWindow<OptionDialog>();
+
+        /// <summary>对话框字典</summary>
+        private static readonly Dictionary<Type, XDialog> _windowDict = new Dictionary<Type, XDialog>();
     }
 }

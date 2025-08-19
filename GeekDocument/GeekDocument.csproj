@@ -42,7 +42,9 @@
     <None Remove="Assets\Icon16\Setting.png" />
     <None Remove="Assets\Icon16\Undo.png" />
     <None Remove="Assets\Logo2.png" />
+    <None Remove="Assets\WindowIcon\DocumentOption.png" />
     <None Remove="Assets\WindowIcon\NewFile.png" />
+    <None Remove="Assets\WindowIcon\Setting.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Delete.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Folder.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Mark.png" />
@@ -57,6 +59,7 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Code.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Color.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Document.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\DocumentOption.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Emoji.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Export.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Function.png" />
@@ -141,7 +144,9 @@
     <Resource Include="Assets\Icon16\Setting.png" />
     <Resource Include="Assets\Icon16\Undo.png" />
     <Resource Include="Assets\Icon16\Lib.png" />
+    <Resource Include="Assets\WindowIcon\DocumentOption.png" />
     <Resource Include="Assets\WindowIcon\NewFile.png" />
+    <Resource Include="Assets\WindowIcon\Setting.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Delete.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Folder.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Mark.png" />
@@ -156,6 +161,7 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\Code.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Color.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Document.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\DocumentOption.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Emoji.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Export.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Function.png" />
@@ -180,6 +186,7 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\ToRight.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\UnderLine.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Undo.png" />
+    <Resource Include="SubSystem\OptionSystem\Panel\Link.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Break.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Error.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Info.png" />
