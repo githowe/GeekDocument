@@ -9,6 +9,8 @@ namespace GeekDocument.SubSystem.CacheSystem
     /// </summary>
     public class CacheData
     {
+        public ApplicationCache Application { get; set; } = new ApplicationCache();
+
         public MainWindowCache MainWindow { get; set; } = new MainWindowCache();
 
         public DocumentManageCache DocumentManager { get; set; } = new DocumentManageCache();

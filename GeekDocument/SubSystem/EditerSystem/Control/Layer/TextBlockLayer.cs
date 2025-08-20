@@ -556,8 +556,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// </summary>
         private List<double> GetXList(TextLine textLine)
         {
-            // 起始横坐标 = 图层左侧坐标 + 行缩进
-            double start_x = Canvas.GetLeft(this) + textLine.Indent;
+            // 起始横坐标 = 图层左侧坐标
+            double start_x = Canvas.GetLeft(this);
             List<double> xList = new List<double>();
             // 遍历字
             int x_index = 0;

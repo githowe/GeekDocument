@@ -37,8 +37,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// <summary>页面内边距</summary>
         public PageThickness Padding { get; set; } = new PageThickness();
 
-        /// <summary>块间距</summary>
-        public int BlockInterval { get; set; } = 16;
+        /// <summary>首行缩进</summary>
+        public int FirstLineIndent { get; set; } = 32;
+
+        /// <summary>段间距</summary>
+        public int ParagraphInterval { get; set; } = 16;
 
         /// <summary>光标横坐标。此横坐标是为了上下移动光标时保持在一条直线上</summary>
         public int IBeamX { get; set; } = 0;
@@ -154,6 +157,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             layer.Update();
             // 插入块后须立即更新块坐标，因为移动光标依赖块坐标
             UpdateBlockPoint();
+            // 将新块设置为当前块，并移动光标至块开头
             _currentBlockLayer = layer;
             _currentBlockLayer.MoveIBeamToHead();
             更新光标横坐标();
@@ -364,7 +368,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 // 记录块区域
                 _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
                 // 累加纵坐标
-                y += layer.BlockHeight + Options.Instance.Page.BlockInterval;
+                y += layer.BlockHeight + ParagraphInterval;
             }
         }
 
@@ -387,7 +391,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 // 记录块区域
                 _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
                 // 累加纵坐标
-                y += layer.BlockHeight + Options.Instance.Page.BlockInterval;
+                y += layer.BlockHeight + ParagraphInterval;
             }
         }
 
@@ -401,7 +405,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             foreach (var layer in _blockLayerList)
                 height += layer.BlockHeight;
             // 累加块间距
-            height += (_blockLayerList.Count - 1) * BlockInterval;
+            height += (_blockLayerList.Count - 1) * ParagraphInterval;
             // 累加上下内边距
             height += Padding.Top + Padding.Bottom;
             // 更新画布高度
@@ -444,14 +448,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (point.Y >= _blockRectDict[_blockLayerList[_blockLayerList.Count - 1]].Bottom)
                 return _blockLayerList[_blockLayerList.Count - 1];
             // 遍历块区域，找到坐标所处的块
-            int blockInterval = Options.Instance.Page.BlockInterval;
             foreach (var block in _blockLayerList)
             {
                 Rect rect = _blockRectDict[block];
                 // 纵坐标向上偏移一半的块间距
-                rect.Y -= blockInterval / 2;
+                rect.Y -= ParagraphInterval / 2;
                 // 高度增加一个块间距
-                rect.Height += blockInterval;
+                rect.Height += ParagraphInterval;
                 if (point.Y >= rect.Top && point.Y < rect.Bottom)
                     return block;
             }

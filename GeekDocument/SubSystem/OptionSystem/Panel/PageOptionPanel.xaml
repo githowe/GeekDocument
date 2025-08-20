@@ -24,7 +24,7 @@
                 <TextBox x:Name="Input_Padding_Bottom" Width="100" Margin="10,0,0,0"/>
                 <TextBox x:Name="Input_Padding_Left" Width="100" Margin="10,0,0,0"/>
                 <TextBox x:Name="Input_Padding_Right" Width="100" Margin="10,0,0,0"/>
-                <ToggleButton Style="{StaticResource ToggleNoBorder}" Width="25" Height="25" Margin="10,0,0,0" IsChecked="True" ToolTip="链接边距">
+                <ToggleButton x:Name="Toggle_Link" Style="{StaticResource ToggleNoBorder}" Width="25" Height="25" Margin="10,0,0,0" IsChecked="True" ToolTip="同时调整所有边距">
                     <Image Source="Link.png" Width="15" Height="15"/>
                 </ToggleButton>
             </StackPanel>

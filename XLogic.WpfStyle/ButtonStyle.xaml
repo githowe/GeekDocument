@@ -639,13 +639,11 @@
                     <ControlTemplate.Triggers>
                         <!-- 鼠标悬停 -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#fed267"/>
-                            <Setter Property="Foreground" Value="#141414"/>
+                            <Setter Property="Background" Value="#282828"/>
                         </Trigger>
                         <!-- 鼠标按下 -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#fed267"/>
-                            <Setter Property="Foreground" Value="#141414"/>
+                            <Setter Property="Background" Value="#141414"/>
                         </Trigger>
                         <!-- 已选中 -->
                         <Trigger Property="IsChecked" Value="True">
@@ -679,14 +677,14 @@
                     <!-- 外观 -->
                     <Grid Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="32"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <!-- 图标 -->
-                        <Image x:Name="Icon" Source="Image/CheckBox_Off.png" Width="30"/>
+                        <Image x:Name="Icon" Source="Image/CheckBox_Off.png" Width="32"/>
                         <!-- 文本 -->
-                        <ContentPresenter Grid.Column="2" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <ContentPresenter Grid.Column="2" VerticalAlignment="Center" Margin="0,0,10,0"/>
                     </Grid>
                     <!-- 触发器 -->
                     <ControlTemplate.Triggers>

@@ -25,9 +25,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 4;
-
-        /// <summary>首行缩进</summary>
-        public int FirstLineIndent { get; set; } = 0;
     }
 
     /// <summary>
@@ -58,8 +55,20 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 4;
 
-        /// <summary>首行缩进</summary>
+        /// <summary>首行缩进（从文档继承，无需写入存档）</summary>
         public int FirstLineIndent { get; set; } = 0;
+
+        /// <summary>自定义首行缩进</summary>
+        public int CustomFirstLineIndent { get; set; } = 0;
+
+        /// <summary>使用自定义首行缩进</summary>
+        public bool UseCustomFirstLineIndent { get; set; } = false;
+
+        /// <summary>左缩进</summary>
+        public int LeftIndent { get; set; } = 0;
+
+        /// <summary>右缩进</summary>
+        public int RightIndent { get; set; } = 0;
 
         public List<TextLine> ViewData => _lineList;
 
@@ -108,7 +117,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
             TStyle = (TextStyle)blockData.TextStyle;
             Align = (LineAlignType)blockData.Align;
             LineSpace = blockData.LineSpace;
-            FirstLineIndent = blockData.FirstLineIndent;
         }
 
         public override string ToJson()
@@ -122,7 +130,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 TextStyle = (int)TStyle,
                 Align = (int)Align,
                 LineSpace = LineSpace,
-                FirstLineIndent = FirstLineIndent,
             };
             return JsonConvert.SerializeObject(blockData);
         }

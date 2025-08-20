@@ -140,13 +140,19 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
 
         public string Padding { get; set; } = "0";
 
+        public int FirstLineIndent { get; set; } = 0;
+
+        public int ParagraphInterval { get; set; } = 0;
+
         public void LoadPageData(byte[] byteData)
         {
             string jsonData = Encoding.UTF8.GetString(byteData);
             List<string>? listData = JsonConvert.DeserializeObject<List<string>>(jsonData);
-            if (listData == null || listData.Count < 2) throw new Exception("无效的页面数据");
+            if (listData == null || listData.Count < 4) throw new Exception("无效的页面数据");
             PageWidth = listData[0];
             Padding = listData[1];
+            FirstLineIndent = int.Parse(listData[2]);
+            ParagraphInterval = int.Parse(listData[3]);
         }
 
         public byte[] ToByteArray()
@@ -154,7 +160,9 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
             List<string> listData = new List<string>
             {
                 PageWidth,
-                Padding
+                Padding,
+                FirstLineIndent.ToString(),
+                ParagraphInterval.ToString()
             };
             string jsonData = JsonConvert.SerializeObject(listData);
             return Encoding.UTF8.GetBytes(jsonData);

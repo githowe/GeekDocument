@@ -26,10 +26,10 @@ namespace GeekDocument.SubSystem.OptionSystem.Panel
         {
             PageOption pageOption = Options.Instance.Page;
             Input_PageWidth.Text = pageOption.PageWidth.ToString();
-            Input_Padding_Top.Text = pageOption.PageMargin.Top.ToString();
-            Input_Padding_Bottom.Text = pageOption.PageMargin.Bottom.ToString();
-            Input_Padding_Left.Text = pageOption.PageMargin.Left.ToString();
-            Input_Padding_Right.Text = pageOption.PageMargin.Right.ToString();
+            Input_Padding_Top.Text = pageOption.PagePadding.Top.ToString();
+            Input_Padding_Bottom.Text = pageOption.PagePadding.Bottom.ToString();
+            Input_Padding_Left.Text = pageOption.PagePadding.Left.ToString();
+            Input_Padding_Right.Text = pageOption.PagePadding.Right.ToString();
         }
     }
 }

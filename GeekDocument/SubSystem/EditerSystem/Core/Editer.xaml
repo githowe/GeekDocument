@@ -35,7 +35,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <!-- 工具栏 -->
-            <StackPanel Orientation="Horizontal" Background="#1E1E1E" Grid.Row="0">
+            <StackPanel x:Name="MainToolBar" Orientation="Horizontal" Background="#1E1E1E" Grid.Row="0">
                 <Button x:Name="Tool_Save" Style="{StaticResource ToolBarButton}" ToolTip="保存" Width="30" Height="30">
                     <Button.Content>
                         <Image Source="Image/Save.png" Height="16" Width="16"/>
@@ -63,9 +63,15 @@
                     </Button.Content>
                 </Button>
                 <wc:ToolSplitBar/>
+                <Button x:Name="Tool_Option" Style="{StaticResource ToolBarButton}" ToolTip="文档选项" Width="30" Height="30">
+                    <Button.Content>
+                        <Image Source="Image/DocumentOption.png" Height="16" Width="16"/>
+                    </Button.Content>
+                </Button>
+                <wc:ToolSplitBar/>
                 <Button x:Name="Tool_Latex" Style="{StaticResource ToolBarButton}" ToolTip="插入公式" Width="30" Height="30">
                     <Button.Content>
-                        <Image Source="Image/Pi.png" Height="16" Width="16"/>
+                        <Image Source="Image/Sqrt.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
                 <Button x:Name="Tool_List" Style="{StaticResource ToolBarButton}" ToolTip="插入列表" Width="30" Height="30">
@@ -103,7 +109,6 @@
                         <Image Source="Image/Link.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <wc:ToolSplitBar/>
                 <Button x:Name="Tool_Doc" Style="{StaticResource ToolBarButton}" ToolTip="插入文档" Width="30" Height="30">
                     <Button.Content>
                         <Image Source="Image/Document.png" Height="16" Width="16"/>
@@ -141,16 +146,16 @@
                     </Button.Content>
                 </Button>
                 <wc:ToolSplitBar/>
-                <Button x:Name="Tool_Blod" Style="{StaticResource ToolBarButton}" ToolTip="加粗" Width="30" Height="30">
-                    <Button.Content>
+                <ToggleButton x:Name="Tool_Blod" Style="{StaticResource LayoutToggle}" Foreground="White" ToolTip="加粗" Width="30" Height="30">
+                    <ToggleButton.Content>
                         <Image Source="Image/Blod.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
-                <Button x:Name="Tool_Italic" Style="{StaticResource ToolBarButton}" ToolTip="斜体" Width="30" Height="30">
-                    <Button.Content>
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <ToggleButton x:Name="Tool_Italic" Style="{StaticResource LayoutToggle}" Foreground="White" ToolTip="斜体" Width="30" Height="30" Margin="2,0,0,0">
+                    <ToggleButton.Content>
                         <Image Source="Image/Italic.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
+                    </ToggleButton.Content>
+                </ToggleButton>
                 <Button x:Name="Tool_UnderLine" Style="{StaticResource ToolBarButton}" ToolTip="下划线" Width="30" Height="30" Visibility="Collapsed">
                     <Button.Content>
                         <Image Source="Image/UnderLine.png" Height="16" Width="16"/>
@@ -162,26 +167,26 @@
                     </Button.Content>
                 </Button>
                 <wc:ToolSplitBar/>
-                <Button x:Name="Tool_AlignLeft" Style="{StaticResource ToolBarButton}" ToolTip="左对齐" Width="30" Height="30">
-                    <Button.Content>
+                <RadioButton x:Name="Tool_AlignLeft" GroupName="Align" Style="{StaticResource RadioToolButton2}" Foreground="White" ToolTip="左对齐" Width="30" Height="30">
+                    <RadioButton.Content>
                         <Image Source="Image/AlignLeft.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
-                <Button x:Name="Tool_AlignCenter" Style="{StaticResource ToolBarButton}" ToolTip="居中对齐" Width="30" Height="30">
-                    <Button.Content>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton x:Name="Tool_AlignCenter" GroupName="Align" Style="{StaticResource RadioToolButton2}" Foreground="White" ToolTip="居中对齐" Width="30" Height="30">
+                    <RadioButton.Content>
                         <Image Source="Image/AlignCenter.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
-                <Button x:Name="Tool_AlignRight" Style="{StaticResource ToolBarButton}" ToolTip="右对齐" Width="30" Height="30">
-                    <Button.Content>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton x:Name="Tool_AlignRight" GroupName="Align" Style="{StaticResource RadioToolButton2}" Foreground="White" ToolTip="右对齐" Width="30" Height="30">
+                    <RadioButton.Content>
                         <Image Source="Image/AlignRight.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
-                <Button x:Name="Tool_AlignBoth" Style="{StaticResource ToolBarButton}" ToolTip="两端对齐" Width="30" Height="30">
-                    <Button.Content>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton x:Name="Tool_AlignBoth" GroupName="Align" Style="{StaticResource RadioToolButton2}" Foreground="White" ToolTip="两端对齐" Width="30" Height="30">
+                    <RadioButton.Content>
                         <Image Source="Image/AlignBoth.png" Height="16" Width="16"/>
-                    </Button.Content>
-                </Button>
+                    </RadioButton.Content>
+                </RadioButton>
                 <wc:ToolSplitBar/>
                 <Button x:Name="Tool_ToLeft" Style="{StaticResource ToolBarButton}" ToolTip="减少缩进" Width="30" Height="30">
                     <Button.Content>

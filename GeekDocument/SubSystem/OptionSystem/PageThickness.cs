@@ -25,13 +25,13 @@
             Bottom = int.Parse(array[3]);
         }
 
-        public int Left { get; set; } = 32;
+        public int Left { get; set; } = 64;
 
-        public int Right { get; set; } = 32;
+        public int Right { get; set; } = 64;
 
-        public int Top { get; set; } = 32;
+        public int Top { get; set; } = 64;
 
-        public int Bottom { get; set; } = 32;
+        public int Bottom { get; set; } = 64;
 
         /// <summary>横向线宽</summary>
         public int Horizontal => Left + Right;

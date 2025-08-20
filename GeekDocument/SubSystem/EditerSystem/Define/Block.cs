@@ -4,8 +4,6 @@
     {
         public BlockType Type { get; set; } = BlockType.Text;
 
-        public Document? OwnerDoc { get; set; } = null;
-
         /// <summary>
         /// 更新视图数据
         /// </summary>

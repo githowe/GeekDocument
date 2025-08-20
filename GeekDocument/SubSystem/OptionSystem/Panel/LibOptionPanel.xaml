@@ -15,7 +15,7 @@
                 <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
             <!-- 表格 -->
-            <Grid Background="Black">
+            <Grid Background="#141414">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="29"/>
                     <RowDefinition />

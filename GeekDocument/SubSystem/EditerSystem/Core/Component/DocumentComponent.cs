@@ -51,7 +51,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             {
                 BlockList = blockList,
                 PageWidth = pageOption.PageWidth,
-                Padding = pageOption.PageMargin,
+                Padding = pageOption.PagePadding,
             };
             // 读取文本文件
             foreach (var line in File.ReadAllLines("D:/示例文档3.txt"))
@@ -83,11 +83,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _host.DocArea.Width = document.PageWidth + document.Padding.Left + document.Padding.Right;
             // 更新布局以确保区域内控件大小的正确性
             _host.DocArea.UpdateLayout();
-            // 设置页宽（包含内边距）与内边距
-            GetComponent<PageComponent>().PageWidth = (int)_host.DocArea.Width;
-            GetComponent<PageComponent>().Padding = document.Padding;
+            // 设置页宽（包含内边距）、内边距、首行缩进、段间距
+            PageComponent pageComponent = GetComponent<PageComponent>();
+            pageComponent.PageWidth = (int)_host.DocArea.Width;
+            pageComponent.Padding = document.Padding;
+            pageComponent.FirstLineIndent = document.FirstLineIndent;
+            pageComponent.ParagraphInterval = document.ParagraphInterval;
             // 加载块
-            GetComponent<PageComponent>().LoadBlock(document.BlockList);
+            pageComponent.LoadBlock(document.BlockList);
         }
 
         /// <summary>

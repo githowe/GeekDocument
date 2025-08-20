@@ -9,9 +9,6 @@
         public int PageWidth { get; set; } = 800;
 
         /// <summary>页边距</summary>
-        public PageThickness PageMargin { get; set; } = new PageThickness(32);
-
-        /// <summary>块间距</summary>
-        public int BlockInterval { get; set; } = 16;
+        public PageThickness PagePadding { get; set; } = new PageThickness(64);
     }
 }

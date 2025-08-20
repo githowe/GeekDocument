@@ -54,21 +54,28 @@ namespace GeekDocument.SubSystem.OptionSystem
             if (optionFile == null) throw new Exception("加载选项文件失败");
 
             // 加载选项
-            System.LibList.AddRange(optionFile.LibPathList);
-            System.DefaultPathIndex = optionFile.DefaultPathIndex;
-            Page.PageWidth = optionFile.PageWidth;
-            string[] margin = optionFile.PageMargin.Split(',');
-            Page.PageMargin = new PageThickness
             {
-                Left = int.Parse(margin[0]),
-                Top = int.Parse(margin[1]),
-                Right = int.Parse(margin[2]),
-                Bottom = int.Parse(margin[3])
-            };
-            Page.BlockInterval = optionFile.BlockInterval;
-            View.ShowRowLine = optionFile.ShowRowLine;
-            View.ShowParagraphMark = optionFile.ShowParagraphMark;
-            Paragraph.FirstLineIndent = optionFile.FirstLineIndent;
+                // 文档库
+                System.LibList.AddRange(optionFile.LibPathList);
+                System.DefaultPathIndex = optionFile.DefaultPathIndex;
+                // 页面宽度
+                Page.PageWidth = optionFile.PageWidth;
+                string[] margin = optionFile.PageMargin.Split(',');
+                // 页边距
+                Page.PagePadding = new PageThickness
+                {
+                    Left = int.Parse(margin[0]),
+                    Top = int.Parse(margin[1]),
+                    Right = int.Parse(margin[2]),
+                    Bottom = int.Parse(margin[3])
+                };
+                // 首行缩进、段间距
+                Paragraph.FirstLineIndent = optionFile.FirstLineIndent;
+                Paragraph.ParagraphInterval = optionFile.ParagraphInterval;
+                // 边距标记、行线
+                View.ShowPaddingMark = optionFile.ShowPaddingMark;
+                View.ShowRowLine = optionFile.ShowRowLine;
+            }
 
             // 移除无效路径
             for (int index = System.LibList.Count - 1; index >= 0; index--)

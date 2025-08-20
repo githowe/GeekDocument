@@ -23,6 +23,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         {
             // 添加组件
             _documentComponent = _componentBox.AddComponent<DocumentComponent>(this, "文档组件");
+            _editerComponent = _componentBox.AddComponent<EditerComponent>(this, "编辑器组件");
             _ibeamComponent = _componentBox.AddComponent<IBeamComponent>(this, "光标组件");
             _interactionComponent = _componentBox.AddComponent<InteractionComponent>(this, "交互组件");
             _pageComponent = _componentBox.AddComponent<PageComponent>(this, "页面组件");
@@ -36,10 +37,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// <summary>
         /// 处理按键按下
         /// </summary>
-        public void HandleKeyDown(KeyEventArgs e)
-        {
-            _interactionComponent.HandleKeyDown(e);
-        }
+        public void HandleKeyDown(KeyEventArgs e) => _interactionComponent.HandleKeyDown(e);
 
         /// <summary>
         /// 处理文本输入
@@ -92,6 +90,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         private readonly ComponentBox<Editer> _componentBox = new ComponentBox<Editer>();
 
         private DocumentComponent _documentComponent;
+        private EditerComponent _editerComponent;
         private IBeamComponent _ibeamComponent;
         private InteractionComponent _interactionComponent;
         private PageComponent _pageComponent;

@@ -42,10 +42,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         /// <summary>内边距</summary>
         public PageThickness Padding { get; set; } = new PageThickness();
 
-        public Dictionary<int, DocumentRes> ResourceDict { get; set; } = new Dictionary<int, DocumentRes>();
+        /// <summary>首行缩进</summary>
+        public int FirstLineIndent { get; set; } = 0;
 
-        /// <summary>已保存</summary>
-        public bool Saved { get; set; } = true;
+        /// <summary>段间距</summary>
+        public int ParagraphInterval { get; set; } = 0;
+
+        public Dictionary<int, DocumentRes> ResourceDict { get; set; } = new Dictionary<int, DocumentRes>();
 
         /// <summary>
         /// 加载存档
@@ -60,11 +63,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
             TagList = archive.MetaData.Tag.Split(",").ToList();
             for (int index = 0; index < TagList.Count; index++)
                 TagList[index] = TagList[index].Trim();
-            // 加载块列表
-            LoadBlockList(archive.BlockData.DataList);
             // 加载页面信息
             PageWidth = int.Parse(archive.PageData.PageWidth);
             Padding = new PageThickness(archive.PageData.Padding);
+            FirstLineIndent = archive.PageData.FirstLineIndent;
+            ParagraphInterval = archive.PageData.ParagraphInterval;
+            // 加载块列表
+            LoadBlockList(archive.BlockData.DataList);
             // 加载资源数据
             {
                 int offset = 0;
@@ -98,7 +103,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 switch (blockInfo.Type)
                 {
                     case "Text":
-                        block = new BlockText();
+                        block = new BlockText
+                        {
+                            FirstLineIndent = FirstLineIndent,
+                        };
                         break;
                 }
                 if (block == null) continue;

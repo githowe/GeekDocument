@@ -26,7 +26,7 @@ namespace GeekDocument.SubSystem.OptionSystem.Panel
         {
             ParagraphOption paragraphOption = Options.Instance.Paragraph;
             Input_FirstLineIndent.Text = paragraphOption.FirstLineIndent.ToString();
-            Input_ParagraphInterval.Text = paragraphOption.BlockInterval.ToString();
+            Input_ParagraphInterval.Text = paragraphOption.ParagraphInterval.ToString();
         }
     }
 }

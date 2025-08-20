@@ -22,11 +22,15 @@ namespace GeekDocument
 {
     public partial class MainWindow : XMainWindow
     {
+        #region 构造方法
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
+
+        #endregion
 
         #region 生命周期
 
@@ -255,7 +259,7 @@ namespace GeekDocument
                     OpenDocument();
                     break;
                 case "SaveAll":
-                    
+
                     break;
                 case "Setting":
                     WM.ShowAppOptionDialog();
@@ -338,13 +342,16 @@ namespace GeekDocument
                 Document document = new Document
                 {
                     PageWidth = Options.Instance.Page.PageWidth,
-                    Padding = Options.Instance.Page.PageMargin,
+                    Padding = Options.Instance.Page.PagePadding,
+                    FirstLineIndent = Options.Instance.Paragraph.FirstLineIndent,
+                    ParagraphInterval = Options.Instance.Paragraph.ParagraphInterval,
                 };
                 // 添加标题块
                 BlockText title = new BlockText
                 {
                     Content = dialog.DocumentName,
                     FontSize = 32,
+                    FirstLineIndent = document.FirstLineIndent,
                 };
                 title.UpdateViewData(document.PageWidth);
                 document.BlockList.Add(title);

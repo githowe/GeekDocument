@@ -17,19 +17,19 @@ namespace GeekDocument.SubSystem.OptionSystem
         public int PageWidth { get; set; } = 800;
 
         /// <summary>页边距</summary>
-        public string PageMargin { get; set; } = "32,32,32,32";
-
-        /// <summary>块间距</summary>
-        public int BlockInterval { get; set; } = 16;
-
-        /// <summary>显示行线</summary>
-        public bool ShowRowLine { get; set; } = false;
-
-        /// <summary>显示段落标记</summary>
-        public bool ShowParagraphMark { get; set; } = false;
+        public string PageMargin { get; set; } = "64,64,64,64";
 
         /// <summary>首行缩进。单位：像素</summary>
         public int FirstLineIndent { get; set; } = 32;
+
+        /// <summary>段间距</summary>
+        public int ParagraphInterval { get; set; } = 16;
+
+        /// <summary>显示边距标记</summary>
+        public bool ShowPaddingMark { get; set; } = true;
+
+        /// <summary>显示行线</summary>
+        public bool ShowRowLine { get; set; } = false;
 
         public void Init()
         {
