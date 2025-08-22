@@ -14,6 +14,30 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
 
         #endregion
 
+        #region 属性、事件
+
+        /// <summary>文档名称</summary>
+        public string DocumentName { get; set; } = "未命名文档";
+
+        /// <summary>文档路径</summary>
+        public string DocumentPath { get; set; } = "";
+
+        /// <summary>已保存</summary>
+        public bool Saved
+        {
+            get => _saved;
+            set
+            {
+                if (_saved == value) return;
+                _saved = value;
+                SaveStateChanged?.Invoke(this);
+            }
+        }
+
+        public event Action<Editer> SaveStateChanged;
+
+        #endregion
+
         #region 公开方法
 
         /// <summary>
@@ -97,6 +121,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         private ScrollBarComponent _scrollBarComponent;
         private SelectComponent _selectComponent;
         private ToolBarComponent _toolBarComponent;
+
+        private bool _saved = true;
 
         #endregion
     }

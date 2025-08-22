@@ -52,22 +52,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         protected override void Init()
         {
-            // 添加块画布
-            _canvas = new Canvas
+            // 添加背景图层
+            _backLayer = new BackLayer
             {
                 Background = new SolidColorBrush(Color.FromRgb(38, 38, 38)),
                 VerticalAlignment = VerticalAlignment.Top,
                 Margin = new Thickness(0, 16, 0, 0),
             };
-            _host.PageBox.Children.Add(_canvas);
-            // 添加背景图层
-            _backLayer = new BackLayer
+            _backLayer.Init();
+            _host.PageBox.Children.Add(_backLayer);
+            // 添加块画布
+            _canvas = new Canvas
             {
                 VerticalAlignment = VerticalAlignment.Top,
                 Margin = new Thickness(0, 16, 0, 0),
             };
-            _backLayer.Init();
-            _host.PageBox.Children.Add(_backLayer);
+            _host.PageBox.Children.Add(_canvas);
         }
 
         #endregion
@@ -233,6 +233,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 UpdatePageHeight();
                 UpdateBack();
                 GetComponent<ScrollBarComponent>().UpdateScrollBar();
+                _host.Saved = false;
             }
         }
 
@@ -266,6 +267,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                     break;
                 // 保存
                 case Key.S:
+                    GetComponent<DocumentComponent>().SaveDocument();
+                    _host.Saved = true;
                     break;
                 // 回车
                 case Key.Enter:
@@ -297,6 +300,36 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
             UpdateBlockPoint();
             UpdatePageHeight();
+            UpdateBack();
+            GetComponent<ScrollBarComponent>().UpdateScrollBar();
+            _host.Saved = false;
+        }
+
+        /// <summary>
+        /// 更新页面布局
+        /// </summary>
+        public void UpdatePageLayout()
+        {
+            // 更新块图层与块
+            foreach (var blockLayer in _blockLayerList)
+            {
+                // 更新块图层宽度
+                blockLayer.BlockWidth = PageWidth - Padding.Horizontal;
+                // 更新块首行缩进
+                if (blockLayer.SourceBlock is BlockText blockText)
+                    blockText.FirstLineIndent = FirstLineIndent;
+                // 更新块视图数据
+                blockLayer.SourceBlock.UpdateViewData(blockLayer.BlockWidth);
+                // 重会块图层
+                blockLayer.Update();
+            }
+            // 块大小变化后，光标坐标也可能变化，但光标坐标需要根据块的坐标来更新，所以先更新块坐标
+            UpdateBlockPoint();
+            _currentBlockLayer?.SyncIBeam();
+            更新光标横坐标();
+            // 更新图层高度
+            UpdatePageHeight();
+            // 更新背景、滚动条
             UpdateBack();
             GetComponent<ScrollBarComponent>().UpdateScrollBar();
         }
@@ -430,6 +463,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _backLayer.BottomMargin = Padding.Bottom;
             _backLayer.LeftMargin = Padding.Left;
             _backLayer.RightMargin = Padding.Right;
+            // 边距标记
+            _backLayer.ShowClipMark = Options.Instance.View.ShowPaddingMark;
             // 更新
             _backLayer.Update();
         }

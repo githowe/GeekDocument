@@ -17,7 +17,7 @@ namespace GeekDocument.SubSystem.OptionSystem
         public int PageWidth { get; set; } = 800;
 
         /// <summary>页边距</summary>
-        public string PageMargin { get; set; } = "64,64,64,64";
+        public string PagePadding { get; set; } = "64,64,64,64";
 
         /// <summary>首行缩进。单位：像素</summary>
         public int FirstLineIndent { get; set; } = 32;

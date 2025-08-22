@@ -57,6 +57,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// </summary>
         public virtual void MoveIBeamToPoint(Point point) { }
 
+        /// <summary>
+        /// 同步光标
+        /// </summary>
+        public virtual void SyncIBeam() { }
+
         #endregion
 
         /// <summary>

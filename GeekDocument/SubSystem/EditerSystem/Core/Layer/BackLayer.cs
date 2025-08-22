@@ -9,6 +9,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Layer
     /// </summary>
     public class BackLayer : SingleBoard
     {
+        public Brush Background { get; set; } = Brushes.Black;
+
         public int PageWidth { get; set; } = 0;
 
         public int PageHeight { get; set; } = 0;
@@ -27,16 +29,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Layer
 
         public override void Init()
         {
+            Background.Freeze();
             _borderPen.Freeze();
             _markLine.Freeze();
         }
 
         protected override void OnUpdate()
         {
-            // 绘制边框
+            // 绘制底框
             if (PageWidth > 0 && PageHeight > 0)
             {
-                _dc.DrawRectangle(null, _borderPen, new Rect(0.5, 0.5, PageWidth - 1, PageHeight - 1));
+                _dc.DrawRectangle(Background, _borderPen, new Rect(0.5, 0.5, PageWidth - 1, PageHeight - 1));
             }
             // 绘制裁剪标记
             if (ShowClipMark)

@@ -29,8 +29,8 @@
             <Grid Background="#20FFFFFF" Grid.Row="1" Height="1"/>
             <Button x:Name="Default" Content="设为默认" Height="25" Style="{StaticResource NormalButton}" HorizontalAlignment="Left" Width="120" Grid.Row="2" Click="Default_Click"/>
             <StackPanel Grid.Row="2" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.ColumnSpan="3">
-                <Button x:Name="Yes" Content="确定" Style="{StaticResource ConfirmButton}" IsDefault="True" Width="120" Click="Yes_Click"/>
-                <Button x:Name="Cancel" Content="取消" Style="{StaticResource CancelButton}" IsCancel="True" Width="120" Margin="10,0,0,0" Click="Cancel_Click"/>
+                <Button x:Name="Yes" Content="确定" Style="{StaticResource ConfirmButton}" Width="120" Click="Yes_Click"/>
+                <Button x:Name="Cancel" Content="取消" Style="{StaticResource CancelButton}" IsCancel="True" Width="120" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>

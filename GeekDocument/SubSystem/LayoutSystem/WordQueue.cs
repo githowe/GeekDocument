@@ -48,6 +48,14 @@ namespace GeekDocument.SubSystem.LayoutSystem
             {
                 // 取出字
                 Word word = WordList[_wordIndex];
+                // 当前行无字符，且字的宽度大于当前行的行宽时，需要拆分字
+                if (line.CurrentWidth == 0 && word.Width > line.LineWidth)
+                {
+                    List<Word> wordList = SplitWord(word, 0, line.LineWidth);
+                    WordList.RemoveAt(_wordIndex);
+                    WordList.InsertRange(_wordIndex, wordList);
+                    continue;
+                }
                 // 字的宽度大于行宽时，需要拆分字
                 if (word.Width > lineWidth)
                 {

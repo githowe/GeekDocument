@@ -105,7 +105,7 @@ namespace GeekDocument
                 return;
             }
             // 打开文档
-            OpenDocument(document, Path.GetFileNameWithoutExtension(filePath));
+            OpenDocument(document, Path.GetFileNameWithoutExtension(filePath), filePath);
             // 添加打开记录
             CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
             CacheManager.Instance.SaveCache();
@@ -356,7 +356,8 @@ namespace GeekDocument
                 title.UpdateViewData(document.PageWidth);
                 document.BlockList.Add(title);
                 // 在磁盘中新建文件
-                FileStream fileStream = File.Create($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
+                string filePath = $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc";
+                FileStream fileStream = File.Create(filePath);
                 // 刷新文档库
                 Panel_DocLib.RefreshDocumentLib();
                 // 保存文档数据至文件
@@ -364,7 +365,7 @@ namespace GeekDocument
                 fileStream.Write(archiveData, 0, archiveData.Length);
                 fileStream.Close();
                 // 打开新建的文档
-                OpenDocument(document, dialog.DocumentName);
+                OpenDocument(document, dialog.DocumentName, filePath);
                 // 添加打开记录
                 CacheManager.Instance.Cache.DocumentManager.AddRecentDocument($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
                 CacheManager.Instance.SaveCache();
@@ -395,7 +396,7 @@ namespace GeekDocument
         /// <summary>
         /// 打开文档
         /// </summary>
-        private void OpenDocument(Document document, string docName)
+        private void OpenDocument(Document document, string docName, string docPath)
         {
             // 关闭主页并打开编辑器页
             if (Control_Home.Visibility == Visibility.Visible)
@@ -407,7 +408,11 @@ namespace GeekDocument
             TabContrlItem editerItem = new TabContrlItem();
             TabControl_Doc.Items.Add(editerItem);
             // 新建一个编辑器并添加至选项卡
-            Editer editer = new Editer();
+            Editer editer = new Editer
+            {
+                DocumentPath = docPath,
+                DocumentName = docName
+            };
             editer.Init();
             editerItem.Content = editer;
             // 新建选项卡标签并关联至选项卡
@@ -419,6 +424,9 @@ namespace GeekDocument
             editerItem.IsSelected = true;
             // 加载文档
             editer.LoadDocument(document);
+            editer.SaveStateChanged += Editer_SaveStateChanged;
+
+            _tabItemDict.Add(editer, tabItem);
         }
 
         #endregion
@@ -433,6 +441,15 @@ namespace GeekDocument
                 tabItem.ItemInstance.IsSelected = true;
         }
 
+        private void Editer_SaveStateChanged(Editer sender)
+        {
+            TabItem tabItem = _tabItemDict[sender];
+            if (sender.Saved)
+                tabItem.Header = sender.DocumentName;
+            else
+                tabItem.Header = $"{sender.DocumentName}*";
+        }
+
         #endregion
 
         #region 字段
@@ -441,6 +458,8 @@ namespace GeekDocument
 
         private GridLength _zeroLength = new GridLength(0);
         private GridLength _splitLength = new GridLength(2);
+
+        private readonly Dictionary<Editer, TabItem> _tabItemDict = new Dictionary<Editer, TabItem>();
 
         #endregion
     }

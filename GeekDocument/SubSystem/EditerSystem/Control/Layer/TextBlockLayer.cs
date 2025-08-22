@@ -125,6 +125,64 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Page.更新光标横坐标();
         }
 
+        /// <summary>
+        /// 同步光标
+        /// </summary>
+        public override void SyncIBeam()
+        {
+            _currentLine = null;
+            // 获取图层在画布中的纵坐标
+            int top = (int)Canvas.GetTop(this);
+            // 没有文本时：将光标定位在第一行开头
+            if (Block.Content.Length == 0)
+            {
+                double start_x = Canvas.GetLeft(this);
+                Page.移动光标((int)start_x + Block.FirstLineIndent, top, Block.FontSize);
+                return;
+            }
+
+            TextLine? 字符索引所在行 = null;
+            List<int> 字符索引列表 = new List<int>();
+            int 行索引 = 0;
+
+            if (_charIndex == Block.Content.Length)
+            {
+                字符索引所在行 = Block.ViewData.Last();
+                字符索引列表 = GetCharIndexList(字符索引所在行);
+                字符索引列表.Add(_charIndex);
+                行索引 = Block.ViewData.Count - 1;
+            }
+            else
+            {
+                // 遍历文本行
+                foreach (var textLine in Block.ViewData)
+                {
+                    (int, int) range = textLine.GetCharIndexRange();
+                    if (range.Item1 <= _charIndex && _charIndex <= range.Item2)
+                    {
+                        字符索引列表 = GetCharIndexList(textLine);
+                        字符索引所在行 = textLine;
+                        break;
+                    }
+                    行索引++;
+                }
+            }
+            // 如果没有找到，返回
+            if (字符索引所在行 == null) throw new Exception("未找到字符索引所在行");
+
+            _currentLine = 字符索引所在行;
+            // 获取文本行每个字符横坐标
+            List<double> xList = GetXList(字符索引所在行);
+            // 获取字符索引在行中的索引
+            int indexInLine = 字符索引列表.IndexOf(_charIndex);
+            // 获取字符横坐标
+            double x = xList[indexInLine];
+            // 计算当前行的纵坐标
+            double y = Canvas.GetTop(this) + 行索引 * (Block.FontSize + Block.LineSpace);
+            // 移动光标
+            Page.移动光标((int)x, (int)y, Block.FontSize);
+        }
+
         #endregion
 
         #region 状态树接口
@@ -480,64 +538,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _charIndex = charIndexList[hitedIndex];
             // 返回命中横坐标
             return hitedx;
-        }
-
-        /// <summary>
-        /// 同步光标
-        /// </summary>
-        private void SyncIBeam()
-        {
-            _currentLine = null;
-            // 获取图层在画布中的纵坐标
-            int top = (int)Canvas.GetTop(this);
-            // 没有文本时：将光标定位在第一行开头
-            if (Block.Content.Length == 0)
-            {
-                double start_x = Canvas.GetLeft(this);
-                Page.移动光标((int)start_x + Block.FirstLineIndent, top, Block.FontSize);
-                return;
-            }
-
-            TextLine? 字符索引所在行 = null;
-            List<int> 字符索引列表 = new List<int>();
-            int 行索引 = 0;
-
-            if (_charIndex == Block.Content.Length)
-            {
-                字符索引所在行 = Block.ViewData.Last();
-                字符索引列表 = GetCharIndexList(字符索引所在行);
-                字符索引列表.Add(_charIndex);
-                行索引 = Block.ViewData.Count - 1;
-            }
-            else
-            {
-                // 遍历文本行
-                foreach (var textLine in Block.ViewData)
-                {
-                    (int, int) range = textLine.GetCharIndexRange();
-                    if (range.Item1 <= _charIndex && _charIndex <= range.Item2)
-                    {
-                        字符索引列表 = GetCharIndexList(textLine);
-                        字符索引所在行 = textLine;
-                        break;
-                    }
-                    行索引++;
-                }
-            }
-            // 如果没有找到，返回
-            if (字符索引所在行 == null) throw new Exception("未找到字符索引所在行");
-
-            _currentLine = 字符索引所在行;
-            // 获取文本行每个字符横坐标
-            List<double> xList = GetXList(字符索引所在行);
-            // 获取字符索引在行中的索引
-            int indexInLine = 字符索引列表.IndexOf(_charIndex);
-            // 获取字符横坐标
-            double x = xList[indexInLine];
-            // 计算当前行的纵坐标
-            double y = Canvas.GetTop(this) + 行索引 * (Block.FontSize + Block.LineSpace);
-            // 移动光标
-            Page.移动光标((int)x, (int)y, Block.FontSize);
         }
 
         /// <summary>

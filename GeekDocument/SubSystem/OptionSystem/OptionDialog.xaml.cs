@@ -21,7 +21,7 @@ namespace GeekDocument.SubSystem.OptionSystem
 
         private void XDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            Panel_PageOption.Init();
+            Panel_PageOption.Init(Options.Instance.Page);
             Panel_ParagraphOption.Init();
             Panel_ViewOption.Init();
         }

@@ -33,6 +33,22 @@ namespace GeekDocument.SubSystem.OptionSystem
             LoadOption();
         }
 
+        public void Save()
+        {
+            OptionFile file = new OptionFile
+            {
+                LibPathList = System.LibList,
+                DefaultPathIndex = System.DefaultPathIndex,
+                PageWidth = Page.PageWidth,
+                PagePadding = Page.PagePadding.ToString(),
+                FirstLineIndent = Paragraph.FirstLineIndent,
+                ParagraphInterval = Paragraph.ParagraphInterval,
+                ShowPaddingMark = View.ShowPaddingMark,
+                ShowRowLine = View.ShowRowLine
+            };
+            File.WriteAllText(_optionFilePath, JsonConvert.SerializeObject(file, Formatting.Indented));
+        }
+
         /// <summary>
         /// 新建选项
         /// </summary>
@@ -60,7 +76,7 @@ namespace GeekDocument.SubSystem.OptionSystem
                 System.DefaultPathIndex = optionFile.DefaultPathIndex;
                 // 页面宽度
                 Page.PageWidth = optionFile.PageWidth;
-                string[] margin = optionFile.PageMargin.Split(',');
+                string[] margin = optionFile.PagePadding.Split(',');
                 // 页边距
                 Page.PagePadding = new PageThickness
                 {

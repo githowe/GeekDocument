@@ -11,34 +11,46 @@ namespace GeekDocument.SubSystem.OptionSystem
 
         public void Init(Document document)
         {
-            // 页面宽度
-            Panel_PageOption.Input_PageWidth.Text = document.PageWidth.ToString();
-            // 内边距
-            Panel_PageOption.Input_Padding_Top.Text = document.Padding.Top.ToString();
-            Panel_PageOption.Input_Padding_Bottom.Text = document.Padding.Bottom.ToString();
-            Panel_PageOption.Input_Padding_Left.Text = document.Padding.Left.ToString();
-            Panel_PageOption.Input_Padding_Right.Text = document.Padding.Right.ToString();
+            PageOption pageOption = new PageOption
+            {
+                PageWidth = document.PageWidth,
+                PagePadding = new PageThickness
+                {
+                    Top = document.Padding.Top,
+                    Bottom = document.Padding.Bottom,
+                    Left = document.Padding.Left,
+                    Right = document.Padding.Right
+                }
+            };
+            Panel_PageOption.Init(pageOption);
             // 同时调整所有边距
             Panel_PageOption.Toggle_Link.IsChecked = CacheManager.Instance.Cache.Application.PagePaddingLink;
-            // 首行缩进
+            // 首行缩进、段间距
             Panel_ParagraphOption.Input_FirstLineIndent.Text = document.FirstLineIndent.ToString();
-            // 段间距
             Panel_ParagraphOption.Input_ParagraphInterval.Text = document.ParagraphInterval.ToString();
         }
 
         private void Default_Click(object sender, RoutedEventArgs e)
         {
-
+            PageOption page = Options.Instance.Page;
+            page.PageWidth = Panel_PageOption.PageWidth;
+            page.PagePadding = new PageThickness
+            {
+                Top = Panel_PageOption.Top,
+                Bottom = Panel_PageOption.Bottom,
+                Left = Panel_PageOption.Left,
+                Right = Panel_PageOption.Right
+            };
+            ParagraphOption paragraph = Options.Instance.Paragraph;
+            paragraph.FirstLineIndent = int.Parse(Panel_ParagraphOption.Input_FirstLineIndent.Text);
+            paragraph.ParagraphInterval = int.Parse(Panel_ParagraphOption.Input_ParagraphInterval.Text);
+            // 保存选项
+            Options.Instance.Save();
         }
 
         private void Yes_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-
+            DialogResult = true;
         }
     }
 }
