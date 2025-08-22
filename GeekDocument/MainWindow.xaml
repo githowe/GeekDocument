@@ -26,7 +26,7 @@
             <Grid x:Name="LeftPanel" Background="#262626" Grid.Column="0">
                 <dls:DocLibPanel x:Name="Panel_DocLib"/>
             </Grid>
-            <GridSplitter x:Name="Splitter_Left" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"/>
+            <GridSplitter x:Name="Splitter_Left" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Focusable="False"/>
             <!-- 编辑器区域 -->
             <Grid x:Name="EditerArea" Grid.Column="2">
                 <!-- 编辑器选项卡 -->

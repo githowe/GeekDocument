@@ -196,6 +196,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         }
 
         /// <summary>
+        /// 获取块列表
+        /// </summary>
+        public List<Block> GetBlockList()
+        {
+            List<Block> result = new List<Block>();
+            foreach (var item in _blockLayerList) result.Add(item.SourceBlock);
+            return result;
+        }
+
+        /// <summary>
         /// 初始化光标
         /// </summary>
         public void InitIBeam()

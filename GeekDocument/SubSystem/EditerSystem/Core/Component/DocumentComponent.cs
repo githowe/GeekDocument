@@ -111,6 +111,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void SaveDocument()
         {
+            // 更新块列表
+            Document.BlockList = GetComponent<PageComponent>().GetBlockList();
             // 打开文件
             FileStream fileStream = File.OpenWrite(_host.DocumentPath);
             // 生成存档数据
