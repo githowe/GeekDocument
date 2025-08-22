@@ -204,6 +204,8 @@
                 <Grid x:Name="PageBox" IsHitTestVisible="False"/>
                 <Grid x:Name="LayerBox" IsHitTestVisible="False"/>
             </Grid>
+            <!-- 工具栏阴影 -->
+            <Image Source="Image/Shadow.png" Height="10" VerticalAlignment="Top" Stretch="Fill" Grid.Row="1"/>
             <!-- 滚动条 -->
             <ScrollBar x:Name="PageScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0" Grid.Row="1"
                SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>

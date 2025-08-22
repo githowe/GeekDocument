@@ -78,6 +78,7 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Redo.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Save.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\SaveAs.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Shadow.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Sqrt.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Table.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Text.png" />
@@ -176,6 +177,7 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\Redo.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Save.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\SaveAs.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Shadow.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Sqrt.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Table.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Text.png" />
