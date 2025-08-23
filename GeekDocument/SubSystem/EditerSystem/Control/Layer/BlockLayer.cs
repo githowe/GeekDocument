@@ -23,6 +23,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// <summary>块高度：根据内容动态生成</summary>
         public abstract int BlockHeight { get; }
 
+        public virtual int CharIndex => -1;
+
+        public virtual int CharIndexMax => -1;
+
         #endregion
 
         #region 光标接口
@@ -73,6 +77,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// 输入文本
         /// </summary>
         public virtual void InputText(string text) { }
+
+        public virtual List<Rect> GetSelectionRectList(int startCharIndex, int endCharIndex) => new List<Rect>();
 
         #region 状态树接口
 

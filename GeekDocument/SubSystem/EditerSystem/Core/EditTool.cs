@@ -25,34 +25,43 @@ public class EditTool : ToolBase<InteractionComponent>
         NewTree(Behaviors.Move, (_) =>
         {
             ResetTree();
-            // 更新悬停块
-            // _host.UpdateHoveredBlock();
+            // 处理鼠标移动
+            _host.HandleMouseMove();
         });
         Finish();
     }
 
     private void 点击页面()
     {
-        NewTree("点击页面", (_) =>
+        // 点击页面 -> 松开左键
+        BehaviorNode leftDown = NewTree("点击页面", (_) =>
         {
+            _host.CaptureMouse();
             // 停止光标闪烁
             _host.StopBlinkIBeam();
             // 处理鼠标按下
             _host.HandleMouseDown();
         });
+        // 按下左键后，滚动滚轮时的行为
+        leftDown.MouseWheel = _host.滚动页面并更新选区;
         NewNode(Behaviors.LeftUp, (_) =>
         {
+            _host.ReleaseMouse();
             ResetTree();
             // 开始光标闪烁
             _host.StartBlinkIBeam();
         });
         BackToRoot();
-        NewNode(Behaviors.Move, (_) =>
+        // 点击页面 -> 移动鼠标 -> 松开左键
+        BehaviorNode mouseMove = NewNode(Behaviors.Move, (_) =>
         {
-            // 更新选中内容
+            _host.移动光标并更新选区();
         });
+        // 移动鼠标后，滚动滚轮时的行为
+        mouseMove.MouseWheel = _host.滚动页面并更新选区;
         NewNode(Behaviors.LeftUp, (_) =>
         {
+            _host.ReleaseMouse();
             ResetTree();
             _host.StartBlinkIBeam();
         });

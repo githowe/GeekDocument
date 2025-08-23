@@ -49,10 +49,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _scrollBar.Maximum = GetComponent<PageComponent>().PageHeight - _host.DocArea.ActualHeight;
         }
 
-        public void HandleMouseWheel(MouseWheelEventArgs e)
-        {
-            _scrollBar.Value -= e.Delta / 120 * 64;
-        }
+        public void HandleMouseWheel(MouseWheelEventArgs e) => _scrollBar.Value -= e.Delta / 120 * 64;
+
+        public void Scroll(int delta) => _scrollBar.Value -= delta * 64;
 
         #endregion
 
@@ -62,6 +61,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             GetComponent<IBeamComponent>().Offset = (int)_scrollBar.Value;
             GetComponent<PageComponent>().Offset = (int)_scrollBar.Value;
+            GetComponent<SelectComponent>().Offset = (int)_scrollBar.Value;
         }
 
         #endregion

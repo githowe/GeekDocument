@@ -59,7 +59,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             StopBlinkIBeam();
             _layer.Clear();
-            _layerVisible = false;
+            _ibeamVisible = false;
         }
 
         protected override void Remove()
@@ -76,7 +76,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void StartBlinkIBeam()
         {
-            _layerVisible = true;
+            if (_hideIBeam) return;
+
+            _ibeamVisible = true;
             _layer.Update();
             _blinkTimer.Start();
         }
@@ -86,8 +88,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void StopBlinkIBeam()
         {
+            if (_hideIBeam) return;
+
             _blinkTimer.Stop();
-            _layerVisible = true;
+            _ibeamVisible = true;
             _layer.Update();
         }
 
@@ -98,6 +102,25 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             _layer.IBeamPoint = new Point(x, y);
             _layer.LineHeight = height;
+            if (_hideIBeam) return;
+            _layer.Update();
+        }
+
+        /// <summary>
+        /// 隐藏光标
+        /// </summary>
+        public void HideIBeam()
+        {
+            _hideIBeam = true;
+            _layer.Clear();
+        }
+
+        /// <summary>
+        /// 显示光标
+        /// </summary>
+        public void ShowIBeam()
+        {
+            _hideIBeam = false;
             _layer.Update();
         }
 
@@ -107,9 +130,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         private void BlinkTimer_Tick(object? sender, EventArgs e)
         {
-            if (_layerVisible) _layer.Clear();
+            if (_ibeamVisible) _layer.Clear();
             else _layer.Update();
-            _layerVisible = !_layerVisible;
+            _ibeamVisible = !_ibeamVisible;
         }
 
         #endregion
@@ -119,8 +142,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// <summary>光标图层</summary>
         private IBeamLayer _layer;
 
-        private bool _layerVisible = true;
+        /// <summary>光标可见性，用于闪烁光标</summary>
+        private bool _ibeamVisible = true;
         private readonly DispatcherTimer _blinkTimer = new DispatcherTimer();
+
+        /// <summary>隐藏光标</summary>
+        private bool _hideIBeam = false;
 
         private int _offset = 0;
 

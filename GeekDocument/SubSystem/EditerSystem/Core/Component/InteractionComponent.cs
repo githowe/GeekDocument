@@ -99,6 +99,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void StartBlinkIBeam() => GetComponent<IBeamComponent>().StartBlinkIBeam();
 
+        public void CaptureMouse() => _host.DocArea.CaptureMouse();
+
+        public void ReleaseMouse() => _host.DocArea.ReleaseMouseCapture();
+
         /// <summary>
         /// 处理鼠标移动
         /// </summary>
@@ -112,16 +116,57 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void HandleMouseDown()
         {
+            SelectComponent selectComponent = GetComponent<SelectComponent>();
+
+            // 如果已有选区
+            if (selectComponent.HasSelection)
+            {
+                // 取消选区并显示光标
+                selectComponent.CancelSelection();
+                GetComponent<IBeamComponent>().ShowIBeam();
+            }
+
             // 获取鼠标相对于页面的坐标
             Point mousePoint = Mouse.GetPosition(_host.DocArea);
             mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
+            // 页面组件处理鼠标按下：移动光标
             GetComponent<PageComponent>().HandleMouseDown(mousePoint);
+            // 选择组件处理鼠标按下：开始选择
+            GetComponent<SelectComponent>().HandleMouseDown();
         }
 
         /// <summary>
         /// 处理鼠标滚轮
         /// </summary>
         public void HandleMouseWheel(MouseWheelEventArgs e) => GetComponent<ScrollBarComponent>().HandleMouseWheel(e);
+
+        public void 滚动页面并更新选区(int delta)
+        {
+            // 隐藏光标
+            GetComponent<IBeamComponent>().HideIBeam();
+            // 滚动页面
+            GetComponent<ScrollBarComponent>().Scroll(delta);
+            // 获取鼠标相对于页面的坐标
+            Point mousePoint = Mouse.GetPosition(_host.DocArea);
+            mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
+            // 移动光标
+            GetComponent<PageComponent>().HandleMouseDown(mousePoint);
+            // 更新选区
+            GetComponent<SelectComponent>().UpdateSelection();
+        }
+
+        public void 移动光标并更新选区()
+        {
+            // 隐藏光标
+            GetComponent<IBeamComponent>().HideIBeam();
+            // 获取鼠标相对于页面的坐标
+            Point mousePoint = Mouse.GetPosition(_host.DocArea);
+            mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
+            // 移动光标
+            GetComponent<PageComponent>().HandleMouseDown(mousePoint);
+            // 更新选区
+            GetComponent<SelectComponent>().UpdateSelection();
+        }
 
         #endregion
 

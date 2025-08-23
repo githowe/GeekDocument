@@ -344,6 +344,78 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             GetComponent<ScrollBarComponent>().UpdateScrollBar();
         }
 
+        /// <summary>
+        /// 获取当前字符游标
+        /// </summary>
+        public CharCursor GetCharCursor()
+        {
+            if (_currentBlockLayer == null) throw new Exception("当前块为空");
+            CharCursor result = new CharCursor
+            {
+                BlockIndex = _blockLayerList.IndexOf(_currentBlockLayer),
+                CharIndex = _currentBlockLayer.CharIndex
+            };
+            return result;
+        }
+
+        /// <summary>
+        /// 获取选区包含的区域列表
+        /// </summary>
+        public List<Rect> GetSelectionRectList(CharCursor start, CharCursor end)
+        {
+            List<Rect> result = new List<Rect>();
+
+            // 确定前后顺序
+            CharCursor first, second;
+            if (start.CompareTo(end) <= 0)
+            {
+                first = start;
+                second = end;
+            }
+            else
+            {
+                first = end;
+                second = start;
+            }
+            // 一个块
+            if (second.BlockIndex == first.BlockIndex)
+                return _blockLayerList[first.BlockIndex].GetSelectionRectList(first.CharIndex, second.CharIndex);
+            // 两个块
+            if (second.BlockIndex - 1 == first.BlockIndex)
+            {
+                BlockLayer firstBlock = _blockLayerList[first.BlockIndex];
+                BlockLayer secondBlock = _blockLayerList[second.BlockIndex];
+                // 起始块
+                result.AddRange(firstBlock.GetSelectionRectList(first.CharIndex, firstBlock.CharIndexMax));
+                // 结束块
+                result.AddRange(secondBlock.GetSelectionRectList(0, second.CharIndex));
+                return result;
+            }
+            // 遍历块
+            for (int blockIndex = first.BlockIndex; blockIndex <= second.BlockIndex; blockIndex++)
+            {
+                // 起始块
+                if (blockIndex == first.BlockIndex)
+                {
+                    BlockLayer startBlock = _blockLayerList[first.BlockIndex];
+                    result.AddRange(startBlock.GetSelectionRectList(first.CharIndex, startBlock.CharIndexMax));
+                }
+                // 中间块
+                else if (blockIndex > first.BlockIndex && blockIndex < second.BlockIndex)
+                {
+                    BlockLayer middleBlock = _blockLayerList[blockIndex];
+                    result.AddRange(middleBlock.GetSelectionRectList(0, middleBlock.CharIndexMax));
+                }
+                // 结束块
+                else
+                {
+                    BlockLayer endBlock = _blockLayerList[second.BlockIndex];
+                    result.AddRange(endBlock.GetSelectionRectList(0, second.CharIndex));
+                }
+            }
+            return result;
+        }
+
         #endregion
 
         #region 私有方法

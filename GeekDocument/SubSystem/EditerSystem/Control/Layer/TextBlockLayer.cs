@@ -2,6 +2,8 @@
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,6 +19,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public BlockText Block { get; set; }
 
         public override int BlockHeight => Block.GetViewHeight();
+
+        public override int CharIndex => _charIndex;
+
+        public override int CharIndexMax => Block.Content.Length;
 
         #endregion
 
@@ -76,7 +82,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (Block.ViewData.Count > 0) _currentLine = Block.ViewData[0];
             double y = GetLineY(_currentLine);
             double x = MoveIBeamToLine(_currentLine, mouse_x);
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
         }
 
         public override void MoveIBeamToLastLine(double mouse_x)
@@ -85,7 +91,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (Block.ViewData.Count > 0) _currentLine = Block.ViewData.Last();
             double y = GetLineY(_currentLine);
             double x = MoveIBeamToLine(_currentLine, mouse_x);
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
         }
 
         public override void MoveIBeamToIndex(int index)
@@ -120,7 +126,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 第三步是判断鼠标横坐标点在哪个字符上，以确定光标的横坐标
             double x = MoveIBeamToLine(_currentLine, point.X);
             // 第四步是移动光标
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
             // 使用鼠标移动光标后，需要更新光标横坐标
             Page.更新光标横坐标();
         }
@@ -137,7 +143,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (Block.Content.Length == 0)
             {
                 double start_x = Canvas.GetLeft(this);
-                Page.移动光标((int)start_x + Block.FirstLineIndent, top, Block.FontSize);
+                Page.移动光标(start_x.RoundInt() + Block.FirstLineIndent, top, Block.FontSize);
                 return;
             }
 
@@ -180,7 +186,90 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 计算当前行的纵坐标
             double y = Canvas.GetTop(this) + 行索引 * (Block.FontSize + Block.LineSpace);
             // 移动光标
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+        }
+
+        public override List<Rect> GetSelectionRectList(int startCharIndex, int endCharIndex)
+        {
+            List<Rect> result = new List<Rect>();
+
+            if (Block.Content.Length == 0)
+            {
+                int x1 = (int)(Canvas.GetLeft(this) + Block.FirstLineIndent);
+                int x2 = x1;
+                int y1 = (int)Canvas.GetTop(this);
+                int y2 = y1 + Block.FontSize;
+                result.Add(new Rect(new Point(x1, y1), new Point(x2, y2)));
+                return result;
+            }
+
+            if (endCharIndex == 30)
+            {
+                int i = 10;
+            }
+
+            // 获取字符索引所在行
+            int startLineIndex = GetLineIndex(startCharIndex);
+            int endLineIndex = GetLineIndex(endCharIndex);
+            // 获取失败
+            if (startLineIndex == -1 || endLineIndex == -1) throw new Exception("获取字符索引所在行失败");
+            // 一行
+            if (endLineIndex == startLineIndex)
+            {
+                double x1 = GetCharIndexXOnLine(Block.ViewData[startLineIndex], startCharIndex);
+                double x2 = GetCharIndexXOnLine(Block.ViewData[startLineIndex], endCharIndex);
+                double y1 = GetLineY(Block.ViewData[startLineIndex]);
+                double y2 = y1 + Block.FontSize;
+                result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                return result;
+            }
+            // 两行
+            if (endLineIndex - 1 == startLineIndex)
+            {
+                // 第一行
+                double x1 = GetCharIndexXOnLine(Block.ViewData[startLineIndex], startCharIndex);
+                double x2 = GetLineRight(Block.ViewData[startLineIndex]);
+                double y1 = GetLineY(Block.ViewData[startLineIndex]);
+                double y2 = y1 + Block.FontSize;
+                result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                // 第二行
+                x1 = GetLineLeft(Block.ViewData[endLineIndex]);
+                x2 = GetCharIndexXOnLine(Block.ViewData[endLineIndex], endCharIndex);
+                y1 = GetLineY(Block.ViewData[endLineIndex]);
+                y2 = y1 + Block.FontSize;
+                result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                return result;
+            }
+            // 多行
+            for (int lineIndex = startLineIndex; lineIndex <= endLineIndex; lineIndex++)
+            {
+                double x1, x2;
+                double y1 = GetLineY(Block.ViewData[lineIndex]);
+                double y2 = y1 + Block.FontSize;
+                // 首行
+                if (lineIndex == startLineIndex)
+                {
+                    x1 = GetCharIndexXOnLine(Block.ViewData[lineIndex], startCharIndex);
+                    x2 = GetLineRight(Block.ViewData[lineIndex]);
+                    result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                }
+                // 中间行
+                else if (lineIndex > startLineIndex && lineIndex < endLineIndex)
+                {
+                    x1 = GetLineLeft(Block.ViewData[lineIndex]);
+                    x2 = GetLineRight(Block.ViewData[lineIndex]);
+                    result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                }
+                // 尾行
+                else
+                {
+                    x1 = GetLineLeft(Block.ViewData[lineIndex]);
+                    x2 = GetCharIndexXOnLine(Block.ViewData[lineIndex], endCharIndex);
+                    result.Add(new Rect(new Point(x1.Round(), y1), new Point(x2.Round(), y2)));
+                }
+            }
+
+            return result;
         }
 
         #endregion
@@ -188,8 +277,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         #region 状态树接口
 
         public bool IsEmpty => Block.Content == "";
-
-        public int CharIndex => _charIndex;
 
         public int TextLength => Block.Content.Length;
 
@@ -243,7 +330,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 模拟鼠标点击以确定光标横坐标
             double x = MoveIBeamToLine(_currentLine, Page.获取光标横坐标());
             // 移动光标
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
         }
 
         public void 下移光标()
@@ -253,7 +340,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _currentLine = Block.ViewData[index + 1];
             double y = GetLineY(_currentLine);
             double x = MoveIBeamToLine(_currentLine, Page.获取光标横坐标());
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
         }
 
         public void 左移光标()
@@ -282,7 +369,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
             double y = GetLineY(_currentLine);
             double x = xList.First();
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
             Page.更新光标横坐标();
             _charIndex = charIndexList.First();
         }
@@ -299,7 +386,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
             double y = GetLineY(_currentLine);
             double x = xList.Last();
-            Page.移动光标((int)x, (int)y, Block.FontSize);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
             Page.更新光标横坐标();
             _charIndex = charIndexList.Last();
         }
@@ -575,6 +662,78 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             xList.Add(last_x);
 
             return xList;
+        }
+
+        /// <summary>
+        /// 根据字符索引获取所在行索引
+        /// </summary>
+        private int GetLineIndex(int charIndex)
+        {
+            // 当前块没有任何内容时，返回第一行
+            if (Block.Content.Length == 0) return 0;
+
+            int lineIndex = 0;
+            // 遍历行
+            foreach (var line in Block.ViewData)
+            {
+                // 获取该行的字符索引范围
+                (int, int) range = line.GetCharIndexRange();
+                // 末尾索引应该放到行尾，所以要向后移动一位
+                range.Item2 += 1;
+                // 判断字符索引是否在该范围内
+                if (range.Item1 <= charIndex && charIndex <= range.Item2)
+                    return lineIndex;
+                lineIndex++;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 获取行中的字符索引的横坐标
+        /// </summary>
+        private double GetCharIndexXOnLine(TextLine textLine, int charIndex)
+        {
+            double start_x = Canvas.GetLeft(this);
+            int wordIndex = 0;
+            // 遍历字
+            foreach (var word in textLine.WordList)
+            {
+                // 获取字的起始坐标
+                double word_x = start_x + textLine.XList[wordIndex];
+                // 判断字符索引是否在该字中
+                int indexInWord = word.CharIndexList.IndexOf(charIndex);
+                if (indexInWord != -1)
+                {
+                    List<double> xList = word.GetXList(word_x);
+                    return xList[indexInWord];
+                }
+                wordIndex++;
+            }
+            // 获取最后一个字的最后一个字符索引
+            int lastIndex = textLine.WordList.Last().CharIndexList.Last();
+            // 如果字符索引处于行尾，返回行的右端坐标
+            if (lastIndex + 1 == charIndex) return GetLineRight(textLine);
+            return -1;
+        }
+
+        private double GetLineLeft(TextLine textLine)
+        {
+            // 获取块横坐标
+            double block_x = Canvas.GetLeft(this);
+            if (textLine.WordList.Count == 0) return block_x + Block.FirstLineIndent;
+            // 获取第一个字的横坐标
+            double firstWordX = textLine.XList.First();
+            return block_x + firstWordX;
+        }
+
+        private double GetLineRight(TextLine textLine)
+        {
+            // 获取块横坐标
+            double block_x = Canvas.GetLeft(this);
+            if (textLine.WordList.Count == 0) return block_x + Block.FirstLineIndent;
+            // 获取最后一个字的横坐标
+            double lastWordX = textLine.XList.Last() + textLine.WordList.Last().Width;
+            return block_x + lastWordX;
         }
 
         #endregion
