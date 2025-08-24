@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace GeekDocument.SubSystem.OptionSystem.Panel
 {
     public partial class ParagraphOptionPanel : UserControl
     {
-        public ParagraphOptionPanel()
-        {
-            InitializeComponent();
-        }
+        public ParagraphOptionPanel() => InitializeComponent();
+
+        public int FirstLineIndent => int.Parse(Input_FirstLineIndent.Text);
+
+        public int ParagraphInterval => int.Parse(Input_ParagraphInterval.Text);
 
         public void Init()
         {

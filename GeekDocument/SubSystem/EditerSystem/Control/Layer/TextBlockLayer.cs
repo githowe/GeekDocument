@@ -2,8 +2,7 @@
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
-using System;
-using System.Collections.Generic;
+using GeekDocument.SubSystem.StyleSystem;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -143,7 +142,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (Block.Content.Length == 0)
             {
                 double start_x = Canvas.GetLeft(this);
-                Page.移动光标(start_x.RoundInt() + Block.FirstLineIndent, top, Block.FontSize);
+                Page.移动光标(start_x.RoundInt() + Block.RealFirstLineIndent, top, Block.FontSize);
                 return;
             }
 
@@ -195,17 +194,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
             if (Block.Content.Length == 0)
             {
-                int x1 = (int)(Canvas.GetLeft(this) + Block.FirstLineIndent);
+                int x1 = (int)(Canvas.GetLeft(this) + Block.RealFirstLineIndent);
                 int x2 = x1;
                 int y1 = (int)Canvas.GetTop(this);
                 int y2 = y1 + Block.FontSize;
                 result.Add(new Rect(new Point(x1, y1), new Point(x2, y2)));
                 return result;
-            }
-
-            if (endCharIndex == 30)
-            {
-                int i = 10;
             }
 
             // 获取字符索引所在行
@@ -270,6 +264,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
 
             return result;
+        }
+
+        public override void ApplyStyle(StyleSheet? styleSheet)
+        {
+            Block.ApplyStyle(styleSheet);
+            Block.UpdateViewData(BlockWidth);
+            Update();
         }
 
         #endregion
@@ -453,16 +454,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 获取自身索引
             int blockIndex = Page.获取块索引(this);
             // 创建文本块并继承当前块的属性
-            BlockText block = new BlockText
-            {
-                FontFamily = Block.FontFamily,
-                FontSize = Block.FontSize,
-                Color = Block.Color,
-                TStyle = Block.TStyle,
-                Align = Block.Align,
-                LineSpace = Block.LineSpace,
-                FirstLineIndent = Block.FirstLineIndent
-            };
+            BlockText block = Block.CloneWithoutContent();
             Page.插入块(block, blockIndex + 1);
         }
 
@@ -478,17 +470,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 获取自身索引
             int blockIndex = Page.获取块索引(this);
             // 创建文本块并继承当前块的属性
-            BlockText block = new BlockText
-            {
-                Content = tailText,
-                FontFamily = Block.FontFamily,
-                FontSize = Block.FontSize,
-                Color = Block.Color,
-                TStyle = Block.TStyle,
-                Align = Block.Align,
-                LineSpace = Block.LineSpace,
-                FirstLineIndent = Block.FirstLineIndent
-            };
+            BlockText block = Block.CloneWithoutContent();
+            block.Content = tailText;
             Page.插入块(block, blockIndex + 1);
         }
 
@@ -603,7 +586,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 获取块横坐标
             double block_x = Canvas.GetLeft(this);
             // 行为空时，返回第一行缩进位置
-            if (line == null) return block_x + Block.FirstLineIndent;
+            if (line == null) return block_x + Block.RealFirstLineIndent;
 
             // 获取行的每个字符的横坐标
             List<double> xList = GetXList(line);
@@ -718,22 +701,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         private double GetLineLeft(TextLine textLine)
         {
-            // 获取块横坐标
-            double block_x = Canvas.GetLeft(this);
-            if (textLine.WordList.Count == 0) return block_x + Block.FirstLineIndent;
-            // 获取第一个字的横坐标
-            double firstWordX = textLine.XList.First();
-            return block_x + firstWordX;
+            // 块横坐标 + 第一个字的横坐标
+            return Canvas.GetLeft(this) + textLine.XList.First();
         }
 
         private double GetLineRight(TextLine textLine)
         {
-            // 获取块横坐标
-            double block_x = Canvas.GetLeft(this);
-            if (textLine.WordList.Count == 0) return block_x + Block.FirstLineIndent;
-            // 获取最后一个字的横坐标
-            double lastWordX = textLine.XList.Last() + textLine.WordList.Last().Width;
-            return block_x + lastWordX;
+            // 块横坐标 + 最后一个字的横坐标 + 最后一个字的宽度
+            double lastWordX = textLine.XList.Last();
+            double lastWordWidth = textLine.WordList.Last().Width;
+            return Canvas.GetLeft(this) + lastWordX + lastWordWidth;
         }
 
         #endregion

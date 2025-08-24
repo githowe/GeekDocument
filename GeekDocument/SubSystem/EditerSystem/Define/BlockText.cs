@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.LayoutSystem;
+using GeekDocument.SubSystem.StyleSystem;
 using Newtonsoft.Json;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define
@@ -58,6 +59,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         /// <summary>首行缩进（从文档继承，无需写入存档）</summary>
         public int FirstLineIndent { get; set; } = 0;
 
+        /// <summary>
+        /// 实际首行缩进值
+        /// </summary>
+        public int RealFirstLineIndent => UseCustomFirstLineIndent ? CustomFirstLineIndent : FirstLineIndent;
+
         /// <summary>自定义首行缩进</summary>
         public int CustomFirstLineIndent { get; set; } = 0;
 
@@ -98,11 +104,63 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 }
             }
             // 生成文本行
-            TextWrapTool.Instance.FirstLineIndent = FirstLineIndent;
+            TextWrapTool.Instance.FirstLineIndent = RealFirstLineIndent;
             TextWrapTool.Instance.WrapText(wordList, _lineList, blockWidth, Align);
             // 更新视图高度
             if (_lineList.Count == 0) _viewHeight = FontSize;
             else _viewHeight = _lineList.Count * FontSize + LineSpace * (_lineList.Count - 1);
+        }
+
+        public override void ApplyStyle(StyleSheet? style)
+        {
+            ResetStyle();
+
+            if (style == null) return;
+            foreach (var item in style.ItemList)
+            {
+                bool bold = false;
+                bool italic = false;
+
+                switch (item.ID)
+                {
+                    case StyleID.FontFamily:
+                        FontFamily = item.Value;
+                        break;
+                    case StyleID.FontSize:
+                        FontSize = int.Parse(item.Value);
+                        break;
+                    case StyleID.Color:
+                        Color = item.Value;
+                        break;
+                    case StyleID.Bold:
+                        bold = item.Value == "true";
+                        break;
+                    case StyleID.Italic:
+                        italic = item.Value == "true";
+                        break;
+                    case StyleID.Align:
+                        Align = (LineAlignType)int.Parse(item.Value);
+                        break;
+                    case StyleID.LineSpace:
+                        LineSpace = int.Parse(item.Value);
+                        break;
+                    case StyleID.FirstLineIndent:
+                        CustomFirstLineIndent = int.Parse(item.Value);
+                        UseCustomFirstLineIndent = true;
+                        break;
+                    case StyleID.IndentLeft:
+                        LeftIndent = int.Parse(item.Value);
+                        break;
+                    case StyleID.IndentRight:
+                        RightIndent = int.Parse(item.Value);
+                        break;
+                }
+
+                if (bold && italic) TStyle = TextStyle.BoldItalic;
+                else if (bold) TStyle = TextStyle.Bold;
+                else if (italic) TStyle = TextStyle.Italic;
+                else TStyle = TextStyle.Normal;
+            }
         }
 
         public override void LoadJson(string json)
@@ -135,6 +193,45 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         }
 
         public override int GetViewHeight() => _viewHeight;
+
+        /// <summary>
+        /// 克隆文本块，但不包含内容
+        /// </summary>
+        public BlockText CloneWithoutContent()
+        {
+            BlockText blockText = new BlockText
+            {
+                FontFamily = FontFamily,
+                FontSize = FontSize,
+                Color = Color,
+                TStyle = TStyle,
+                Align = Align,
+                LineSpace = LineSpace,
+                FirstLineIndent = FirstLineIndent,
+                CustomFirstLineIndent = CustomFirstLineIndent,
+                UseCustomFirstLineIndent = UseCustomFirstLineIndent,
+                LeftIndent = LeftIndent,
+                RightIndent = RightIndent
+            };
+            return blockText;
+        }
+
+        /// <summary>
+        /// 重置样式
+        /// </summary>
+        private void ResetStyle()
+        {
+            FontFamily = "仿宋";
+            FontSize = 16;
+            Color = "FFFFFF";
+            TStyle = TextStyle.Normal;
+            Align = LineAlignType.Justify;
+            LineSpace = 4;
+            CustomFirstLineIndent = 0;
+            UseCustomFirstLineIndent = false;
+            LeftIndent = 0;
+            RightIndent = 0;
+        }
 
         protected List<TextLine> _lineList = new List<TextLine>();
         protected int _viewHeight = 0;

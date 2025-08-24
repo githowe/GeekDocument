@@ -352,6 +352,8 @@ namespace GeekDocument
                     Content = dialog.DocumentName,
                     FontSize = 32,
                     FirstLineIndent = document.FirstLineIndent,
+                    CustomFirstLineIndent = 0,
+                    UseCustomFirstLineIndent = true,
                 };
                 title.UpdateViewData(document.PageWidth);
                 document.BlockList.Add(title);

@@ -1,4 +1,6 @@
-﻿namespace GeekDocument.SubSystem.EditerSystem.Define
+﻿using GeekDocument.SubSystem.StyleSystem;
+
+namespace GeekDocument.SubSystem.EditerSystem.Define
 {
     public abstract class Block
     {
@@ -13,6 +15,11 @@
         /// 获取视图高度
         /// </summary>
         public virtual int GetViewHeight() => 0;
+
+        /// <summary>
+        /// 应用样式
+        /// </summary>
+        public virtual void ApplyStyle(StyleSheet? style) { }
 
         public abstract void LoadJson(string json);
 

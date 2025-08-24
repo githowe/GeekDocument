@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.StyleSystem;
 using System.Windows;
 using XLogic.Wpf.Drawing;
 
@@ -79,6 +80,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public virtual void InputText(string text) { }
 
         public virtual List<Rect> GetSelectionRectList(int startCharIndex, int endCharIndex) => new List<Rect>();
+
+        /// <summary>
+        /// 应用样式
+        /// </summary>
+        public virtual void ApplyStyle(StyleSheet? styleSheet) { }
 
         #region 状态树接口
 

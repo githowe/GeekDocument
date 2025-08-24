@@ -1,7 +1,9 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
 using GeekDocument.SubSystem.EditerSystem.Core.Layer;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EventSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.StyleSystem;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,6 +70,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 Margin = new Thickness(0, 16, 0, 0),
             };
             _host.PageBox.Children.Add(_canvas);
+
+            GetComponent<ToolBarComponent>().ToolClick += ToolBar_ToolClick;
+            EM.Instance.Add(EventType.Option_Changed, Option_Changed);
         }
 
         #endregion
@@ -419,6 +424,61 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         #endregion
 
         #region 私有方法
+
+        private void ToolBar_ToolClick(string name)
+        {
+            switch (name)
+            {
+                case "Tool_Text":
+                    ApplySystemStyle("");
+                    break;
+                case "Tool_Title":
+                    ApplySystemStyle("Title");
+                    break;
+                case "Tool_Header1":
+                    ApplySystemStyle("H1");
+                    break;
+                case "Tool_Header2":
+                    ApplySystemStyle("H2");
+                    break;
+                case "Tool_Header3":
+                    ApplySystemStyle("H3");
+                    break;
+                case "Tool_Header4":
+                    ApplySystemStyle("H4");
+                    break;
+            }
+        }
+
+        private void Option_Changed()
+        {
+            // 影响页面的选项只有两个：显示边距标记、显示行线
+            UpdateBack();
+            DrawBlock();
+        }
+
+        /// <summary>
+        /// 应用系统样式
+        /// </summary>
+        private void ApplySystemStyle(string styleName)
+        {
+            // 查找样式
+            StyleSheet? styleSheet = StyleManager.Instance.FindStyleSheet(styleName);
+            if (styleName != "" && styleSheet == null) throw new Exception($"未找到样式：{styleName}");
+            // 应用样式
+            if (_currentBlockLayer == null) throw new Exception("当前块为空");
+            _currentBlockLayer.ApplyStyle(styleSheet);
+            // 更新图层坐标并同步光标
+            UpdateBlockPoint();
+            _currentBlockLayer?.SyncIBeam();
+            更新光标横坐标();
+            // 更新图层高度
+            UpdatePageHeight();
+            // 更新背景、滚动条
+            UpdateBack();
+            GetComponent<ScrollBarComponent>().UpdateScrollBar();
+            _host.Saved = false;
+        }
 
         /// <summary>
         /// 生成块图层

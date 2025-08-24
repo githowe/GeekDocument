@@ -1,6 +1,8 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.DocLibSystem;
+using GeekDocument.SubSystem.EventSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.StyleSystem;
 using System.IO;
 using System.Windows;
 using XLogic.Windows.Kernel32;
@@ -27,6 +29,9 @@ namespace GeekDocument
             Options.Instance.Init();
             DocumentTree.Instance.Init();
             CacheManager.Instance.Init();
+            StyleManager.Instance.Init();
+            // 初始化系统服务
+            EM.Instance.Init();
         }
     }
 }

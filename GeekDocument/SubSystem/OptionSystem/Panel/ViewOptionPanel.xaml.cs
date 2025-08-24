@@ -1,30 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace GeekDocument.SubSystem.OptionSystem.Panel
 {
     public partial class ViewOptionPanel : UserControl
     {
-        public ViewOptionPanel()
-        {
-            InitializeComponent();
-        }
+        public ViewOptionPanel() => InitializeComponent();
 
         public void Init()
         {
             ViewOption viewOption = Options.Instance.View;
+            Check_PaddingMark.IsChecked = viewOption.ShowPaddingMark;
+            Check_RowLine.IsChecked = viewOption.ShowRowLine;
         }
     }
 }

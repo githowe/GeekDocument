@@ -120,32 +120,32 @@
                     </Button.Content>
                 </Button>
                 <wc:ToolSplitBar/>
-                <Button x:Name="Tool_Text" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Text" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：正文">
                     <Button.Content>
                         <Image Source="Image/Text.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <Button x:Name="Tool_Title" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Title" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：标题">
                     <Button.Content>
                         <Image Source="Image/Title.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <Button x:Name="Tool_Header1" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Header1" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：一级标头">
                     <Button.Content>
                         <Image Source="Image/H1.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <Button x:Name="Tool_Header2" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Header2" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：二级标头">
                     <Button.Content>
                         <Image Source="Image/H2.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <Button x:Name="Tool_Header3" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Header3" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：三级标头">
                     <Button.Content>
                         <Image Source="Image/H3.png" Height="16" Width="16"/>
                     </Button.Content>
                 </Button>
-                <Button x:Name="Tool_Header4" Style="{StaticResource ToolBarButton}" Width="30" Height="30">
+                <Button x:Name="Tool_Header4" Style="{StaticResource ToolBarButton}" Width="30" Height="30" ToolTip="应用样式：四级标头">
                     <Button.Content>
                         <Image Source="Image/H4.png" Height="16" Width="16"/>
                     </Button.Content>
