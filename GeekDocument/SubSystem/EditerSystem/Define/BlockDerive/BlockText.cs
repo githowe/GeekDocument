@@ -2,7 +2,7 @@
 using GeekDocument.SubSystem.StyleSystem;
 using Newtonsoft.Json;
 
-namespace GeekDocument.SubSystem.EditerSystem.Define
+namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
     public class TextBlockData
     {

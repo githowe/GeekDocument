@@ -5,6 +5,7 @@ using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
 using GeekDocument.SubSystem.EditerSystem.Core;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.ResourceSystem;

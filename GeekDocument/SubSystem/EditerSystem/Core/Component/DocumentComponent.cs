@@ -1,5 +1,6 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.OptionSystem;
 using System.IO;
 using XLogic.Base.UI;
