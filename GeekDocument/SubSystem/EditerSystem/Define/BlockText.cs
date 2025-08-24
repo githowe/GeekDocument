@@ -26,6 +26,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 4;
+
+        public int CustomFirstLineIndent { get; set; } = 0;
+
+        public bool UseCustomFirstLineIndent { get; set; } = false;
+
+        public int LeftIndent { get; set; } = 0;
+
+        public int RightIndent { get; set; } = 0;
     }
 
     /// <summary>
@@ -175,6 +183,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
             TStyle = (TextStyle)blockData.TextStyle;
             Align = (LineAlignType)blockData.Align;
             LineSpace = blockData.LineSpace;
+            CustomFirstLineIndent = blockData.CustomFirstLineIndent;
+            UseCustomFirstLineIndent = blockData.UseCustomFirstLineIndent;
+            LeftIndent = blockData.LeftIndent;
+            RightIndent = blockData.RightIndent;
         }
 
         public override string ToJson()
@@ -188,6 +200,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
                 TextStyle = (int)TStyle,
                 Align = (int)Align,
                 LineSpace = LineSpace,
+                CustomFirstLineIndent = CustomFirstLineIndent,
+                UseCustomFirstLineIndent = UseCustomFirstLineIndent,
+                LeftIndent = LeftIndent,
+                RightIndent = RightIndent,
             };
             return JsonConvert.SerializeObject(blockData);
         }
