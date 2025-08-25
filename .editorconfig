@@ -2,3 +2,6 @@
 
 # IDE0090: 使用 "new(...)"
 dotnet_diagnostic.IDE0090.severity = none
+
+# IDE0028: 可以简化集合初始化
+dotnet_diagnostic.IDE0028.severity = none
