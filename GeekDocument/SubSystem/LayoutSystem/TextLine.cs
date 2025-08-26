@@ -197,6 +197,23 @@ namespace GeekDocument.SubSystem.LayoutSystem
             return (first, last);
         }
 
+        /// <summary>
+        /// 横向移动至
+        /// </summary>
+        public void MoveTo(double x)
+        {
+            XList.Clear();
+            double currentX = x;
+            XList.Add(currentX);
+            Word lastWord = WordList.Last();
+            foreach (var word in WordList)
+            {
+                if (word == lastWord) break;
+                currentX += word.Width + word.Interval;
+                XList.Add(currentX);
+            }
+        }
+
         #endregion
 
         #region 私有方法

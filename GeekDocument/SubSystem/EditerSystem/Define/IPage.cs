@@ -25,6 +25,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         int 获取块索引(BlockLayer block);
 
+        int 获取当前块索引();
+
         bool 有上一个块(BlockLayer block);
 
         bool 有下一个块(BlockLayer block);

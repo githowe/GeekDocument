@@ -8,9 +8,10 @@
              mc:Ignorable="d" d:FontFamily="NSimSun"
              HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid>
-        <Grid Margin="10">
-            <CheckBox x:Name="Check_PaddingMark" Content="显示边距标记" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True"/>
-            <CheckBox x:Name="Check_RowLine" Content="显示行线" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160,0,0,0"/>
-        </Grid>
+        <StackPanel Margin="10" Orientation="Horizontal">
+            <CheckBox x:Name="Check_PageBorder" Content="显示页面边框" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left"/>
+            <CheckBox x:Name="Check_PaddingMark" Content="显示边距标记" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+            <CheckBox x:Name="Check_RowLine" Content="显示行线" Style="{StaticResource OnOff}" Width="140" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+        </StackPanel>
     </Grid>
 </UserControl>

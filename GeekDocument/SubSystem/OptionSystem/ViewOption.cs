@@ -5,6 +5,9 @@
     /// </summary>
     public class ViewOption
     {
+        /// <summary>显示页面边框</summary>
+        public bool ShowPageBorder { get; set; } = true;
+
         /// <summary>显示边距标记</summary>
         public bool ShowPaddingMark { get; set; } = true;
 

@@ -10,16 +10,22 @@ namespace XLogic.Base
         public TypeInfo(string name, string extension)
         {
             Name = name;
-            Extension = extension;
+            ExtensionList = extension.Split(",").ToList();
         }
 
         /// <summary>类型名</summary>
         public string Name { get; set; } = "文件";
 
-        /// <summary>扩展名</summary>
-        public string Extension { get; set; } = "*";
+        public List<string> ExtensionList { get; set; } = new List<string>();
 
-        public override string ToString() => $"{Name}(*.{Extension})|*.{Extension}";
+        public override string ToString()
+        {
+            // 文件筛选器格式：图片|*.png;*.jpg;*.jpeg
+            string extension = "";
+            foreach (var item in ExtensionList) extension += $"*.{item};";
+            extension = extension.TrimEnd(';');
+            return $"{Name}|{extension}";
+        }
     }
 
     /// <summary>

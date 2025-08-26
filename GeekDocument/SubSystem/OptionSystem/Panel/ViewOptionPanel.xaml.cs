@@ -9,6 +9,7 @@ namespace GeekDocument.SubSystem.OptionSystem.Panel
         public void Init()
         {
             ViewOption viewOption = Options.Instance.View;
+            Check_PageBorder.IsChecked = viewOption.ShowPageBorder;
             Check_PaddingMark.IsChecked = viewOption.ShowPaddingMark;
             Check_RowLine.IsChecked = viewOption.ShowRowLine;
         }

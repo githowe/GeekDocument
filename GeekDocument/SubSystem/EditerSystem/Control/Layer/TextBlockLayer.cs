@@ -525,7 +525,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 }
                 // 字横坐标
                 double word_x = line.XList[index];
-                // 绘制字包含的字形
+                // 绘制字的字形
                 foreach (var image in word.GlyphImageList)
                 {
                     Point leftTop = new Point((word_x + image.Origin.X).Round(), y + image.Origin.Y);

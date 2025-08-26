@@ -1,6 +1,8 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.DocLibSystem;
 using GeekDocument.SubSystem.EventSystem;
+using GeekDocument.SubSystem.FileSystem;
+using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.StyleSystem;
 using System.IO;
@@ -32,6 +34,8 @@ namespace GeekDocument
             StyleManager.Instance.Init();
             // 初始化系统服务
             EM.Instance.Init();
+            FM.Instance.Init();
+            ImageLoader.Instance.Init();
         }
     }
 }

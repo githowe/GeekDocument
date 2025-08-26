@@ -33,6 +33,7 @@ namespace GeekDocument.SubSystem.OptionSystem
             paragraph.ParagraphInterval = Panel_ParagraphOption.ParagraphInterval;
             // 应用视图选项
             ViewOption view = Options.Instance.View;
+            view.ShowPageBorder = Panel_ViewOption.Check_PageBorder.IsChecked == true;
             view.ShowPaddingMark = Panel_ViewOption.Check_PaddingMark.IsChecked == true;
             view.ShowRowLine = Panel_ViewOption.Check_RowLine.IsChecked == true;
             // 保存选项、关闭对话框、触发事件

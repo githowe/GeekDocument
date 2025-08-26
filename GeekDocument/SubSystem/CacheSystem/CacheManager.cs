@@ -16,6 +16,8 @@ namespace GeekDocument.SubSystem.CacheSystem
         public DocumentManageCache DocumentManager { get; set; } = new DocumentManageCache();
 
         public DocumentLibCache DocumentLib { get; set; } = new DocumentLibCache();
+
+        public FileManagerCache FileManager { get; set; } = new FileManagerCache();
     }
 
     public class CacheManager

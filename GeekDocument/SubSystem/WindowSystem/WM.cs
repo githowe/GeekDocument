@@ -2,7 +2,6 @@
 using System.Media;
 using System.Windows;
 using XLogic.Wpf.Window;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace GeekDocument.SubSystem.WindowSystem
 {

@@ -125,6 +125,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         public int 获取块索引(BlockLayer block) => _blockLayerList.IndexOf(block);
 
+        public int 获取当前块索引()
+        {
+            if (_currentBlockLayer == null) throw new Exception("当前块为空");
+            return _blockLayerList.IndexOf(_currentBlockLayer);
+        }
+
         public bool 有上一个块(BlockLayer block)
         {
             int index = _blockLayerList.IndexOf(block);
@@ -167,6 +173,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _currentBlockLayer = layer;
             _currentBlockLayer.MoveIBeamToHead();
             更新光标横坐标();
+
+            UpdatePageHeight();
+            UpdateBack();
+            GetComponent<ScrollBarComponent>().UpdateScrollBar();
+            _host.Saved = false;
         }
 
         public void 移除块(BlockLayer block)
@@ -500,6 +511,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.List:
                     break;
                 case BlockType.Image:
+                    layer = new ImageBlockLayer { SourceBlock = block, Block = (BlockImage)block };
                     break;
                 case BlockType.Table:
                     break;
