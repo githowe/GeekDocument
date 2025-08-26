@@ -53,12 +53,22 @@ public partial class NewDocumentDialog : XDialog
 
     private void Tool_Explorer_Click(object sender, RoutedEventArgs e)
     {
+        if (Directory.Exists(Input_Path.Text) == false)
+        {
+            WM.ShowErrorTip($"路径“{Input_Path.Text}”不存在");
+            return;
+        }
         string newPath = FM.Instance.OpenFolderExplorerDialog(Input_Path.Text);
         if (newPath != "") Input_Path.Text = newPath;
     }
 
     private void OK_Click(object sender, RoutedEventArgs e)
     {
+        if (Directory.Exists(Input_Path.Text) == false)
+        {
+            WM.ShowErrorTip($"路径“{Input_Path.Text}”不存在");
+            return;
+        }
         DocumentPath = Input_Path.Text;
         DocumentName = Input_Name.Text;
         if (DocumentPath.EndsWith("\\")) DocumentPath = DocumentPath[..^1];

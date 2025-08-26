@@ -151,10 +151,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             List<int> 字符索引列表 = new List<int>();
             int 行索引 = 0;
 
+            // 字符索引处于文本块末尾
             if (_charIndex == Block.Content.Length)
             {
                 字符索引所在行 = Block.ViewData.Last();
-                字符索引列表 = GetCharIndexList(字符索引所在行);
+                字符索引列表 = 字符索引所在行.GetCharIndexList();
                 字符索引列表.Add(_charIndex);
                 行索引 = Block.ViewData.Count - 1;
             }
@@ -166,7 +167,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                     (int, int) range = textLine.GetCharIndexRange();
                     if (range.Item1 <= _charIndex && _charIndex <= range.Item2)
                     {
-                        字符索引列表 = GetCharIndexList(textLine);
+                        字符索引列表 = textLine.GetCharIndexList();
                         字符索引所在行 = textLine;
                         break;
                     }
@@ -178,7 +179,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
             _currentLine = 字符索引所在行;
             // 获取文本行每个字符横坐标
-            List<double> xList = GetXList(字符索引所在行);
+            List<double> xList = 字符索引所在行.GetXList(Canvas.GetLeft(this));
             // 获取字符索引在行中的索引
             int indexInLine = 字符索引列表.IndexOf(_charIndex);
             // 获取字符横坐标
@@ -362,9 +363,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public void 移动光标至行首()
         {
             // 获取当前行的横坐标列表
-            List<double> xList = GetXList(_currentLine);
+            List<double> xList = _currentLine.GetXList(Canvas.GetLeft(this));
             // 获取当前行的字符索引列表
-            List<int> charIndexList = GetCharIndexList(_currentLine);
+            List<int> charIndexList = _currentLine.GetCharIndexList();
             // 添加末尾索引，以便将光标定位至末尾
             int lastCharIndex = charIndexList.Last();
             charIndexList.Add(lastCharIndex + 1);
@@ -379,9 +380,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public void 移动光标至行尾()
         {
             // 获取当前行的横坐标列表
-            List<double> xList = GetXList(_currentLine);
+            List<double> xList = _currentLine.GetXList(Canvas.GetLeft(this));
             // 获取当前行的字符索引列表
-            List<int> charIndexList = GetCharIndexList(_currentLine);
+            List<int> charIndexList = _currentLine.GetCharIndexList();
             // 添加末尾索引，以便将光标定位至末尾
             int lastCharIndex = charIndexList.Last();
             charIndexList.Add(lastCharIndex + 1);
@@ -590,9 +591,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (line == null) return block_x + Block.RealFirstLineIndent;
 
             // 获取行的每个字符的横坐标
-            List<double> xList = GetXList(line);
+            List<double> xList = line.GetXList(Canvas.GetLeft(this));
             // 获取行的字符索引列表
-            List<int> charIndexList = GetCharIndexList(line);
+            List<int> charIndexList = line.GetCharIndexList();
             // 添加末尾索引，以便将光标定位至末尾
             int lastCharIndex = charIndexList.Last();
             charIndexList.Add(lastCharIndex + 1);
@@ -609,43 +610,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _charIndex = charIndexList[hitedIndex];
             // 返回命中横坐标
             return hitedx;
-        }
-
-        /// <summary>
-        /// 获取文本行的字符索引列表
-        /// </summary>
-        private List<int> GetCharIndexList(TextLine textLine)
-        {
-            List<int> result = new List<int>();
-            foreach (var item in textLine.WordList)
-                result.AddRange(item.CharIndexList);
-            return result;
-        }
-
-        /// <summary>
-        /// 获取文本行的字符横坐标列表
-        /// </summary>
-        private List<double> GetXList(TextLine textLine)
-        {
-            // 起始横坐标 = 图层左侧坐标
-            double start_x = Canvas.GetLeft(this);
-            List<double> xList = new List<double>();
-            // 遍历字
-            int x_index = 0;
-            foreach (var item in textLine.WordList)
-            {
-                // 获取字的起始坐标
-                double word_x = start_x + textLine.XList[x_index];
-                // 添加横坐标
-                if (item.MultiChar) xList.AddRange(item.GetXList(word_x));
-                else xList.Add(word_x);
-                x_index++;
-            }
-            // 添加末尾横坐标：末尾字横坐标 + 末尾字宽度
-            double last_x = start_x + textLine.XList.Last() + textLine.WordList.Last().Width;
-            xList.Add(last_x);
-
-            return xList;
         }
 
         /// <summary>

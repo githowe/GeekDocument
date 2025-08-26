@@ -84,27 +84,29 @@ public class EditerComponent : Component<Editer>
     private void InsertImage()
     {
         // 选择图片
-        string imagePath = FM.Instance.OpenReadImageDialog("插入图片");
-        if (imagePath == "") return;
+        List<string> pathList = FM.Instance.OpenReadImageDialog("插入图片");
+        if (pathList.Count == 0) return;
 
-        // 加载图片
-        ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(imagePath);
-        if (imageInfo == null)
+        foreach (var imagePath in pathList)
         {
-            WM.ShowErrorTip($"加载图片“{imagePath}”失败");
-            return;
+            // 加载图片
+            ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(imagePath);
+            if (imageInfo == null)
+            {
+                WM.ShowErrorTip($"加载图片“{imagePath}”失败");
+                continue;
+            }
+            // 创建图片块
+            BlockImage block = new BlockImage
+            {
+                SourceWidth = imageInfo.Width,
+                SourceHeight = imageInfo.Height,
+                FrameList = imageInfo.FrameList,
+                Duration = imageInfo.Duration,
+                Caption = System.IO.Path.GetFileName(imagePath),
+            };
+            // 插入图片块
+            GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
         }
-
-        // 创建图片块
-        BlockImage block = new BlockImage
-        {
-            SourceWidth = imageInfo.Width,
-            SourceHeight = imageInfo.Height,
-            FrameList = imageInfo.FrameList,
-            Duration = imageInfo.Duration,
-            Caption = System.IO.Path.GetFileName(imagePath),
-        };
-        // 插入图片块
-        GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
     }
 }

@@ -5,6 +5,7 @@ using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.StyleSystem;
+using GeekDocument.SubSystem.TimeSystem;
 using System.IO;
 using System.Windows;
 using XLogic.Windows.Kernel32;
@@ -36,6 +37,7 @@ namespace GeekDocument
             EM.Instance.Init();
             FM.Instance.Init();
             ImageLoader.Instance.Init();
+            AppWatch.Instance.Start();
         }
     }
 }

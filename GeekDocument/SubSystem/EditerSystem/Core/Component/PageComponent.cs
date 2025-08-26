@@ -95,6 +95,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (prevBlock == null) throw new Exception("获取上一个块失败");
             prevBlock.MoveIBeamToEnd();
             _currentBlockLayer = prevBlock;
+            更新光标横坐标();
         }
 
         public void 移动光标至后块开头(BlockLayer block)
@@ -103,6 +104,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (nextBlock == null) throw new Exception("获取下一个块失败");
             nextBlock.MoveIBeamToHead();
             _currentBlockLayer = nextBlock;
+            更新光标横坐标();
         }
 
         public void 移动光标至前块最后一行(BlockLayer block)

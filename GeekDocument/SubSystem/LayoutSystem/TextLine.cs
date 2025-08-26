@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Define;
+using System.Windows.Media.TextFormatting;
 
 namespace GeekDocument.SubSystem.LayoutSystem
 {
@@ -212,6 +213,41 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 currentX += word.Width + word.Interval;
                 XList.Add(currentX);
             }
+        }
+
+        /// <summary>
+        /// 获取加上起始横坐标的横坐标列表
+        /// </summary>
+        public List<double> GetXList(double startx)
+        {
+            List<double> xList = new List<double>();
+            // 遍历字
+            int x_index = 0;
+            foreach (var item in WordList)
+            {
+                // 获取字的起始坐标
+                double word_x = startx + XList[x_index];
+                // 添加横坐标
+                if (item.MultiChar) xList.AddRange(item.GetXList(word_x));
+                else xList.Add(word_x);
+                x_index++;
+            }
+            // 添加末尾横坐标：末尾字横坐标 + 末尾字宽度
+            double last_x = startx + XList.Last() + WordList.Last().Width;
+            xList.Add(last_x);
+
+            return xList;
+        }
+
+        /// <summary>
+        /// 获取字符索引列表
+        /// </summary>
+        public List<int> GetCharIndexList()
+        {
+            List<int> result = new List<int>();
+            foreach (var item in WordList)
+                result.AddRange(item.CharIndexList);
+            return result;
         }
 
         #endregion

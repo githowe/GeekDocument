@@ -62,23 +62,24 @@ namespace GeekDocument.SubSystem.FileSystem
         /// <summary>
         /// 打开读取图片对话框
         /// </summary>
-        public string OpenReadImageDialog(string title)
+        public List<string> OpenReadImageDialog(string title)
         {
             OpenFileDialog dialog = new OpenFileDialog
             {
                 Title = title,
                 InitialDirectory = GetImagePath(),
                 Filter = _image.ToString(),
-                FilterIndex = CacheManager.Instance.Cache.FileManager.RecentImageType
+                FilterIndex = CacheManager.Instance.Cache.FileManager.RecentImageType,
+                Multiselect = true,
             };
             if (dialog.ShowDialog() == true)
             {
                 CacheManager.Instance.Cache.FileManager.RecentImagePath = Path.GetDirectoryName(dialog.FileName);
                 CacheManager.Instance.Cache.FileManager.RecentImageType = dialog.FilterIndex;
                 CacheManager.Instance.SaveCache();
-                return dialog.FileName;
+                return dialog.FileNames.ToList();
             }
-            return "";
+            return [];
         }
 
         private string GetImagePath()

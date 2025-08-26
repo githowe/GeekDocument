@@ -9,7 +9,7 @@
         mc:Ignorable="d" WindowStartupLocation="CenterOwner"
         Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
         FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/NewFile"
-        Title="新建文档" SizeToContent="Height" Width="500">
+        Title="新建文档" SizeToContent="Height" Width="600">
     <Grid>
         <Grid Margin="10">
             <Grid.RowDefinitions>
@@ -33,7 +33,7 @@
 
             <wc:FrameLabel Text="路径" Grid.Row="4"/>
             <Grid Grid.Row="6">
-                <TextBox x:Name="Input_Path" Width="478"/>
+                <TextBox x:Name="Input_Path" Width="578"/>
                 <Grid Background="Transparent" Width="37" Height="23" HorizontalAlignment="Right" Margin="0,0,1,0">
                     <Button x:Name="Tool_Explorer" Style="{StaticResource ToolBarButton}" Click="Tool_Explorer_Click" ToolTip="浏览">
                         <Button.Content>

@@ -9,7 +9,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
     /// </summary>
     public class BlockImage : Block
     {
+        #region 构造方法
+
         public BlockImage() => Type = BlockType.Image;
+
+        #endregion
 
         #region 属性
 
@@ -61,7 +65,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>文本纵坐标</summary>
         public int TextY => _actualHeight + _captionTop;
 
+        public int CaptionTop => _captionTop;
+
         #endregion
+
+        #region Block 方法
 
         public override void LoadJson(string json)
         {
@@ -73,9 +81,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             return "";
         }
 
-        /// <summary>
-        /// 视图高度
-        /// </summary>
         public override int GetViewHeight()
         {
             // 有图注时，高度 = 图片高度 + 图注上边距 + 图注高度
@@ -91,6 +96,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             CalculateImageX(blockWidth);
             UpdateTextLine(blockWidth);
         }
+
+        #endregion
 
         #region 私有方法
 
@@ -201,7 +208,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         private int _actualHeight = 0;
 
         /// <summary>图注上边距mmary>
-        private readonly int _captionTop = 8;
+        private readonly int _captionTop = 4;
 
         /// <summary>文本行。存放图注</summary>
         private TextLine? _textLine = null;
