@@ -404,7 +404,9 @@ namespace GeekDocument
             // 关闭主页并打开编辑器页
             if (Control_Home.Visibility == Visibility.Visible)
             {
-                Control_Home.Visibility = Visibility.Collapsed;
+                // Control_Home.Visibility = Visibility.Collapsed;
+                EditerArea.Children.Remove(Control_Home);
+                GC.Collect();
                 Grid_Editer.Visibility = Visibility.Visible;
             }
             // 新建一个选项卡用于承载编辑器

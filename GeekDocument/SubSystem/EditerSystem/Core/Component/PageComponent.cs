@@ -188,6 +188,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _canvas.Children.Remove(block);
             // 移除块实例
             _blockLayerList.Remove(block);
+            _blockRectDict.Remove(block);
         }
 
         #endregion

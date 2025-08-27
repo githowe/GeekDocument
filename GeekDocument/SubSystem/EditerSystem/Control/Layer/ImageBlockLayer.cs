@@ -121,9 +121,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 int x;
                 int imagex = left + Block.ImageX;
                 // 图片前
-                if (_charIndex == 0) x = imagex;
+                if (_charIndex == 0) x = imagex - 1;
                 // 图片后
-                else x = imagex + Block.RenderWidth;
+                else x = imagex + Block.RenderWidth + 1;
                 // 移动光标
                 Page.移动光标(x, top, Block.RenderHeight);
             }
@@ -155,6 +155,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _stateTree.HandleEditKey(key);
         }
 
+        public override void InputText(string text)
+        {
+            if (_subArea == SubArea.Image) return;
+
+            Block.Caption = Block.Caption.Insert(_charIndex - 2, text);
+            _charIndex += text.Length;
+            Block.UpdateViewData(BlockWidth);
+            Update();
+            SyncIBeam();
+        }
+
         public override void MoveIBeamToPoint(Point point)
         {
             // 确定子区域
@@ -173,6 +184,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public bool HasPrevLine => _subArea == SubArea.Caption;
 
         public bool HasNextLine => _subArea == SubArea.Image && Block.Caption != null;
+
+        public bool 处于图片区 => _subArea == SubArea.Image;
+
+        public bool EmptyCaption => Block.Caption == "";
+
+        public bool NoneCaption => Block.Caption == null;
 
         public void 上移光标()
         {
@@ -216,6 +233,86 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Page.更新光标横坐标();
         }
 
+        public void 用退格键删除块()
+        {
+            // 获取上一个块
+            BlockLayer? prevBlock = Page.获取上一个块(this);
+            if (prevBlock == null) throw new Exception("获取上一个块失败");
+            // 移除当前块
+            Page.移除块(this);
+            // 将上一个块设为当前块
+            Page.设置当前块(prevBlock);
+            // 移动光标至上一个块末尾
+            prevBlock.MoveIBeamToEnd();
+            Page.更新光标横坐标();
+        }
+
+        public void 删除图注()
+        {
+            // 置空图注
+            Block.Caption = null;
+            // 更新视图数据与视图
+            Block.UpdateViewData(BlockWidth);
+            Update();
+            // 移动光标至图片后
+            _charIndex = 1;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 用退格键删除字符()
+        {
+            Block.Caption = Block.Caption.Remove(_charIndex - 3, 1);
+            _charIndex--;
+            // 更新视图数据与视图
+            Block.UpdateViewData(BlockWidth);
+            Update();
+            // 移动光标
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 在块前插入空文本块()
+        {
+            // 获取自身索引
+            int blockIndex = Page.获取块索引(this);
+            // 创建文本块
+            BlockText blockText = new BlockText
+            {
+                FirstLineIndent = Page.FirstLineIndent,
+            };
+            Page.插入块(blockText, blockIndex);
+        }
+
+        public void 插入空图注并移动至图注区()
+        {
+            Block.Caption = "";
+            Block.UpdateViewData(BlockWidth);
+            Update();
+            _charIndex = 2;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 移动光标至图注末尾()
+        {
+            _charIndex = CharIndexMax;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 在块后插入空文本块()
+        {
+            // 获取自身索引
+            int blockIndex = Page.获取块索引(this);
+            // 创建文本块
+            BlockText blockText = new BlockText
+            {
+                FirstLineIndent = Page.FirstLineIndent,
+            };
+            Page.插入块(blockText, blockIndex + 1);
+        }
+
         #endregion
 
         #region 内部方法
@@ -225,7 +322,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 绘制图片
             _dc.DrawImage(_display, new Rect(Block.ImageX, 0, Block.RenderWidth, Block.RenderHeight));
             // 绘制图注
-            if (Block.Caption == null) return;
+            if (Block.Caption == null || Block.Caption == "") return;
             int y = Block.TextY;
             int index = 0;
             foreach (var word in Block.TextLine.WordList)
@@ -294,12 +391,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (x < imageCenter)
             {
                 _charIndex = 0;
-                Page.移动光标(left + Block.ImageX, top, Block.RenderHeight);
+                Page.移动光标(left + Block.ImageX - 1, top, Block.RenderHeight);
             }
             else
             {
                 _charIndex = 1;
-                Page.移动光标(left + Block.ImageX + Block.RenderWidth, top, Block.RenderHeight);
+                Page.移动光标(left + Block.ImageX + Block.RenderWidth + 1, top, Block.RenderHeight);
             }
         }
 

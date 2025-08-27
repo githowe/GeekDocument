@@ -21,6 +21,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
 
             Init_Home();
             Init_End();
+
+            Init_Backspace();
+            Init_Enter();
         }
 
         private void Init_Up()
@@ -83,6 +86,49 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
         private void Init_End()
         {
             _end.NewNode("光标不在行尾", () => true, Layer.移动光标至行尾);
+        }
+
+        private void Init_Backspace()
+        {
+            // 图片区
+            //     图片前
+            //         有前块 - 移动光标至前块末尾
+            //         无前块 - 无操作
+            //     图片后 - 删除块
+            // 图注区
+            //     无字符 - 删除图注
+            //     光标前有字符 - 删除字符
+            //     光标前无字符 - 左移光标(移动至图片后)
+
+            var 图片区 = _backspace.NewNode("图片区", () => Layer.处于图片区, null);
+
+            var 图片前 = _backspace.NewNode("图片前", () => Layer.CharIndex == 0, null, 图片区);
+            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 图片前);
+            _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 图片前);
+
+            _backspace.NewNode("图片后", () => Layer.CharIndex == 1, Layer.用退格键删除块, 图片区);
+
+            var 图注区 = _backspace.NewNode("图注区", () => !Layer.处于图片区, null);
+            _backspace.NewNode("无字符", () => Layer.EmptyCaption, Layer.删除图注, 图注区);
+            _backspace.NewNode("光标前有字符", () => Layer.CharIndex > 2, Layer.用退格键删除字符, 图注区);
+            _backspace.NewNode("光标前无字符", () => Layer.CharIndex == 2, Layer.左移光标, 图注区);
+        }
+
+        private void Init_Enter()
+        {
+            // 图片区
+            //     图片前 - 在块前插入空文本块
+            //     图片后
+            //         无图注 - 插入空图注并移动至图注区
+            //         有图注 - 移动至图注末尾
+            // 图注区 - 在块后插入空文本块
+
+            var 图片区 = _enter.NewNode("图片区", () => Layer.处于图片区, null);
+            _enter.NewNode("图片前", () => Layer.CharIndex == 0, Layer.在块前插入空文本块, 图片区);
+            var 图片后 = _enter.NewNode("图片后", () => Layer.CharIndex == 1, null, 图片区);
+            _enter.NewNode("无图注", () => Layer.NoneCaption, Layer.插入空图注并移动至图注区, 图片后);
+            _enter.NewNode("有图注", () => !Layer.NoneCaption, Layer.移动光标至图注末尾, 图片后);
+            _enter.NewNode("图注区", () => !Layer.处于图片区, Layer.在块后插入空文本块, null);
         }
     }
 }

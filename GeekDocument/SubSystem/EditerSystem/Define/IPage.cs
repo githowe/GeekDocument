@@ -7,6 +7,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
     /// </summary>
     public interface IPage
     {
+        int FirstLineIndent { get; set; }
+
         void 移动光标(int x, int y, int height);
 
         void 更新光标横坐标();
