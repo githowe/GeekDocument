@@ -99,6 +99,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="WpfMath" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -189,6 +190,10 @@
     <Resource Include="SubSystem\WindowSystem\Image\Error.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Info.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Warning.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SubSystem\FormulaSystem\" />
   </ItemGroup>
 
 </Project>

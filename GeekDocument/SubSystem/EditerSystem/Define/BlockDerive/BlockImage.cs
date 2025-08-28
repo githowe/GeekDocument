@@ -79,7 +79,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>实际渲染宽度</summary>
         public int RealRenderWidth => _actualWidth;
 
-        /// <summary>渲染高度（只读）</summary>
+        /// <summary>实际渲染高度</summary>
         public int RenderHeight => _actualHeight;
 
         /// <summary>图片横坐标</summary>

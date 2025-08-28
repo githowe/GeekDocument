@@ -519,6 +519,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.Table:
                     break;
                 case BlockType.Formula:
+                    layer = new FormulaBlockLayer { SourceBlock = block, Block = (BlockFormula)block };
                     break;
                 case BlockType.Chart:
                     break;

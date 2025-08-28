@@ -40,6 +40,9 @@ public class EditerComponent : Component<Editer>
             case "Tool_Image":
                 InsertImage();
                 break;
+            case "Tool_Latex":
+                InsertFormula();
+                break;
         }
     }
 
@@ -126,5 +129,19 @@ public class EditerComponent : Component<Editer>
         ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
         // 返回图片信息
         return imageInfo;
+    }
+
+    /// <summary>
+    /// 插入公式
+    /// </summary>
+    private void InsertFormula()
+    {
+        // 创建公式块
+        BlockFormula block = new BlockFormula
+        {
+
+        };
+        // 插入块
+        GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
     }
 }
