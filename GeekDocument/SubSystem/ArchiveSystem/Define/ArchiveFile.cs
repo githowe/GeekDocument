@@ -174,8 +174,8 @@ namespace GeekDocument.SubSystem.ArchiveSystem.Define
     /// </summary>
     public class ResInfo
     {
-        /// <summary>编号</summary>
-        public int ResID { get; set; } = -1;
+        /// <summary>哈希值</summary>
+        public string Hash { get; set; } = "";
 
         /// <summary>类型</summary>
         public string ResType { get; set; } = "";

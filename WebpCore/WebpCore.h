@@ -4,7 +4,7 @@
 
 dll_export void* CreateWebpReader();
 
-dll_export int LoadImageFile(WebpReader* reader, const wchar_t* filePath);
+dll_export int LoadImageFile(WebpReader* reader, uint8_t* sourceData, int size);
 
 dll_export int GetImageWidth(WebpReader* reader);
 

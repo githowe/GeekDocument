@@ -2,7 +2,11 @@
 
 void* CreateWebpReader() { return new WebpReader(); }
 
-int LoadImageFile(WebpReader* reader, const wchar_t* filePath) { return reader->LoadFile(filePath); }
+int LoadImageFile(WebpReader* reader, uint8_t* sourceData, int size)
+{
+	ImageFileData fileData = { sourceData, size };
+	return reader->LoadFile(fileData);
+}
 
 int GetImageWidth(WebpReader* reader) { return reader->ImageWidth; }
 

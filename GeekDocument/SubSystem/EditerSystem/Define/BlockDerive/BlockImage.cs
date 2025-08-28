@@ -1,9 +1,33 @@
 ﻿using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutSystem;
+using GeekDocument.SubSystem.WindowSystem;
+using Newtonsoft.Json;
 using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
+    public class ImageBlockData
+    {
+        /// <summary>源哈希值</summary>
+        public string SourceHash { get; set; } = "";
+
+        /// <summary>期望渲染宽度</summary>
+        public int RenderWidth { get; set; } = 0;
+
+        /// <summary>对齐方式</summary>
+        public int Align { get; set; } = 0;
+
+        /// <summary>是否为像素画</summary>
+        public bool PixelArt { get; set; } = false;
+
+        /// <summary>图注</summary>
+        public string? Caption { get; set; } = null;
+
+        public string FontFamily { get; set; } = "仿宋";
+
+        public int FontSize { get; set; } = 16;
+    }
+
     /// <summary>
     /// 图片块
     /// </summary>
@@ -17,17 +41,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 属性
 
-        /// <summary>帧列表</summary>
-        public List<ImageFrame> FrameList { get; set; } = new List<ImageFrame>();
+        /// <summary>源哈希值</summary>
+        public string SourceHash { get; set; } = "";
 
-        /// <summary>总持续时长。单位：毫秒</summary>
-        public int Duration { get; set; } = 0;
-
-        /// <summary>源宽度</summary>
-        public int SourceWidth { get; set; } = 0;
-
-        /// <summary>源高度</summary>
-        public int SourceHeight { get; set; } = 0;
+        /// <summary>期望渲染宽度</summary>
+        public int RenderWidth { get; set; } = 0;
 
         /// <summary>对齐方式</summary>
         public LineAlignType Align { get; set; } = LineAlignType.Center;
@@ -46,12 +64,20 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 运行时属性
 
-        /// <summary>渲染宽度</summary>
-        public int RenderWidth
-        {
-            get => _actualWidth;
-            set => _renderWidth = value;
-        }
+        /// <summary>帧列表</summary>
+        public List<ImageFrame> FrameList { get; set; } = new List<ImageFrame>();
+
+        /// <summary>总持续时长。单位：毫秒</summary>
+        public int Duration { get; set; } = 0;
+
+        /// <summary>源宽度</summary>
+        public int SourceWidth { get; set; } = 0;
+
+        /// <summary>源高度</summary>
+        public int SourceHeight { get; set; } = 0;
+
+        /// <summary>实际渲染宽度</summary>
+        public int RealRenderWidth => _actualWidth;
 
         /// <summary>渲染高度（只读）</summary>
         public int RenderHeight => _actualHeight;
@@ -73,12 +99,33 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override void LoadJson(string json)
         {
+            ImageBlockData? blockData = JsonConvert.DeserializeObject<ImageBlockData>(json);
+            if (blockData == null) return;
 
+            SourceHash = blockData.SourceHash;
+            RenderWidth = blockData.RenderWidth;
+            Align = (LineAlignType)blockData.Align;
+            PixelArt = blockData.PixelArt;
+            Caption = blockData.Caption;
+            FontFamily = blockData.FontFamily;
+            FontSize = blockData.FontSize;
+
+            LoadImage();
         }
 
         public override string ToJson()
         {
-            return "";
+            ImageBlockData blockData = new ImageBlockData
+            {
+                SourceHash = SourceHash,
+                RenderWidth = RenderWidth,
+                Align = (int)Align,
+                PixelArt = PixelArt,
+                Caption = Caption,
+                FontFamily = FontFamily,
+                FontSize = FontSize,
+            };
+            return JsonConvert.SerializeObject(blockData);
         }
 
         public override int GetViewHeight()
@@ -107,10 +154,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         private void CalculateActualSize(int blockWidth)
         {
             // 设置了渲染宽度
-            if (_renderWidth > 0)
+            if (RenderWidth > 0)
             {
                 // 没有超过块宽度
-                if (_renderWidth <= blockWidth) _actualWidth = _renderWidth;
+                if (RenderWidth <= blockWidth) _actualWidth = RenderWidth;
                 // 超过块宽度，使用块宽度
                 else _actualWidth = blockWidth;
             }
@@ -195,12 +242,27 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             }
         }
 
+        /// <summary>
+        /// 加载图片。加载块数据后调用
+        /// </summary>
+        private void LoadImage()
+        {
+            // 获取图片信息
+            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(SourceHash);
+            if (imageInfo == null)
+            {
+                WM.ShowErrorTip($"加载图片块“{Caption}”失败：找不到图片信息");
+                return;
+            }
+            SourceWidth = imageInfo.Width;
+            SourceHeight = imageInfo.Height;
+            FrameList = imageInfo.FrameList;
+            Duration = imageInfo.Duration;
+        }
+
         #endregion
 
         #region 字段
-
-        /// <summary>期望渲染宽度</summary>
-        private int _renderWidth = 0;
 
         /// <summary>实际渲染宽度</summary>
         private int _actualWidth = 0;

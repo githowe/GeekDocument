@@ -51,6 +51,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             ImageFrame frameData = Block.FrameList[0];
             _sourceIntRect = new Int32Rect(0, 0, Block.SourceWidth, Block.SourceHeight);
             _display.WritePixels(_sourceIntRect, frameData.PixelData, Block.SourceWidth * 4, 0);
+            // 只有一帧时，冻结以提升性能
+            if (Block.FrameList.Count == 1) _display.Freeze();
             // 动态图片，则启动定时器
             if (Block.FrameList.Count > 1)
             {
@@ -123,7 +125,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 // 图片前
                 if (_charIndex == 0) x = imagex - 1;
                 // 图片后
-                else x = imagex + Block.RenderWidth + 1;
+                else x = imagex + Block.RealRenderWidth + 1;
                 // 移动光标
                 Page.移动光标(x, top, Block.RenderHeight);
             }
@@ -135,7 +137,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 if (Block.Caption == "")
                 {
                     // 将光标移动至图片中间
-                    double imageCenter = left + Block.ImageX + Block.RenderWidth / 2.0;
+                    double imageCenter = left + Block.ImageX + Block.RealRenderWidth / 2.0;
                     Page.移动光标(imageCenter.RoundInt(), y, Block.FontSize);
                 }
                 else
@@ -320,7 +322,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         protected override void OnUpdate()
         {
             // 绘制图片
-            _dc.DrawImage(_display, new Rect(Block.ImageX, 0, Block.RenderWidth, Block.RenderHeight));
+            _dc.DrawImage(_display, new Rect(Block.ImageX, 0, Block.RealRenderWidth, Block.RenderHeight));
             // 绘制图注
             if (Block.Caption == null || Block.Caption == "") return;
             int y = Block.TextY;
@@ -387,7 +389,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             int left = (int)Canvas.GetLeft(this);
             int top = (int)Canvas.GetTop(this);
-            double imageCenter = left + Block.ImageX + Block.RenderWidth / 2.0;
+            double imageCenter = left + Block.ImageX + Block.RealRenderWidth / 2.0;
             if (x < imageCenter)
             {
                 _charIndex = 0;
@@ -396,7 +398,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             else
             {
                 _charIndex = 1;
-                Page.移动光标(left + Block.ImageX + Block.RenderWidth + 1, top, Block.RenderHeight);
+                Page.移动光标(left + Block.ImageX + Block.RealRenderWidth + 1, top, Block.RenderHeight);
             }
         }
 
@@ -410,7 +412,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             if (Block.Caption == "")
             {
                 _charIndex = 2;
-                double imageCenter = left + Block.ImageX + Block.RenderWidth / 2.0;
+                double imageCenter = left + Block.ImageX + Block.RealRenderWidth / 2.0;
                 Page.移动光标(imageCenter.RoundInt(), top + Block.TextY, Block.FontSize);
             }
             else

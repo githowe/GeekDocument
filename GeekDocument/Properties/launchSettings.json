@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "GeekDocument": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "hotReloadEnabled": false
+    }
+  }
+}

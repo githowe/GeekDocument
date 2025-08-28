@@ -16,7 +16,7 @@ public:
 	/// <summary>
 	/// 加载文件：加载文件数据并解码为帧列表
 	/// </summary>
-	int LoadFile(const wchar_t* filePath);
+	int LoadFile(ImageFileData sourceData);
 
 	/// <summary>
 	/// 获取帧
@@ -29,10 +29,6 @@ public:
 	void ClearFrame();
 
 private:
-	/// <summary>
-	/// 加载图片文件
-	/// </summary>
-	ImageFileData LoadImageFile(const wchar_t* filePath);
 
 	/// <summary>
 	/// 解码静态帧

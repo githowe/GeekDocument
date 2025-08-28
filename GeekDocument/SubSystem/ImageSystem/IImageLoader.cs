@@ -14,7 +14,7 @@
         /// <summary>
         /// 加载图片文件
         /// </summary>
-        public void LoadImageFile(string path);
+        public void LoadImageFile(byte[] sourceData);
 
         /// <summary>
         /// 重置加载器

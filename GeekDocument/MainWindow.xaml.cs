@@ -306,6 +306,11 @@ namespace GeekDocument
                     e.Handled = true;
                     OpenDocument();
                 }
+                /*else if (e.Key == Key.G)
+                {
+                    e.Handled = true;
+                    GC.Collect();
+                }*/
             }
             // 按下了“Ctrl + Shift”
             else if (Keyboard.Modifiers == (ModifierKeys.Shift | ModifierKeys.Control))

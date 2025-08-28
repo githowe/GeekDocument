@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GeekDocument.SubSystem.ImageSystem.Bitmap
@@ -19,16 +20,15 @@ namespace GeekDocument.SubSystem.ImageSystem.Bitmap
 
         #endregion
 
-        public void LoadImageFile(string path)
+        public void LoadImageFile(byte[] sourceData)
         {
-            // 创建图片实例
+            MemoryStream memoryStream = new MemoryStream(sourceData);
             BitmapImage image = new BitmapImage();
             image.BeginInit();
-            // 设置加载图片后释放文件
             image.CacheOption = BitmapCacheOption.OnLoad;
-            // 设置图片源
-            image.UriSource = new Uri(path);
+            image.StreamSource = memoryStream;
             image.EndInit();
+            memoryStream.Dispose();
 
             // 设置图片大小
             Width = image.PixelWidth;

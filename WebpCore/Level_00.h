@@ -44,7 +44,7 @@ extern "C"
 typedef struct ImageFileData
 {
 	uint8_t* data;
-	size_t size;
+	int size;
 } ImageFileData;
 
 /// <summary>

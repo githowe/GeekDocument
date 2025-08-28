@@ -1,7 +1,9 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using XLogic.Base.UI;
 
@@ -114,13 +116,26 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             // 更新块列表
             Document.BlockList = GetComponent<PageComponent>().GetBlockList();
-            // 打开文件
-            FileStream fileStream = File.OpenWrite(_host.DocumentPath);
-            // 生成存档数据
-            byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(Document);
-            // 写入存档数据并关闭
-            fileStream.Write(archiveData, 0, archiveData.Length);
-            fileStream.Close();
+
+            // 先备份文件
+            string backPath = BackupFile(_host.DocumentPath);
+            try
+            {
+                // 打开文件
+                FileStream fileStream = new FileStream(_host.DocumentPath, FileMode.Create);
+                // 生成存档数据
+                byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(Document);
+                // 写入存档数据并关闭
+                fileStream.Write(archiveData, 0, archiveData.Length);
+                fileStream.Close();
+                // 删除备份文件
+                File.Delete(backPath);
+            }
+            catch (Exception)
+            {
+                // 出现异常时，恢复文件
+                File.Copy(backPath, _host.DocumentPath, true);
+            }
         }
 
         /// <summary>
@@ -129,6 +144,27 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         public void UnloadDocument()
         {
 
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        /// <summary>
+        /// 备份文件
+        /// </summary>
+        private string BackupFile(string filePath)
+        {
+            // 获取系统临时文件夹路径
+            string tempPath = Path.GetTempPath();
+            // 随机一个文件名
+            string guid = Guid.NewGuid().ToString();
+            // 备份路径
+            string backupPath = Path.Combine(tempPath, guid + ".gdocbak");
+            // 复制文件
+            File.Copy(filePath, backupPath, true);
+            // 返回备份路径
+            return backupPath;
         }
 
         #endregion

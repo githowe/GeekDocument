@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using Btimap = System.Drawing.Bitmap;
 
@@ -17,10 +18,10 @@ namespace GeekDocument.SubSystem.ImageSystem.Gif
         /// <summary>帧列表</summary>
         public List<ImageFrame> FrameList => _frameList;
 
-        public void LoadImageFile(string path)
+        public void LoadImageFile(byte[] sourceData)
         {
-            // 加载图片文件
-            Image image = Image.FromFile(path);
+            MemoryStream memoryStream = new MemoryStream(sourceData);
+            Image image = Image.FromStream(memoryStream);
             // 设置图片大小
             Width = image.Width;
             Height = image.Height;
@@ -90,6 +91,7 @@ namespace GeekDocument.SubSystem.ImageSystem.Gif
             Duration = timestamp;
 
             image.Dispose();
+            memoryStream.Dispose();
         }
 
         public void Reset()

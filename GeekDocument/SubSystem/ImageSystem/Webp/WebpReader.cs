@@ -35,10 +35,10 @@ namespace GeekDocument.SubSystem.ImageSystem.Webp
         /// <summary>
         /// 加载文件
         /// </summary>
-        public void LoadImageFile(string path)
+        public void LoadImageFile(byte[] sourceData)
         {
             // 加载文件。加载时会进行解码
-            int loadResult = Interop.LoadImageFile(_reader, path);
+            int loadResult = Interop.LoadImageFile(_reader, sourceData, sourceData.Length);
             if (loadResult != 0)
             {
                 Console.WriteLine("加载图片文件失败。错误码：" + loadResult);

@@ -27,17 +27,15 @@ namespace GeekDocument.SubSystem.ImageSystem
             _imageLoaderDict.Add("webp", new Webp.WebpReader());
         }
 
-        public ImageInfo? LoadImageFile(string path)
+        public ImageInfo? LoadImageFile(byte[] sourceData, string extension)
         {
             ImageInfo result = new ImageInfo();
 
-            // 获取文件扩展名
-            string extension = System.IO.Path.GetExtension(path).ToLowerInvariant().TrimStart('.');
             // 尝试获取对应的加载器
             if (_imageLoaderDict.TryGetValue(extension, out IImageLoader? loader))
             {
                 // 加载图片
-                loader.LoadImageFile(path);
+                loader.LoadImageFile(sourceData);
                 // 设置图片信息
                 result.Width = loader.Width;
                 result.Height = loader.Height;

@@ -86,19 +86,18 @@ public class EditerComponent : Component<Editer>
         // 选择图片
         List<string> pathList = FM.Instance.OpenReadImageDialog("插入图片");
         if (pathList.Count == 0) return;
-
+        // 遍历选择的图片列表
         foreach (var imagePath in pathList)
         {
+            // 获取图片文件数据
+            ImageFileData fileData = ImageManager.Instance.GetImageFileData(imagePath);
             // 加载图片
-            ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(imagePath);
-            if (imageInfo == null)
-            {
-                WM.ShowErrorTip($"加载图片“{imagePath}”失败");
-                continue;
-            }
+            ImageInfo? imageInfo = LoadImage(fileData);
+            if (imageInfo == null) continue;
             // 创建图片块
             BlockImage block = new BlockImage
             {
+                SourceHash = fileData.Hash,
                 SourceWidth = imageInfo.Width,
                 SourceHeight = imageInfo.Height,
                 FrameList = imageInfo.FrameList,
@@ -108,5 +107,24 @@ public class EditerComponent : Component<Editer>
             // 插入图片块
             GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
         }
+    }
+
+    /// <summary>
+    /// 加载图片
+    /// </summary>
+    private ImageInfo? LoadImage(ImageFileData fileData)
+    {
+        // 获取图片信息，获取成功则直接返回
+        ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(fileData.Hash);
+        if (imageInfo != null) return imageInfo;
+        // 加载图片
+        imageInfo = ImageLoader.Instance.LoadImageFile(fileData.Data, fileData.Type);
+        // 加载失败时返回空
+        if (imageInfo == null) return null;
+        // 缓存文件数据和解码结果
+        ImageManager.Instance.AddFileData(fileData);
+        ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
+        // 返回图片信息
+        return imageInfo;
     }
 }

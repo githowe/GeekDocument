@@ -1,5 +1,8 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+using GeekDocument.SubSystem.ImageSystem;
+using GeekDocument.SubSystem.WindowSystem;
 using Newtonsoft.Json;
 
 namespace GeekDocument.SubSystem.ArchiveSystem
@@ -50,14 +53,16 @@ namespace GeekDocument.SubSystem.ArchiveSystem
             {
                 // 资源大小
                 int resourceSize = 0;
+                // 收集文档中的资源
+                List<DocumentRes> 资源列表 = 收集文档中的资源(document);
                 // 设置资源列表
-                foreach (var pair in document.ResourceDict)
+                foreach (var 资源 in 资源列表)
                 {
                     ResInfo resInfo = new ResInfo
                     {
-                        ResID = pair.Key,
-                        ResType = pair.Value.ResType,
-                        ResSize = pair.Value.SourceData.Length
+                        Hash = 资源.Hash,
+                        ResType = 资源.ResType,
+                        ResSize = 资源.SourceData.Length
                     };
                     archiveFile.ResList.List.Add(resInfo);
                     // 更新资源大小
@@ -68,7 +73,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem
                 int offset = 0;
                 foreach (var resInfo in archiveFile.ResList.List)
                 {
-                    byte[] resData = document.ResourceDict[resInfo.ResID].SourceData;
+                    byte[] resData = 查找源数据(资源列表, resInfo.Hash);
                     Array.Copy(resData, 0, archiveFile.ResData, offset, resInfo.ResSize);
                     offset += resInfo.ResSize;
                 }
@@ -79,6 +84,45 @@ namespace GeekDocument.SubSystem.ArchiveSystem
         #endregion
 
         #region 私有方法
+
+        private static List<DocumentRes> 收集文档中的资源(Document document)
+        {
+            // 图片块中引用了图片的哈希值
+            // 通过此哈希值查找图片的源数据
+
+            List<DocumentRes> 资源列表 = new List<DocumentRes>();
+            foreach (var block in document.BlockList)
+            {
+                // 图片块
+                if (block.Type == BlockType.Image)
+                {
+                    BlockImage blockImage = (BlockImage)block;
+                    // 查找图片块对应的图片文件数据
+                    ImageFileData? fileData = ImageManager.Instance.FindFileData(blockImage.SourceHash);
+                    if (fileData == null)
+                    {
+                        WM.ShowErrorTip($"查找文件数据失败。哈希值：{blockImage.SourceHash}");
+                        continue;
+                    }
+                    // 创建资源并添加
+                    DocumentRes res = new DocumentRes
+                    {
+                        Hash = blockImage.SourceHash,
+                        ResType = fileData.Type,
+                        SourceData = fileData.Data,
+                    };
+                    资源列表.Add(res);
+                }
+            }
+            return 资源列表;
+        }
+
+        private static byte[] 查找源数据(List<DocumentRes> resList, string hash)
+        {
+            foreach (var res in resList)
+                if (res.Hash == hash) return res.SourceData;
+            throw new Exception($"查找源数据失败。哈希值：{hash}");
+        }
 
         #endregion
     }

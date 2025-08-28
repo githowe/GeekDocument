@@ -7,8 +7,8 @@ namespace GeekDocument.SubSystem.ImageSystem.Webp
         [DllImport("webp/WebpCore.dll")]
         public static extern nint CreateWebpReader();
 
-        [DllImport("webp/WebpCore.dll", CharSet = CharSet.Unicode)]
-        public static extern int LoadImageFile(nint reader, string path);
+        [DllImport("webp/WebpCore.dll")]
+        public static extern int LoadImageFile(nint reader, byte[] sourceData, int size);
 
         [DllImport("webp/WebpCore.dll")]
         public static extern int GetImageWidth(nint reader);
