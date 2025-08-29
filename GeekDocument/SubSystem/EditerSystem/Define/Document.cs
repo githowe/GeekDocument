@@ -101,6 +101,9 @@ public class Document
                 case "Image":
                     block = new BlockImage();
                     break;
+                case "Formula":
+                    block = new BlockFormula();
+                    break;
             }
             if (block == null) continue;
             // 加载块数据

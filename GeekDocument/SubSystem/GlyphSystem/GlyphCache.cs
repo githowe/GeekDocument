@@ -85,7 +85,8 @@ namespace GeekDocument.SubSystem.GlyphSystem
             if (typeface.TryGetGlyphTypeface(out GlyphTypeface glyphTypeface))
             {
                 // 生成字形
-                GlyphRun glyphRun = GenerateGlyphRun(glyphTypeface, c, fontSize);
+                GlyphRun? glyphRun = GenerateGlyphRun(glyphTypeface, c, fontSize);
+                if (glyphRun == null) return null;
                 // 创建字形图片
                 GlyphImage glyphImage = new GlyphImage
                 {
@@ -187,14 +188,14 @@ namespace GeekDocument.SubSystem.GlyphSystem
             return null;
         }
 
-        private GlyphRun GenerateGlyphRun(GlyphTypeface typeface, char c, int fontSize)
+        private GlyphRun? GenerateGlyphRun(GlyphTypeface typeface, char c, int fontSize)
         {
             double baseLine = fontSize * (typeface.Baseline / typeface.Height);
             double pixelEachEM = fontSize / typeface.Height;
 
-            ushort index = 0;
-            try { index = typeface.CharacterToGlyphMap[c]; }
-            catch { }
+            // 查找字符对应的字形索引
+            if (!typeface.CharacterToGlyphMap.TryGetValue(c, out ushort index))
+                return null;
 
             // 计算像素宽度
             double pixelWidth = typeface.AdvanceWidths[index] * pixelEachEM;

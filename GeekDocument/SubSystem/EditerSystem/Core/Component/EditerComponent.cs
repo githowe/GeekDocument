@@ -4,6 +4,7 @@ using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.WindowSystem;
+using System.IO;
 using XLogic.Base.UI;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core.Component;
@@ -42,6 +43,9 @@ public class EditerComponent : Component<Editer>
                 break;
             case "Tool_Latex":
                 InsertFormula();
+                break;
+            case "Tool_Code":
+                InsertCodeBlock();
                 break;
         }
     }
@@ -140,6 +144,20 @@ public class EditerComponent : Component<Editer>
         BlockFormula block = new BlockFormula
         {
 
+        };
+        // 插入块
+        GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
+    }
+
+    /// <summary>
+    /// 插入代码块
+    /// </summary>
+    private void InsertCodeBlock()
+    {
+        // 创建代码块
+        BlockCode block = new BlockCode
+        {
+            // SourceCode = File.ReadAllText("D:/示例代码.txt"),
         };
         // 插入块
         GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);

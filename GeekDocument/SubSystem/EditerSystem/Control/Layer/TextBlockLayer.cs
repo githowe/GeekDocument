@@ -513,7 +513,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// <summary>
         /// 绘制文本行
         /// </summary>
-        protected void DrawTextLine(TextLine line, int y)
+        private void DrawTextLine(TextLine line, int y)
         {
             int index = 0;
             foreach (var word in line.WordList)

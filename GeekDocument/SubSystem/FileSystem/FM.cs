@@ -18,7 +18,7 @@ namespace GeekDocument.SubSystem.FileSystem
         public void Init()
         {
             // 文档格式
-            _document.TypeList.Add(new TypeInfo("极客文档", "gocx"));
+            _document.TypeList.Add(new TypeInfo("极客文档", "gdoc"));
             // 图片格式
             _image.TypeList.Add(new TypeInfo("图片", "png,bmp,jpg,jpeg,gif,webp,jfif,tif,tiff"));
             _image.TypeList.Add(new TypeInfo("便携网络图片", "png"));

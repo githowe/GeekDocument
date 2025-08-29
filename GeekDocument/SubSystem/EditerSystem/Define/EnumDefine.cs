@@ -28,22 +28,6 @@
     }
 
     /// <summary>
-    /// 文本类型
-    /// </summary>
-    public enum TextType
-    {
-        /// <summary>正文</summary>
-        Text,
-        /// <summary>标头</summary>
-        Header_04,
-        Header_03,
-        Header_02,
-        Header_01,
-        /// <summary>标题</summary>
-        Title
-    }
-
-    /// <summary>
     /// 文本样式
     /// </summary>
     public enum TextStyle

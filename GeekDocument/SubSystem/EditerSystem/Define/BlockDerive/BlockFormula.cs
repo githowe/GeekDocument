@@ -1,10 +1,23 @@
 ﻿using GeekDocument.SubSystem.ImageSystem;
+using Newtonsoft.Json;
 using WpfMath;
 using WpfMath.Parsers;
 using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
+    public class FormulaBlockData
+    {
+        public string Latex { get; set; } = "";
+
+        public int Size { get; set; } = 0;
+
+        /// <summary>期望渲染宽度</summary>
+        public int RenderWidth { get; set; } = 0;
+
+        public int Align { get; set; } = 0;
+    }
+
     /// <summary>
     /// 公式块
     /// </summary>
@@ -18,7 +31,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 属性
 
-        public string LaTeX { get; set; } = @"\color[RGB]{255,255,255}{f(x)=\sqrt{x^2}}";
+        public string Latex { get; set; } = @"\color[RGB]{255,255,255}{f(x)=\sqrt{x^2}}";
 
         public int Size { get; set; } = 24;
 
@@ -56,12 +69,25 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override void LoadJson(string json)
         {
+            FormulaBlockData? blockData = JsonConvert.DeserializeObject<FormulaBlockData>(json);
+            if (blockData == null) return;
 
+            Latex = blockData.Latex;
+            Size = blockData.Size;
+            RenderWidth = blockData.RenderWidth;
+            Align = (LineAlignType)blockData.Align;
         }
 
         public override string ToJson()
         {
-            return "";
+            FormulaBlockData blockData = new FormulaBlockData
+            {
+                Latex = Latex,
+                Size = Size,
+                RenderWidth = RenderWidth,
+                Align = (int)Align,
+            };
+            return JsonConvert.SerializeObject(blockData);
         }
 
         public override int GetViewHeight() => _actualHeight;
@@ -69,7 +95,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public override void UpdateViewData(int blockWidth)
         {
             XamlMath.TexFormulaParser 解析器 = WpfTeXFormulaParser.Instance;
-            XamlMath.TexFormula 公式 = 解析器.Parse(LaTeX);
+            XamlMath.TexFormula 公式 = 解析器.Parse(Latex);
             byte[] sourceData = 公式.RenderToPng(Size, 0, 0, "Arial");
 
             ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(sourceData, "png");

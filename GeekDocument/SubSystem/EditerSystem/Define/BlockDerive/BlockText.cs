@@ -249,7 +249,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             RightIndent = 0;
         }
 
-        protected List<TextLine> _lineList = new List<TextLine>();
-        protected int _viewHeight = 0;
+        private readonly List<TextLine> _lineList = new List<TextLine>();
+        private int _viewHeight = 0;
     }
 }

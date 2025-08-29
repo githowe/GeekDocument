@@ -510,6 +510,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.SplitLine:
                     break;
                 case BlockType.Code:
+                    layer = new CodeBlockLayer { SourceBlock = block, Block = (BlockCode)block };
                     break;
                 case BlockType.List:
                     break;
