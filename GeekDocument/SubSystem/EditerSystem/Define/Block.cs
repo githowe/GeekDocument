@@ -7,6 +7,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         public BlockType Type { get; set; } = BlockType.Text;
 
         /// <summary>
+        /// 初始化
+        /// </summary>
+        public virtual void Init() { }
+
+        /// <summary>
         /// 更新视图数据
         /// </summary>
         public abstract void UpdateViewData(int blockWidth);

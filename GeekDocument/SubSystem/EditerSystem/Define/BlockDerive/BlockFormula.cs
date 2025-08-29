@@ -31,7 +31,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 属性
 
-        public string Latex { get; set; } = @"\color[RGB]{255,255,255}{f(x)=\sqrt{x^2}}";
+        public string Latex { get; set; } = @"\color[RGB]{255,255,255}{f(x)=\sqrt{x^2+y^2}}";
 
         public int Size { get; set; } = 24;
 

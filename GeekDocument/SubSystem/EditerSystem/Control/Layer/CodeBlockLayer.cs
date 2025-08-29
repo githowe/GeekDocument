@@ -39,41 +39,32 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             int y = _padding;
             foreach (var line in Block.NumberList)
             {
-                DrawNumberLine(line, y, numberAreaWidth);
+                DrawLine(line, (numberAreaWidth - _padding - line.GetWidth()).RoundInt(), y, 128, 128, 128);
                 y += Block.FontSize + Block.LineSpace;
             }
             // 绘制代码
             y = _padding;
             foreach (var line in Block.LineList)
             {
-                DrawCodeLine(line, y, numberAreaWidth);
+                DrawLine(line, numberAreaWidth + _padding, y, 255, 255, 255);
                 y += Block.FontSize + Block.LineSpace;
             }
+            // 语言区大小
+            double languageAreaWidth = (Block.LanguageLine.GetWidth() + _padding).RoundInt();
+            double languageAreaHeight = Block.FontSize + _padding;
+            _dc.DrawRectangle(_行号背景, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
+            DrawLine(Block.LanguageLine, (BlockWidth - languageAreaWidth).RoundInt() + _padding / 2, _padding / 2, 255, 221, 103);
         }
 
-        private void DrawNumberLine(CodeLine line, int y, int areaWidth)
+        private void DrawLine(CodeLine line, int left, int top, byte r, byte g, byte b)
         {
             int index = 0;
-            double left = areaWidth - _padding - line.GetWidth();
             List<double> xList = line.GetXList(left);
             foreach (var item in line.GlyphImageList)
             {
                 double x = xList[index];
-                Point leftTop = new Point((x + item.Origin.X).Round(), y + item.Origin.Y);
-                _dc.DrawImage(item.GetBitmap(128, 128, 128), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
-                index++;
-            }
-        }
-
-        private void DrawCodeLine(CodeLine line, int y, int areaWidth)
-        {
-            int index = 0;
-            List<double> xList = line.GetXList(areaWidth + _padding);
-            foreach (var item in line.GlyphImageList)
-            {
-                double x = xList[index];
-                Point leftTop = new Point((x + item.Origin.X).Round(), y + item.Origin.Y);
-                _dc.DrawImage(item.GetBitmap(255, 255, 255), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
+                Point leftTop = new Point((x + item.Origin.X).Round(), top + item.Origin.Y);
+                _dc.DrawImage(item.GetBitmap(r, g, b), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
                 index++;
             }
         }
@@ -82,6 +73,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         private readonly Brush _行号背景 = new SolidColorBrush(Color.FromArgb(255, 16, 16, 16));
 
         private int _blockHeight = 0;
-        private int _padding = 16;
+        private readonly int _padding = 16;
     }
 }

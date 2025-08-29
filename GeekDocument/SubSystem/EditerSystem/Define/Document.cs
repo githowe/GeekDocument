@@ -98,6 +98,9 @@ public class Document
                         FirstLineIndent = FirstLineIndent,
                     };
                     break;
+                case "Code":
+                    block = new BlockCode();
+                    break;
                 case "Image":
                     block = new BlockImage();
                     break;
@@ -106,8 +109,9 @@ public class Document
                     break;
             }
             if (block == null) continue;
-            // 加载块数据
+            // 加载块数据并初始化
             block.LoadJson(blockInfo.SourceData);
+            block.Init();
             // 添加块
             BlockList.Add(block);
         }
