@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
+using System.Windows.Input;
 using XLogic.Base.StateTree;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
@@ -16,6 +17,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
 
             Init_Home();
             Init_End();
+
+            Init_Backspace();
+            Init_Enter();
         }
 
         private void Init_Up()
@@ -78,6 +82,73 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
         private void Init_End()
         {
             _end.NewNode("光标不在行尾", () => !Layer.光标在行尾, Layer.移动光标至行尾);
+        }
+
+        private void Init_Backspace()
+        {
+            // 单行
+            //    空行
+            //        有前块 - 删除块
+            //        无前块 - 替换为文本块
+            //    非空行
+            //        光标前有字符 - 删除字符
+            //        光标前无字符
+            //            有前块 - 移动光标至前块末尾
+            //            无前块 - 无操作
+            // 多行
+            //     空行
+            //        有上一行 - 删除当前行
+            //        无上一行
+            //            有前块 - 删除当前行并移动光标至前块末尾
+            //            无前块 - 无操作
+            //     非空行
+            //         光标前有字符 - 删除字符
+            //         光标前无字符
+            //             有上一行 - 合并当前行至上一行
+            //             无上一行
+            //                 有前块 - 移动光标至前块末尾
+            //                 无前块 - 无操作
+
+            StateNode 单行 = _backspace.NewNode("单行", () => Layer.LineCount == 1, null);
+
+            StateNode 空行 = _backspace.NewNode("空行", () => Layer.EmptyLine, null, 单行);
+            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.用退格键删除块, 空行);
+            _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, Layer.替换为文本块, 空行);
+
+            StateNode 非空行 = _backspace.NewNode("非空行", () => !Layer.EmptyLine, null, 单行);
+            _backspace.NewNode("光标前有字符", () => Layer.光标前有字符, Layer.删除字符, 非空行);
+            StateNode 光标前无字符 = _backspace.NewNode("光标前无字符", () => !Layer.光标前有字符, null, 非空行);
+            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 光标前无字符);
+            _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 光标前无字符);
+
+            StateNode 多行 = _backspace.NewNode("多行", () => Layer.LineCount > 1, null);
+            空行 = _backspace.NewNode("空行", () => Layer.EmptyLine, null, 多行);
+            _backspace.NewNode("有上一行", () => Layer.HasPrevLine, Layer.删除当前行, 空行);
+            StateNode 无上一行 = _backspace.NewNode("无上一行", () => !Layer.HasPrevLine, null, 空行);
+            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.删除当前行并移动光标至前块末尾, 无上一行);
+            _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 无上一行);
+            非空行 = _backspace.NewNode("非空行", () => !Layer.EmptyLine, null, 多行);
+            _backspace.NewNode("光标前有字符", () => Layer.光标前有字符, Layer.删除字符, 非空行);
+            光标前无字符 = _backspace.NewNode("光标前无字符", () => !Layer.光标前有字符, null, 非空行);
+            _backspace.NewNode("有上一行", () => Layer.HasPrevLine, Layer.合并当前行至上一行, 光标前无字符);
+            无上一行 = _backspace.NewNode("无上一行", () => !Layer.HasPrevLine, null, 光标前无字符);
+            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 无上一行);
+            _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 无上一行);
+        }
+
+        private void Init_Enter()
+        {
+            // 修饰键为Ctrl
+            //     光标处于块头 - 在块前插入文本块
+            //     光标未处于块头 - 在块后插入文本块
+            // 光标处于行尾 - 创建空行
+            // 光标未处于行尾 - 创建行
+
+            StateNode 修饰键Ctrl = _enter.NewNode("修饰键Ctrl", () => Keyboard.Modifiers == ModifierKeys.Control, null);
+            _enter.NewNode("光标处于块头", () => Layer.光标处于块头, Layer.在块前插入文本块, 修饰键Ctrl);
+            _enter.NewNode("光标未处于块头", () => !Layer.光标处于块头, Layer.在块后插入文本块, 修饰键Ctrl);
+            _enter.NewNode("光标处于行尾", () => Layer.光标在行尾, Layer.创建空行);
+            _enter.NewNode("光标未处于行尾", () => !Layer.光标在行尾, Layer.创建行);
         }
     }
 }

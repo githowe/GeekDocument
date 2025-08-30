@@ -88,34 +88,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override void UpdateViewData(int blockWidth)
         {
-            _lineList.Clear();
-            _numberList.Clear();
-            // 遍历行
-            int index = 0;
-            foreach (var line in SourceLineList)
-            {
-                // 创建并添加代码行
-                CodeLine codeLine = new CodeLine()
-                {
-                    Text = line,
-                    FontFamily = FontFamily,
-                    Size = FontSize
-                };
-                codeLine.UpdateGlyphImage();
-                _lineList.Add(codeLine);
-                // 创建并添加行号行
-                CodeLine numberLine = new CodeLine()
-                {
-                    Text = (index + 1).ToString(),
-                    FontFamily = FontFamily,
-                    Size = FontSize
-                };
-                numberLine.UpdateGlyphImage();
-                _numberList.Add(numberLine);
-                index++;
-            }
-            // 更新视图高度
-            _viewHeight = _lineList.Count * FontSize + (_lineList.Count - 1) * LineSpace;
+            UpdateViewData();
         }
 
         public override int GetViewHeight() => _viewHeight;
@@ -150,7 +123,100 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 公开方法
 
+        /// <summary>
+        /// 移除行
+        /// </summary>
+        public void RemoveLine(CodeLine line)
+        {
+            // 删除源代码行
+            int index = _lineList.IndexOf(line);
+            SourceLineList.RemoveAt(index);
+            // 更新
+            UpdateViewData();
+        }
 
+        /// <summary>
+        /// 移除字符
+        /// </summary>
+        public void RemoveChar(CodeLine line, int charIndex)
+        {
+            // 更新源代码行内容
+            int index = _lineList.IndexOf(line);
+            SourceLineList[index] = SourceLineList[index].Remove(charIndex, 1);
+            // 更新代码行
+            line.Text = SourceLineList[index];
+            line.UpdateGlyphImage();
+        }
+
+        public void 合并至上一行(CodeLine line)
+        {
+            // 合并行至上一行
+            int index = _lineList.IndexOf(line);
+            SourceLineList[index - 1] = SourceLineList[index - 1] + line.Text;
+            // 删除当前行
+            SourceLineList.RemoveAt(index);
+            // 更新
+            UpdateViewData();
+        }
+
+        public void 插入行(int index, string text)
+        {
+            SourceLineList.Insert(index, text);
+            UpdateViewData();
+        }
+
+        public void 分割行(int lineIndex, int splitIndex)
+        {
+            // 获取分割索引后的内容
+            string splitText = SourceLineList[lineIndex].Substring(splitIndex);
+            // 更新当前行内容
+            SourceLineList[lineIndex] = SourceLineList[lineIndex].Substring(0, splitIndex);
+            // 插入新行
+            SourceLineList.Insert(lineIndex + 1, splitText);
+            UpdateViewData();
+        }
+
+        public void 插入文本(int lineIndex, int insertIndex, string text)
+        {
+            SourceLineList[lineIndex] = SourceLineList[lineIndex].Insert(insertIndex, text);
+            UpdateViewData();
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        private void UpdateViewData()
+        {
+            _lineList.Clear();
+            _numberList.Clear();
+            // 遍历行
+            int index = 0;
+            foreach (var line in SourceLineList)
+            {
+                // 创建并添加代码行
+                CodeLine codeLine = new CodeLine()
+                {
+                    Text = line,
+                    FontFamily = FontFamily,
+                    Size = FontSize
+                };
+                codeLine.UpdateGlyphImage();
+                _lineList.Add(codeLine);
+                // 创建并添加行号行
+                CodeLine numberLine = new CodeLine()
+                {
+                    Text = (index + 1).ToString(),
+                    FontFamily = FontFamily,
+                    Size = FontSize
+                };
+                numberLine.UpdateGlyphImage();
+                _numberList.Add(numberLine);
+                index++;
+            }
+            // 更新视图高度
+            _viewHeight = _lineList.Count * FontSize + (_lineList.Count - 1) * LineSpace;
+        }
 
         #endregion
 

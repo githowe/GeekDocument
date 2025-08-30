@@ -302,6 +302,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                     break;
                 // 回车
                 case Key.Enter:
+                    HandleEditKey(EditKey.Enter);
                     break;
             }
         }

@@ -115,6 +115,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _stateTree.HandleEditKey(key);
         }
 
+        public override void InputText(string text)
+        {
+            int lineIndex = Block.LineList.IndexOf(_currentLine);
+            int charIndexInLine = _charIndex - GetLineStartIndex(_currentLine);
+            Block.插入文本(lineIndex, charIndexInLine, text);
+            Update();
+            _charIndex += text.Length;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
         public override void MoveIBeamToPoint(Point point)
         {
             UpdateCurrentLine(point.Y);
@@ -174,7 +185,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             get
             {
-                if (_currentLine == null) return false;
+                if (_currentLine == null) throw new Exception("当前行为空");
                 int index = Block.LineList.IndexOf(_currentLine);
                 return index > 0;
             }
@@ -184,7 +195,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             get
             {
-                if (_currentLine == null) return false;
+                if (_currentLine == null) throw new Exception("当前行为空");
                 int index = Block.LineList.IndexOf(_currentLine);
                 return index < Block.LineList.Count - 1;
             }
@@ -194,7 +205,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             get
             {
-                if (_currentLine == null) return true;
+                if (_currentLine == null) throw new Exception("当前行为空");
                 int startIndex = GetLineStartIndex(_currentLine);
                 return _charIndex == startIndex;
             }
@@ -204,11 +215,34 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             get
             {
-                if (_currentLine == null) return true;
+                if (_currentLine == null) throw new Exception("当前行为空");
                 int startIndex = GetLineStartIndex(_currentLine);
                 return _charIndex == startIndex + _currentLine.Length;
             }
         }
+
+        public int LineCount => Block.LineList.Count;
+
+        public bool EmptyLine
+        {
+            get
+            {
+                if (_currentLine == null) throw new Exception("当前行为空");
+                return _currentLine.Length == 0;
+            }
+        }
+
+        public bool 光标前有字符
+        {
+            get
+            {
+                if (_currentLine == null) throw new Exception("当前行为空");
+                int startIndex = GetLineStartIndex(_currentLine);
+                return _charIndex > startIndex;
+            }
+        }
+
+        public bool 光标处于块头 => _charIndex == 0;
 
         public void 上移光标()
         {
@@ -267,6 +301,114 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Page.更新光标横坐标();
             int lineStartIndex = GetLineStartIndex(_currentLine);
             _charIndex = lineStartIndex + _currentLine.Length;
+        }
+
+        public void 用退格键删除块()
+        {
+            // 获取上一个块
+            BlockLayer? prevBlock = Page.获取上一个块(this);
+            if (prevBlock == null) throw new Exception("获取上一个块失败");
+            // 移除当前块
+            Page.移除块(this);
+            // 将上一个块设为当前块
+            Page.设置当前块(prevBlock);
+            // 移动光标至上一个块末尾
+            prevBlock.MoveIBeamToEnd();
+            Page.更新光标横坐标();
+        }
+
+        public void 替换为文本块()
+        {
+            // 移除当前块
+            Page.移除块(this);
+            // 插入文本块
+            BlockText block = new BlockText { FirstLineIndent = Page.FirstLineIndent };
+            Page.插入块(block, 0);
+        }
+
+        public void 删除字符()
+        {
+            int lineStartIndex = GetLineStartIndex(_currentLine);
+            Block.RemoveChar(_currentLine, _charIndex - lineStartIndex - 1);
+            Update();
+            _charIndex--;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 删除当前行()
+        {
+            // 获取上一行索引
+            int prevLineIndex = Block.LineList.IndexOf(_currentLine) - 1;
+            // 删除当前行
+            Block.RemoveLine(_currentLine);
+            Update();
+            // 更新当前行
+            _currentLine = Block.LineList[prevLineIndex];
+            移动光标至行尾();
+        }
+
+        public void 删除当前行并移动光标至前块末尾()
+        {
+            Block.RemoveLine(_currentLine);
+            Update();
+            _currentLine = null;
+            移动光标至前块末尾();
+        }
+
+        public void 合并当前行至上一行()
+        {
+            // 获取上一行末尾字符索引
+            int prevLineIndex = Block.LineList.IndexOf(_currentLine) - 1;
+            CodeLine prevLine = Block.LineList[prevLineIndex];
+            int prevStartIndex = GetLineStartIndex(prevLine);
+            int preveEndIndex = prevStartIndex + prevLine.Length;
+            // 合并至上一行
+            Block.合并至上一行(_currentLine);
+            Update();
+            // 同步光标
+            _charIndex = preveEndIndex;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 在块前插入文本块()
+        {
+            int index = Page.获取块索引(this);
+            BlockText block = new BlockText { FirstLineIndent = Page.FirstLineIndent };
+            Page.插入块(block, index);
+            Page.设置当前块(this);
+            MoveIBeamToHead();
+        }
+
+        public void 在块后插入文本块()
+        {
+            int index = Page.获取块索引(this);
+            BlockText block = new BlockText { FirstLineIndent = Page.FirstLineIndent };
+            Page.插入块(block, index + 1);
+        }
+
+        public void 创建空行()
+        {
+            int index = Block.LineList.IndexOf(_currentLine);
+            Block.插入行(index + 1, "");
+            Update();
+            _currentLine = Block.LineList[index + 1];
+            _charIndex = GetLineStartIndex(_currentLine);
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 创建行()
+        {
+            int lineIndex = Block.LineList.IndexOf(_currentLine);
+            int charIndexInLine = _charIndex - GetLineStartIndex(_currentLine);
+            Block.分割行(lineIndex, charIndexInLine);
+            Update();
+            _currentLine = Block.LineList[lineIndex + 1];
+            _charIndex = GetLineStartIndex(_currentLine);
+            SyncIBeam();
+            Page.更新光标横坐标();
         }
 
         #endregion
