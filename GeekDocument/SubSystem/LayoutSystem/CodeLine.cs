@@ -21,6 +21,8 @@ namespace GeekDocument.SubSystem.LayoutSystem
 
         #endregion
 
+        public override string ToString() => Text;
+
         /// <summary>
         /// 更新字形图片
         /// </summary>
