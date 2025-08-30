@@ -17,6 +17,8 @@ namespace GeekDocument.SubSystem.LayoutSystem
         /// <summary>字号</summary>
         public int Size { get; set; } = 0;
 
+        public int Length => Text.Length;
+
         #endregion
 
         /// <summary>
@@ -48,6 +50,7 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 result.Add(start_x);
                 start_x += item.GlyphWidth;
             }
+            result.Add(start_x);
             return result;
         }
 

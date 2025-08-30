@@ -1,13 +1,13 @@
 ﻿using GeekDocument.SubSystem.LayoutSystem;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
+using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
     public class CodeBlockData
     {
         /// <summary>语言</summary>
-        public string Language { get; set; } = "CShape";
+        public string Language { get; set; } = "C#";
 
         /// <summary>源代码</summary>
         public string SourceCode { get; set; } = "";
@@ -32,7 +32,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         #region 属性
 
         /// <summary>语言</summary>
-        public string Language { get; set; } = "CShape";
+        public string Language { get; set; } = "C#";
 
         /// <summary>源代码</summary>
         public string SourceCode { get; set; } = "public class Program\r\n{\r\n    static void Main()\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}";
@@ -82,6 +82,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             code = code.Replace("\r\n", "\n");
             // 分割行
             SourceLineList = code.Split('\n').ToList();
+            // 更新源代码
+            SourceCode = code;
         }
 
         public override void UpdateViewData(int blockWidth)
@@ -132,6 +134,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override string ToJson()
         {
+            SourceCode = LineList.ToListString("\n");
             CodeBlockData blockData = new CodeBlockData
             {
                 Language = Language,
@@ -154,11 +157,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         #region 字段
 
         /// <summary>语言行</summary>
-        private CodeLine _languageLine = new CodeLine();
+        private readonly CodeLine _languageLine = new CodeLine();
         /// <summary>代码行列表</summary>
-        private List<CodeLine> _lineList = new List<CodeLine>();
+        private readonly List<CodeLine> _lineList = new List<CodeLine>();
         /// <summary>行号列表</summary>
-        private List<CodeLine> _numberList = new List<CodeLine>();
+        private readonly List<CodeLine> _numberList = new List<CodeLine>();
         private int _viewHeight = 0;
 
         #endregion

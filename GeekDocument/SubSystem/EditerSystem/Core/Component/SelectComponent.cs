@@ -14,6 +14,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         public bool HasSelection => _selection.HasSelection;
 
+        public CharCursor? Start => _selection.Start;
+
+        public CharCursor? End => _selection.End;
+
         public int Offset
         {
             get => _offset;

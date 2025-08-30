@@ -157,8 +157,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         public void 移动光标并更新选区()
         {
-            // 隐藏光标
-            GetComponent<IBeamComponent>().HideIBeam();
             // 获取鼠标相对于页面的坐标
             Point mousePoint = Mouse.GetPosition(_host.DocArea);
             mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
@@ -166,6 +164,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             GetComponent<PageComponent>().HandleMouseDown(mousePoint);
             // 更新选区
             GetComponent<SelectComponent>().UpdateSelection();
+            // 根据选区显示或隐藏光标
+            CharCursor? 起始游标 = GetComponent<SelectComponent>().Start;
+            CharCursor? 结束游标 = GetComponent<SelectComponent>().End;
+            if (起始游标 == null || 结束游标 == null || 结束游标.SameAs(起始游标))
+                GetComponent<IBeamComponent>().ShowIBeam();
+            else
+                GetComponent<IBeamComponent>().HideIBeam();
         }
 
         #endregion

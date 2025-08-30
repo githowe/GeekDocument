@@ -1,6 +1,9 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+﻿using GeekDocument.SubSystem.EditerSystem.Control.LayerTool;
+using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.LayoutSystem;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using XLogic.Base.Ex;
 
@@ -14,16 +17,29 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override int BlockHeight => _blockHeight;
 
-        public override int CharIndex => 0;
+        public override int CharIndex => _charIndex;
 
-        public override int CharIndexMax => 0;
+        public override int CharIndexMax
+        {
+            get
+            {
+                int indexMax = 0;
+                foreach (var item in Block.LineList)
+                    indexMax += item.Length;
+                indexMax += Block.LineList.Count - 1;
+                return indexMax;
+            }
+        }
 
         #endregion
+
+        #region SingleBoard 方法
 
         public override void Init()
         {
             _代码背景.Freeze();
             _行号背景.Freeze();
+            _stateTree.Init(this);
         }
 
         protected override void OnUpdate()
@@ -31,22 +47,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 代码块高度 = 代码区高度 + 上下边距
             _blockHeight = Block.GetViewHeight() + _padding * 2;
             // 行号区宽度 = 最长行号宽度 + 双倍边距
-            int numberAreaWidth = Block.NumberList.Last().GetWidth().RoundInt() + _padding * 2;
+            _numberAreaWidth = Block.NumberList.Last().GetWidth().RoundInt() + _padding * 2;
             // 绘制底框
-            _dc.DrawRectangle(_行号背景, null, new Rect(0, 0, numberAreaWidth, _blockHeight));
-            _dc.DrawRectangle(_代码背景, null, new Rect(numberAreaWidth, 0, BlockWidth - numberAreaWidth, _blockHeight));
+            _dc.DrawRectangle(_行号背景, null, new Rect(0, 0, _numberAreaWidth, _blockHeight));
+            _dc.DrawRectangle(_代码背景, null, new Rect(_numberAreaWidth, 0, BlockWidth - _numberAreaWidth, _blockHeight));
             // 绘制行号
             int y = _padding;
             foreach (var line in Block.NumberList)
             {
-                DrawLine(line, (numberAreaWidth - _padding - line.GetWidth()).RoundInt(), y, 128, 128, 128);
+                DrawLine(line, (_numberAreaWidth - _padding - line.GetWidth()).RoundInt(), y, 128, 128, 128);
                 y += Block.FontSize + Block.LineSpace;
             }
             // 绘制代码
             y = _padding;
             foreach (var line in Block.LineList)
             {
-                DrawLine(line, numberAreaWidth + _padding, y, 255, 255, 255);
+                DrawLine(line, _numberAreaWidth + _padding, y, 255, 255, 255);
                 y += Block.FontSize + Block.LineSpace;
             }
             // 语言区大小
@@ -55,6 +71,207 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _dc.DrawRectangle(_行号背景, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
             DrawLine(Block.LanguageLine, (BlockWidth - languageAreaWidth).RoundInt() + _padding / 2, _padding / 2, 255, 221, 103);
         }
+
+        #endregion
+
+        #region BlockLayer 方法
+
+        public override void MoveIBeamToHead()
+        {
+            _charIndex = 0;
+            SyncIBeam();
+        }
+
+        public override void MoveIBeamToEnd()
+        {
+            _charIndex = CharIndexMax;
+            SyncIBeam();
+        }
+
+        public override void MoveIBeamToFirstLine(double mouse_x)
+        {
+            _currentLine = Block.LineList[0];
+            double y = GetLineY(_currentLine);
+            double x = MoveIBeamToLine(_currentLine, mouse_x);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+        }
+
+        public override void MoveIBeamToLastLine(double mouse_x)
+        {
+            _currentLine = Block.LineList.Last();
+            double y = GetLineY(_currentLine);
+            double x = MoveIBeamToLine(_currentLine, mouse_x);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+        }
+
+        public override void MoveIBeamToIndex(int index)
+        {
+            _charIndex = index;
+            SyncIBeam();
+        }
+
+        public override void HandleEditKey(EditKey key)
+        {
+            _stateTree.HandleEditKey(key);
+        }
+
+        public override void MoveIBeamToPoint(Point point)
+        {
+            UpdateCurrentLine(point.Y);
+            if (_currentLine == null) throw new Exception("当前行为空");
+            double y = GetLineY(_currentLine);
+            double x = MoveIBeamToLine(_currentLine, point.X);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+            Page.更新光标横坐标();
+        }
+
+        public override void SyncIBeam()
+        {
+            _currentLine = null;
+            int left = (int)Canvas.GetLeft(this);
+            int top = (int)Canvas.GetTop(this);
+            int codeLeft = left + _numberAreaWidth + _padding;
+            int codeTop = top + _padding;
+
+            CodeLine? 字符索引所在行 = null;
+            List<int> 字符索引列表 = new List<int>();
+            int 行索引 = 0;
+
+            int 起始索引 = 0;
+            int 结束索引;
+            // 遍历代码行，找到字符索引所在行以及填充该行的字符索引列表
+            foreach (var item in Block.LineList)
+            {
+                结束索引 = 起始索引 + item.Length;
+                if (起始索引 <= _charIndex && _charIndex <= 结束索引)
+                {
+                    字符索引所在行 = item;
+                    for (int index = 起始索引; index <= 结束索引; index++) 字符索引列表.Add(index);
+                    break;
+                }
+                起始索引 = 结束索引 + 1;
+                行索引++;
+            }
+            // 如果没有找到，抛出异常
+            if (字符索引所在行 == null) throw new Exception("未找到字符索引所在行");
+            _currentLine = 字符索引所在行;
+            // 获取每个字符的横坐标
+            List<double> xList = 字符索引所在行.GetXList(codeLeft);
+            // 获取字符横坐标
+            double x = xList[字符索引列表.IndexOf(_charIndex)];
+            // 移动光标
+            int y = codeTop + 行索引 * (Block.FontSize + Block.LineSpace);
+            Page.移动光标(x.RoundInt(), y, Block.FontSize);
+        }
+
+        #endregion
+
+        #region 状态树接口
+
+        public int TextLength => CharIndexMax;
+
+        public bool HasPrevLine
+        {
+            get
+            {
+                if (_currentLine == null) return false;
+                int index = Block.LineList.IndexOf(_currentLine);
+                return index > 0;
+            }
+        }
+
+        public bool HasNextLine
+        {
+            get
+            {
+                if (_currentLine == null) return false;
+                int index = Block.LineList.IndexOf(_currentLine);
+                return index < Block.LineList.Count - 1;
+            }
+        }
+
+        public bool 光标在行首
+        {
+            get
+            {
+                if (_currentLine == null) return true;
+                int startIndex = GetLineStartIndex(_currentLine);
+                return _charIndex == startIndex;
+            }
+        }
+
+        public bool 光标在行尾
+        {
+            get
+            {
+                if (_currentLine == null) return true;
+                int startIndex = GetLineStartIndex(_currentLine);
+                return _charIndex == startIndex + _currentLine.Length;
+            }
+        }
+
+        public void 上移光标()
+        {
+            int index = Block.LineList.IndexOf(_currentLine);
+            _currentLine = Block.LineList[index - 1];
+            double y = GetLineY(_currentLine);
+            double x = MoveIBeamToLine(_currentLine, Page.获取光标横坐标());
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+        }
+
+        public void 下移光标()
+        {
+            int index = Block.LineList.IndexOf(_currentLine);
+            _currentLine = Block.LineList[index + 1];
+            double y = GetLineY(_currentLine);
+            double x = MoveIBeamToLine(_currentLine, Page.获取光标横坐标());
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+        }
+
+        public void 左移光标()
+        {
+            _charIndex--;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 右移光标()
+        {
+            _charIndex++;
+            SyncIBeam();
+            Page.更新光标横坐标();
+        }
+
+        public void 移动光标至行首()
+        {
+            // 获取代码块左侧起始位置
+            double codeLeft = Canvas.GetLeft(this) + _numberAreaWidth + _padding;
+            // 获取当前行的横坐标列表
+            List<double> xList = _currentLine.GetXList(codeLeft);
+            // 移动至最左侧
+            double x = xList[0];
+            double y = GetLineY(_currentLine);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+            Page.更新光标横坐标();
+            // 更新字符索引
+            _charIndex = GetLineStartIndex(_currentLine);
+        }
+
+        public void 移动光标至行尾()
+        {
+            double codeLeft = Canvas.GetLeft(this) + _numberAreaWidth + _padding;
+            List<double> xList = _currentLine.GetXList(codeLeft);
+            double x = xList.Last();
+            double y = GetLineY(_currentLine);
+            Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
+            Page.更新光标横坐标();
+            int lineStartIndex = GetLineStartIndex(_currentLine);
+            _charIndex = lineStartIndex + _currentLine.Length;
+        }
+
+        #endregion
+
+        #region 私有方法
 
         private void DrawLine(CodeLine line, int left, int top, byte r, byte g, byte b)
         {
@@ -69,10 +286,85 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
         }
 
+        /// <summary>
+        /// 更新当前行
+        /// </summary>
+        private void UpdateCurrentLine(double y)
+        {
+            _currentLine = null;
+            // 行起始纵坐标 = 块顶端 + 上边距 - 行间距 / 2
+            double start_y = Canvas.GetTop(this) + _padding - Block.LineSpace / 2;
+            double lineRectHeight = Block.FontSize + Block.LineSpace;
+            // 计算全部行的纵坐标列表
+            int lineCount = Block.LineList.Count;
+            List<double> yList = new List<double>();
+            for (int index = 0; index < lineCount; index++)
+                yList.Add(start_y + index * lineRectHeight);
+            yList.Add(start_y + lineCount * lineRectHeight);
+            // 计算命中区间的索引并更新当前行
+            int hitedIndex = yList.GetHitedRange(y);
+            _currentLine = Block.LineList[hitedIndex];
+        }
+
+        /// <summary>
+        /// 获取行的纵坐标
+        /// </summary>
+        private double GetLineY(CodeLine? line)
+        {
+            if (line == null) return Canvas.GetTop(this) + _padding;
+
+            int lineIndex = Block.LineList.IndexOf(line);
+            return Canvas.GetTop(this) + _padding + lineIndex * (Block.FontSize + Block.LineSpace);
+        }
+
+        /// <summary>
+        /// 移动光标至行
+        /// </summary>
+        private double MoveIBeamToLine(CodeLine line, double x)
+        {
+            double codeLeft = Canvas.GetLeft(this) + _numberAreaWidth + _padding;
+            List<double> xList = line.GetXList(codeLeft);
+            // 获取命中位置
+            (int, double) posotion = xList.GetHitedPosition(x);
+            // 获取起始索引
+            int lineStartIndex = GetLineStartIndex(line);
+            // 更新字符索引
+            _charIndex = lineStartIndex + posotion.Item1;
+            // 返回命中横坐标
+            return posotion.Item2;
+        }
+
+        /// <summary>
+        /// 获取行起始索引
+        /// </summary>
+        private int GetLineStartIndex(CodeLine line)
+        {
+            int lineIndex = Block.LineList.IndexOf(line);
+            int startIndex = 0;
+            for (int index = 0; index < lineIndex; index++)
+                startIndex += Block.LineList[index].Length + 1;
+            return startIndex;
+        }
+
+        #endregion
+
+        #region 字段
+
         private readonly Brush _代码背景 = new SolidColorBrush(Color.FromArgb(255, 24, 24, 24));
         private readonly Brush _行号背景 = new SolidColorBrush(Color.FromArgb(255, 16, 16, 16));
 
         private int _blockHeight = 0;
         private readonly int _padding = 16;
+
+        /// <summary>行号区宽度</summary>
+        private int _numberAreaWidth = 0;
+
+        /// <summary>当前行</summary>
+        private CodeLine? _currentLine = null;
+        private int _charIndex = 0;
+
+        private readonly STCodeBlock _stateTree = new STCodeBlock();
+
+        #endregion
     }
 }

@@ -151,6 +151,23 @@
         }
 
         /// <summary>
+        /// 获取命中位置（索引，横坐标）
+        /// </summary>
+        public static (int, double) GetHitedPosition(this List<double> xList, double mouse_x)
+        {
+            if (xList.Count == 0) throw new Exception("列表不能为空");
+            if (xList.Count == 1) return (0, xList[0]);
+
+            int hitedIndex = xList.GetHitedRange(mouse_x);
+            double hitedLeft = xList[hitedIndex];
+            double hitedRight = xList[hitedIndex + 1];
+            double center = hitedLeft + (hitedRight - hitedLeft) / 2;
+            double hitedx = mouse_x < center ? hitedLeft : hitedRight;
+            if (mouse_x >= center) hitedIndex += 1;
+            return (hitedIndex, hitedx);
+        }
+
+        /// <summary>
         /// 随机获取列表中的一个元素
         /// </summary>
         public static T RandomElement<T>(this List<T> source)

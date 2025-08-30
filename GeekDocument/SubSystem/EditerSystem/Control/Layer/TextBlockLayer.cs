@@ -131,9 +131,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Page.更新光标横坐标();
         }
 
-        /// <summary>
-        /// 同步光标
-        /// </summary>
         public override void SyncIBeam()
         {
             _currentLine = null;
@@ -174,7 +171,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                     行索引++;
                 }
             }
-            // 如果没有找到，返回
+            // 如果没有找到，抛出异常
             if (字符索引所在行 == null) throw new Exception("未找到字符索引所在行");
 
             _currentLine = 字符索引所在行;
