@@ -37,7 +37,8 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 if (glyphImage == null)
                 {
                     glyphImage = GlyphCache.Instance.GetGlyphImage(c, "新宋体", Size);
-                    if (glyphImage == null) throw new Exception($"获取字符 '{c}' 的字形图片失败");
+                    // 再次失败，使用空白字形
+                    if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', "新宋体", Size);
                 }
                 imageList.Add(glyphImage);
             }

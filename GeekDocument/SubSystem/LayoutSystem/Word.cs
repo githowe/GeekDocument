@@ -57,7 +57,7 @@ public class Word
         {
             // 获取字形图片
             GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(c, fontFamily, fontSize, bold, italic);
-            if (glyphImage == null) throw new Exception($"获取字符 '{c}' 的字形图片失败");
+            if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', fontFamily, fontSize, bold, italic);
 
             imageList.Add(glyphImage);
             width += glyphImage.GlyphWidth;

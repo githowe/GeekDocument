@@ -62,7 +62,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             y = _padding;
             foreach (var line in Block.LineList)
             {
-                DrawLine(line, _numberAreaWidth + _padding, y, 255, 255, 255);
+                DrawLine(line, _numberAreaWidth + _padding, y, 255, 255, 255, true);
                 y += Block.FontSize + Block.LineSpace;
             }
             // 语言区大小
@@ -415,16 +415,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         #region 私有方法
 
-        private void DrawLine(CodeLine line, int left, int top, byte r, byte g, byte b)
+        private void DrawLine(CodeLine line, int left, int top, byte r, byte g, byte b, bool isCode = false)
         {
             int index = 0;
+            int charIndex = GetLineStartIndex(line);
             List<double> xList = line.GetXList(left);
             foreach (var item in line.GlyphImageList)
             {
+                Color color = Block.HighlightResult.GetColor(charIndex);
                 double x = xList[index];
                 Point leftTop = new Point((x + item.Origin.X).Round(), top + item.Origin.Y);
-                _dc.DrawImage(item.GetBitmap(r, g, b), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
+                if (isCode)
+                    _dc.DrawImage(item.GetBitmap(color.R, color.G, color.B), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
+                else
+                    _dc.DrawImage(item.GetBitmap(r, g, b), new Rect(leftTop, new Size(item.RenderWidth, item.RenderHeight)));
                 index++;
+                charIndex++;
             }
         }
 

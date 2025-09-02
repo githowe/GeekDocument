@@ -1,4 +1,5 @@
-﻿using GeekDocument.SubSystem.LayoutSystem;
+﻿using GeekDocument.SubSystem.EditerSystem.Tool;
+using GeekDocument.SubSystem.LayoutSystem;
 using Newtonsoft.Json;
 using XLogic.Base.Ex;
 
@@ -58,6 +59,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public List<CodeLine> NumberList => _numberList;
 
+        public HighlightResult HighlightResult => _highlightResult;
+
         #endregion
 
         #region Block 方法
@@ -107,7 +110,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override string ToJson()
         {
-            SourceCode = LineList.ToListString("\n");
+            SourceCode = SourceLineList.ToListString("\n");
             CodeBlockData blockData = new CodeBlockData
             {
                 Language = Language,
@@ -131,6 +134,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             // 删除源代码行
             int index = _lineList.IndexOf(line);
             SourceLineList.RemoveAt(index);
+            SourceCode = SourceLineList.ToListString("\n");
             // 更新
             UpdateViewData();
         }
@@ -146,6 +150,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             // 更新代码行
             line.Text = SourceLineList[index];
             line.UpdateGlyphImage();
+            // 更新源代码以及高亮
+            SourceCode = SourceLineList.ToListString("\n");
+            _highlightResult = CodeTool.Instance.Highlighting(SourceCode);
         }
 
         public void 合并至上一行(CodeLine line)
@@ -155,6 +162,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             SourceLineList[index - 1] = SourceLineList[index - 1] + line.Text;
             // 删除当前行
             SourceLineList.RemoveAt(index);
+            SourceCode = SourceLineList.ToListString("\n");
             // 更新
             UpdateViewData();
         }
@@ -162,6 +170,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public void 插入行(int index, string text)
         {
             SourceLineList.Insert(index, text);
+            SourceCode = SourceLineList.ToListString("\n");
             UpdateViewData();
         }
 
@@ -173,12 +182,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             SourceLineList[lineIndex] = SourceLineList[lineIndex].Substring(0, splitIndex);
             // 插入新行
             SourceLineList.Insert(lineIndex + 1, splitText);
+            SourceCode = SourceLineList.ToListString("\n");
             UpdateViewData();
         }
 
         public void 插入文本(int lineIndex, int insertIndex, string text)
         {
             SourceLineList[lineIndex] = SourceLineList[lineIndex].Insert(insertIndex, text);
+            SourceCode = SourceLineList.ToListString("\n");
             UpdateViewData();
         }
 
@@ -216,6 +227,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             }
             // 更新视图高度
             _viewHeight = _lineList.Count * FontSize + (_lineList.Count - 1) * LineSpace;
+            // 高亮代码
+            _highlightResult = CodeTool.Instance.Highlighting(SourceCode);
         }
 
         #endregion
@@ -228,7 +241,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         private readonly List<CodeLine> _lineList = new List<CodeLine>();
         /// <summary>行号列表</summary>
         private readonly List<CodeLine> _numberList = new List<CodeLine>();
+
         private int _viewHeight = 0;
+
+        private HighlightResult _highlightResult;
 
         #endregion
     }

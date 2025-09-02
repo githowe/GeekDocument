@@ -109,7 +109,7 @@ public class EditerComponent : Component<Editer>
                 SourceHeight = imageInfo.Height,
                 FrameList = imageInfo.FrameList,
                 Duration = imageInfo.Duration,
-                Caption = System.IO.Path.GetFileName(imagePath),
+                Caption = Path.GetFileName(imagePath),
             };
             // 插入图片块
             GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
@@ -160,6 +160,7 @@ public class EditerComponent : Component<Editer>
         {
             // SourceCode = File.ReadAllText("D:/示例代码.txt"),
             // SourceCode = "#include <iostream>\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n\tcout << \"Hello, World!\" << endl;\r\n\treturn 0;\r\n}",
+            SourceCode = "",
         };
         block.Init();
         // 插入块

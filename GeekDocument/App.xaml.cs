@@ -1,5 +1,6 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.DocLibSystem;
+using GeekDocument.SubSystem.EditerSystem.Tool;
 using GeekDocument.SubSystem.EventSystem;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
@@ -38,6 +39,7 @@ namespace GeekDocument
             FM.Instance.Init();
             ImageLoader.Instance.Init();
             AppWatch.Instance.Start();
+            CodeTool.Instance.Init();
         }
     }
 }
