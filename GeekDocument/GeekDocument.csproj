@@ -13,12 +13,17 @@
   <ItemGroup>
     <None Remove="Assets\AppIcon.png" />
     <None Remove="Assets\Font\simsun.ttc" />
+    <None Remove="Assets\Icon15\AlignCenter.png" />
+    <None Remove="Assets\Icon15\AlignLeft.png" />
+    <None Remove="Assets\Icon15\AlignRight.png" />
+    <None Remove="Assets\Icon15\Bold.png" />
     <None Remove="Assets\Icon15\Book.png" />
     <None Remove="Assets\Icon15\Document.png" />
     <None Remove="Assets\Icon15\EmptyFolder.png" />
     <None Remove="Assets\Icon15\File.png" />
     <None Remove="Assets\Icon15\Files.png" />
     <None Remove="Assets\Icon15\Folder.png" />
+    <None Remove="Assets\Icon15\Italic.png" />
     <None Remove="Assets\Icon15\Lib.png" />
     <None Remove="Assets\Icon15\SelectPath.png" />
     <None Remove="Assets\Icon15\SelectPath2.png" />
@@ -57,7 +62,6 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Blod.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\CNPunctuation.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Code.png" />
-    <None Remove="SubSystem\EditerSystem\Core\Image\Color.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Document.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\DocumentOption.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Emoji.png" />
@@ -76,6 +80,8 @@
     <None Remove="SubSystem\EditerSystem\Core\Image\Pi2.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Quote.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Redo.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Right_Closed.png" />
+    <None Remove="SubSystem\EditerSystem\Core\Image\Right_Opened.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Save.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\SaveAs.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\Shadow.png" />
@@ -114,12 +120,18 @@
 
   <ItemGroup>
     <Resource Include="Assets\Font\simsun.ttc" />
+    <Resource Include="Assets\Icon15\AlignJustify.png" />
+    <Resource Include="Assets\Icon15\AlignCenter.png" />
+    <Resource Include="Assets\Icon15\AlignLeft.png" />
+    <Resource Include="Assets\Icon15\AlignRight.png" />
+    <Resource Include="Assets\Icon15\Bold.png" />
     <Resource Include="Assets\Icon15\Book.png" />
     <Resource Include="Assets\Icon15\Document.png" />
     <Resource Include="Assets\Icon15\EmptyFolder.png" />
     <Resource Include="Assets\Icon15\File.png" />
     <Resource Include="Assets\Icon15\Files.png" />
     <Resource Include="Assets\Icon15\Folder.png" />
+    <Resource Include="Assets\Icon15\Italic.png" />
     <Resource Include="Assets\Icon15\Lib.png" />
     <Resource Include="Assets\Icon15\SelectPath.png" />
     <Resource Include="Assets\Icon15\SelectPath2.png" />
@@ -174,6 +186,8 @@
     <Resource Include="SubSystem\EditerSystem\Core\Image\List.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Quote.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Redo.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Right_Closed.png" />
+    <Resource Include="SubSystem\EditerSystem\Core\Image\Right_Opened.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Save.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\SaveAs.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\Shadow.png" />

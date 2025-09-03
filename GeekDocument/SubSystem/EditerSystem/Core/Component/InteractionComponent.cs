@@ -179,6 +179,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         private void DocArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            _host.Focus();
             _tool.OnMouseDown(e.ChangedButton);
         }
 

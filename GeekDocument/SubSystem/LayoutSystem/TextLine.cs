@@ -70,6 +70,19 @@ namespace GeekDocument.SubSystem.LayoutSystem
         /// <returns>剩余空间无法容纳新字时，返回False</returns>
         public bool AddWord(Word word, bool allowCompress)
         {
+            // 当前行无字，且字只有一个字符，同时该字符大于当前行宽，则直接添加
+            if (WordList.Count == 0 && !word.MultiChar && word.Width > LineWidth)
+            {
+                // 添加新字
+                WordList.Add(word);
+                // 记录横坐标
+                XList.Add(_currentWidth + Indent);
+                // 更新当前宽度
+                _currentWidth += word.Width + word.Interval;
+                // 返回成功
+                return true;
+            }
+
             // 无法容纳新字
             if (_currentWidth + word.Width > LineWidth)
             {

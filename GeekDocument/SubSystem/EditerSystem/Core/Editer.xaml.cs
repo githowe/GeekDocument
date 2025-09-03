@@ -54,6 +54,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             _scrollBarComponent = _componentBox.AddComponent<ScrollBarComponent>(this, "滚动条组件");
             _selectComponent = _componentBox.AddComponent<SelectComponent>(this, "选择组件");
             _toolBarComponent = _componentBox.AddComponent<ToolBarComponent>(this, "工具栏组件");
+            _propertyPanelComponent = _componentBox.AddComponent<PropertyPanelComponent>(this, "属性面板组件");
             // 初始化组件
             _componentBox.Init();
         }
@@ -105,6 +106,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             _interactionComponent.ReqEnable();
             // 启用滚动条组件
             _scrollBarComponent.ReqEnable();
+            // 启用属性面板组件
+            _propertyPanelComponent.ReqEnable();
         }
 
         #endregion
@@ -121,6 +124,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         private ScrollBarComponent _scrollBarComponent;
         private SelectComponent _selectComponent;
         private ToolBarComponent _toolBarComponent;
+        private PropertyPanelComponent _propertyPanelComponent;
 
         private bool _saved = true;
 

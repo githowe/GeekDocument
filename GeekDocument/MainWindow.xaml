@@ -16,7 +16,7 @@
     <Grid>
         <Grid Margin="0,2,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftArea" Width="300" MinWidth="300" MaxWidth="500"/>
+                <ColumnDefinition x:Name="LeftArea" Width="320" MinWidth="320" MaxWidth="500"/>
                 <ColumnDefinition x:Name="LeftSplit" Width="2"/>
                 <ColumnDefinition />
                 <ColumnDefinition x:Name="RightSplit" Width="0"/>

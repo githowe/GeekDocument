@@ -48,16 +48,16 @@ namespace GeekDocument.SubSystem.LayoutSystem
             {
                 // 取出字
                 Word word = WordList[_wordIndex];
-                // 当前行无字符，且字的宽度大于当前行的行宽时，需要拆分字
-                if (line.CurrentWidth == 0 && word.Width > line.LineWidth)
+                // 当前行无字符，且字的宽度大于当前行的行宽，同时有多个字符时，需要拆分字
+                if (line.CurrentWidth == 0 && word.Width > line.LineWidth && word.MultiChar)
                 {
                     List<Word> wordList = SplitWord(word, 0, line.LineWidth);
                     WordList.RemoveAt(_wordIndex);
                     WordList.InsertRange(_wordIndex, wordList);
                     continue;
                 }
-                // 字的宽度大于行宽时，需要拆分字
-                if (word.Width > lineWidth)
+                // 字的宽度大于行宽且有多个字符时，需要拆分字
+                if (word.Width > lineWidth && word.MultiChar)
                 {
                     List<Word> wordList = SplitWord(word, line.CurrentWidth, lineWidth);
                     WordList.RemoveAt(_wordIndex);
@@ -104,10 +104,19 @@ namespace GeekDocument.SubSystem.LayoutSystem
                 word.GlyphImageList.RemoveAt(0);
                 int charIndex = word.CharIndexList[0];
                 word.CharIndexList.RemoveAt(0);
-                // 无法容纳刚取出的字形
+
+                // 单个字形大于行宽，直接生成字
+                if (image.GlyphWidth > lineWidth)
+                {
+                    Word newWord = GenerateWord(new List<GlyphImage> { image }, new List<int> { charIndex }, word);
+                    result.Add(newWord);
+                    continue;
+                }
+
+                // 无法容纳刚取出的字形时
                 if (currentWidth + image.GlyphWidth > lineWidth)
                 {
-                    // 生成新字
+                    // 从已添加的字形生成新字
                     Word newWord = GenerateWord(imageList, indexList, word);
                     result.Add(newWord);
                     // 新建列表并添加刚取出的数据

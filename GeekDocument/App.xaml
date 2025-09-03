@@ -16,6 +16,8 @@
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/TextBoxStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/ToggleStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyle;component/RadioStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="/XLogic.WpfStyle;component/ExpanderStyle.xaml"/>
 
                 <ResourceDictionary Source="/XLogic.WpfStyleEx;component/FrameLabelStyle.xaml"/>
                 <ResourceDictionary Source="/XLogic.WpfStyleEx;component/WindowStyle.xaml"/>

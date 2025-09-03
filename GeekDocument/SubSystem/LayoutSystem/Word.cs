@@ -58,6 +58,8 @@ public class Word
             // 获取字形图片
             GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(c, fontFamily, fontSize, bold, italic);
             if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', fontFamily, fontSize, bold, italic);
+            if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage(c, "新宋体", fontSize, bold, italic);
+            if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', "新宋体", fontSize, bold, italic);
 
             imageList.Add(glyphImage);
             width += glyphImage.GlyphWidth;

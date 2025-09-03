@@ -164,9 +164,9 @@ namespace GeekDocument
             LeftPanel.Visibility = cache.LeftPanelHided ? Visibility.Collapsed : Visibility.Visible;
             RightPanel.Visibility = cache.RightPanelHided ? Visibility.Collapsed : Visibility.Visible;
             // 显隐区域
-            LeftArea.MinWidth = cache.LeftPanelHided ? 0 : 300;
+            LeftArea.MinWidth = cache.LeftPanelHided ? 0 : 320;
             LeftArea.Width = cache.LeftPanelHided ? _zeroLength : new GridLength(cache.LeftPanelWidth);
-            RightArea.MinWidth = cache.RightPanelHided ? 0 : 300;
+            RightArea.MinWidth = cache.RightPanelHided ? 0 : 320;
             RightArea.Width = cache.RightPanelHided ? _zeroLength : new GridLength(cache.RightPanelWidth);
             // 显隐分割条
             LeftSplit.Width = cache.LeftPanelHided ? _zeroLength : _splitLength;
@@ -195,7 +195,7 @@ namespace GeekDocument
             RightPanel.Visibility = RightPanel.IsVisible ? Visibility.Collapsed : Visibility.Visible;
             bool panelVisible = RightPanel.IsVisible;
             // 切换区域显隐
-            RightArea.MinWidth = panelVisible ? 300 : 0;
+            RightArea.MinWidth = panelVisible ? 320 : 0;
             RightArea.Width = panelVisible ? new GridLength(cache.RightPanelWidth) : _zeroLength;
             // 切换分割线显隐
             RightSplit.Width = panelVisible ? _splitLength : _zeroLength;
@@ -279,7 +279,7 @@ namespace GeekDocument
             LeftPanel.Visibility = LeftPanel.IsVisible ? Visibility.Collapsed : Visibility.Visible;
             bool panelVisible = LeftPanel.IsVisible;
             // 切换区域显隐
-            LeftArea.MinWidth = panelVisible ? 300 : 0;
+            LeftArea.MinWidth = panelVisible ? 320 : 0;
             LeftArea.Width = panelVisible ? new GridLength(cache.LeftPanelWidth) : _zeroLength;
             // 切换分割线显隐
             LeftSplit.Width = panelVisible ? _splitLength : _zeroLength;

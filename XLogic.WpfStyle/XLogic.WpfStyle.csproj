@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Image\ArrowDown.png" />
     <None Remove="Image\Button_Close.png" />
     <None Remove="Image\Button_Max.png" />
     <None Remove="Image\Button_Menu.png" />
@@ -18,11 +19,14 @@
     <None Remove="Image\CheckBox_Off.png" />
     <None Remove="Image\CheckBox_On.png" />
     <None Remove="Image\Close2.png" />
+    <None Remove="Image\Expander\ArrowDown.png" />
+    <None Remove="Image\Expander\ArrowUp.png" />
     <None Remove="Image\Left.png" />
     <None Remove="Image\Right.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Image\ArrowDown.png" />
     <Resource Include="Image\Button_Close.png" />
     <Resource Include="Image\Button_Max.png" />
     <Resource Include="Image\Button_Menu.png" />
@@ -32,6 +36,8 @@
     <Resource Include="Image\CheckBox_Off.png" />
     <Resource Include="Image\CheckBox_On.png" />
     <Resource Include="Image\Close2.png" />
+    <Resource Include="Image\Expander\ArrowDown.png" />
+    <Resource Include="Image\Expander\ArrowUp.png" />
     <Resource Include="Image\Left.png" />
     <Resource Include="Image\Right.png" />
   </ItemGroup>

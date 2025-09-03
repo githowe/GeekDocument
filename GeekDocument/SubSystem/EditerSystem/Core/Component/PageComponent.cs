@@ -49,6 +49,22 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// <summary>光标横坐标。此横坐标是为了上下移动光标时保持在一条直线上</summary>
         public int IBeamX { get; set; } = 0;
 
+        /// <summary>当前块</summary>
+        public Block CurrentBlock
+        {
+            get
+            {
+                if (_currentBlockLayer == null) throw new Exception("当前块为空");
+                return _currentBlockLayer.SourceBlock;
+            }
+        }
+
+        #endregion
+
+        #region 事件
+
+        public event Action<Block>? CurrentBlockChanged = null;
+
         #endregion
 
         #region 生命周期
@@ -95,6 +111,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (prevBlock == null) throw new Exception("获取上一个块失败");
             prevBlock.MoveIBeamToEnd();
             _currentBlockLayer = prevBlock;
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
             更新光标横坐标();
         }
 
@@ -104,6 +121,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (nextBlock == null) throw new Exception("获取下一个块失败");
             nextBlock.MoveIBeamToHead();
             _currentBlockLayer = nextBlock;
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
             更新光标横坐标();
         }
 
@@ -113,6 +131,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (prevBlock == null) throw new Exception("获取上一个块失败");
             prevBlock.MoveIBeamToLastLine(IBeamX);
             _currentBlockLayer = prevBlock;
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
         }
 
         public void 移动光标至后块第一行(BlockLayer block)
@@ -121,9 +140,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (nextBlock == null) throw new Exception("获取下一个块失败");
             nextBlock.MoveIBeamToFirstLine(IBeamX);
             _currentBlockLayer = nextBlock;
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
         }
 
-        public void 设置当前块(BlockLayer block) => _currentBlockLayer = block;
+        public void 设置当前块(BlockLayer block)
+        {
+            _currentBlockLayer = block;
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
+        }
 
         public int 获取块索引(BlockLayer block) => _blockLayerList.IndexOf(block);
 
@@ -175,6 +199,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _currentBlockLayer = layer;
             _currentBlockLayer.MoveIBeamToHead();
             更新光标横坐标();
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
 
             UpdatePageHeight();
             UpdateBack();
@@ -244,6 +269,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             // 获取命中块并设为当前块
             _currentBlockLayer = GetBlockByPoint(point);
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
             // 移动光标
             _currentBlockLayer.MoveIBeamToPoint(point);
         }
@@ -435,6 +461,26 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// 处理属性变更
+        /// </summary>
+        public void HandlePropertyChanged()
+        {
+            // 更新当前块
+            _currentBlockLayer.SourceBlock.UpdateViewData(_currentBlockLayer.BlockWidth);
+            _currentBlockLayer.Update();
+            // 更新块坐标
+            UpdateBlockPoint();
+            // 同步光标
+            _currentBlockLayer?.SyncIBeam();
+            更新光标横坐标();
+
+            UpdatePageHeight();
+            UpdateBack();
+            GetComponent<ScrollBarComponent>().UpdateScrollBar();
+            _host.Saved = false;
         }
 
         #endregion

@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
+{
+    public class PropertyBarBase : UserControl
+    {
+        public string Title { get; set; } = "";
+
+        protected SolidColorBrush _default = new SolidColorBrush(Color.FromRgb(140, 140, 140));
+        protected SolidColorBrush _hovered = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+    }
+}
