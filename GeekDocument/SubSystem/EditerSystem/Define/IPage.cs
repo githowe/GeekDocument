@@ -39,6 +39,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         void 插入块(Block block, int index);
 
+        void 插入块列表(List<Block> blocks, int index);
+
         void 移除块(BlockLayer block);
+
+        BlockLayer? 获取块(int index);
     }
 }

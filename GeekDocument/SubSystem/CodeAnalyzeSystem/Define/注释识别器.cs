@@ -2,12 +2,12 @@
 {
     public class 注释识别器 : 识别器
     {
-        public override 词法单元? 识别(string 语句, int startIndex)
+        public override Token? 识别(string 语句, int startIndex)
         {
             // 如果第一个字符不是 '/'，说明不是注释
             if (语句[startIndex] != '/') return null;
 
-            词法单元 result = new 词法单元 { 类型 = "注释" };
+            Token result = new Token { Type = "注释" };
             int index = startIndex;
             int state = 0;
             bool accepted = false;
@@ -26,14 +26,14 @@
                         // 下一个字符是 '/'，进入单行注释状态
                         if (语句[index] == '/')
                         {
-                            result.值 = "//";
+                            result.Value = "//";
                             state = 1;
                             index++;
                         }
                         // 下一个字符是 '*'，进入多行注释状态
                         else if (语句[index] == '*')
                         {
-                            result.值 = "/*";
+                            result.Value = "/*";
                             state = 2;
                             index++;
                         }
@@ -44,7 +44,7 @@
                         // 单行注释，读取直到行尾
                         if (index < 语句.Length && 语句[index] != '\n' && 语句[index] != '\r')
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                         }
                         else accepted = true;
@@ -59,19 +59,19 @@
                                 // 如果下一个字符是 '/'，注释结束
                                 if (index + 1 < 语句.Length && 语句[index + 1] == '/')
                                 {
-                                    result.值 += "*/";
+                                    result.Value += "*/";
                                     index += 2;
                                     accepted = true;
                                 }
                                 else
                                 {
-                                    result.值 += 语句[index];
+                                    result.Value += 语句[index];
                                     index++;
                                 }
                             }
                             else
                             {
-                                result.值 += 语句[index];
+                                result.Value += 语句[index];
                                 index++;
                             }
                         }

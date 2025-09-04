@@ -2,10 +2,10 @@
 {
     public class 字符串识别器 : 识别器
     {
-        public override 词法单元? 识别(string 语句, int startIndex)
+        public override Token? 识别(string 语句, int startIndex)
         {
             if (语句[startIndex] != '"') return null;
-            词法单元 result = new 词法单元 { 类型 = "字符串" };
+            Token result = new Token { Type = "字符串" };
 
             int index = startIndex;
             int state = 0;
@@ -19,7 +19,7 @@
                     case 0:
                         if (语句[index] == '"')
                         {
-                            result.值 += '"';
+                            result.Value += '"';
                             index++;
                             state = 1;
                         }
@@ -30,7 +30,7 @@
                         // 遇到非引号，继续读取字符串内容
                         else if (语句[index] != '"')
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                         }
                         // 遇到引号
@@ -47,13 +47,13 @@
                             // 数量为奇数，说明引号是转义的，不作为结束符
                             if (斜杠数量 % 2 == 1)
                             {
-                                result.值 += '"';
+                                result.Value += '"';
                                 index++;
                             }
                             // 否则，结束字符串读取
                             else
                             {
-                                result.值 += '"';
+                                result.Value += '"';
                                 index++;
                                 state = 2;
                             }

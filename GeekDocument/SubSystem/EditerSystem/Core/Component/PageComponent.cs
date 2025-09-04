@@ -207,6 +207,39 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _host.Saved = false;
         }
 
+        public void 插入块列表(List<Block> blockList, int index)
+        {
+            // 生成块图层列表
+            List<BlockLayer> layerList = new List<BlockLayer>();
+            foreach (var item in blockList)
+            {
+                BlockLayer? layer = GenerateBlockLayer(item);
+                if (layer == null) throw new Exception("生成块图层失败");
+                layerList.Add(layer);
+            }
+            // 插入至列表
+            _blockLayerList.InsertRange(index, layerList);
+            // 插入至画布
+            foreach (var layer in layerList)
+            {
+                _canvas.Children.Insert(index, layer);
+                layer.Update();
+                index++;
+            }
+            // 更新块坐标
+            UpdateBlockPoint();
+            // 移动光标至最后一个新块开头
+            _currentBlockLayer = layerList.Last();
+            _currentBlockLayer.MoveIBeamToHead();
+            更新光标横坐标();
+            CurrentBlockChanged?.Invoke(_currentBlockLayer.SourceBlock);
+
+            UpdatePageHeight();
+            UpdateBack();
+            GetComponent<ScrollBarComponent>().UpdateScrollBar();
+            _host.Saved = false;
+        }
+
         public void 移除块(BlockLayer block)
         {
             // 移除块控件
@@ -214,6 +247,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 移除块实例
             _blockLayerList.Remove(block);
             _blockRectDict.Remove(block);
+        }
+
+        public BlockLayer? 获取块(int index)
+        {
+            if (index < 0 || index >= _blockLayerList.Count) return null;
+            return _blockLayerList[index];
         }
 
         #endregion
@@ -348,10 +387,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         {
             // 忽略空字符、退格、回车、Esc
             if (text is "" or "\b" or "\r" or "\u001b") return;
-            // 将回车与换行转换为可视文本
-            text = text.Replace("\r", "\\r");
-            text = text.Replace("\n", "\\n");
-
+            // 将制表符转换为空格
+            text = text.Replace("\t", "    ");
+            // 统一换行符
+            text = text.Replace("\r\n", "\n");
+            
             _currentBlockLayer?.InputText(text);
             更新光标横坐标();
 

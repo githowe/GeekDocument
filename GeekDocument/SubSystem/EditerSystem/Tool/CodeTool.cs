@@ -60,14 +60,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Tool
         {
             HighlightResult result = new HighlightResult();
             词法识别器 lexer = new 词法识别器();
-            List<词法单元> 结果 = lexer.识别语句(code);
+            List<Token> 结果 = lexer.GetTokenList(code);
             foreach (var 词法单元 in 结果)
             {
                 HighlightInfo highlightInfo = new HighlightInfo
                 {
                     StartIndex = 词法单元.StartIndex,
-                    EndIndex = 词法单元.StartIndex + 词法单元.值.Length - 1,
-                    Color = _colorDict[词法单元.类型],
+                    EndIndex = 词法单元.StartIndex + 词法单元.Value.Length - 1,
+                    Color = _colorDict[词法单元.Type],
                 };
                 result.InfoList.Add(highlightInfo);
             }

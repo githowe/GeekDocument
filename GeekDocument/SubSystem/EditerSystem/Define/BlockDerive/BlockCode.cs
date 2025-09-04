@@ -193,6 +193,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             UpdateViewData();
         }
 
+        public void UpdateSouceCode()
+        {
+            SourceCode = SourceLineList.ToListString("\n");
+            UpdateViewData();
+        }
+
         #endregion
 
         #region 私有方法

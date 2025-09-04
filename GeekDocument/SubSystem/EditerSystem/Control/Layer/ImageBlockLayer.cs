@@ -161,6 +161,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         {
             if (_subArea == SubArea.Image) return;
 
+            text = text.Replace("\n", "\\n");
             Block.Caption = Block.Caption.Insert(_charIndex - 2, text);
             _charIndex += text.Length;
             Block.UpdateViewData(BlockWidth);

@@ -4,35 +4,34 @@ namespace GeekDocument.SubSystem.CodeAnalyzeSystem
 {
     public class 词法识别器
     {
-        public List<词法单元> 识别语句(string 语句)
+        public List<Token> GetTokenList(string input)
         {
+            List<Token> result = new List<Token>();
             int index = 0;
-            List<词法单元> 结果 = new List<词法单元>();
-            while (index < 语句.Length)
+            while (index < input.Length)
             {
                 // 跳过空白字符
-                if (char.IsWhiteSpace(语句[index]))
+                if (char.IsWhiteSpace(input[index]))
                 {
                     index++;
                     continue;
                 }
-                词法单元 token = null;
+                Token token = null;
                 foreach (var 识别器 in 识别器列表)
                 {
-                    token = 识别器.识别(语句, index);
+                    token = 识别器.识别(input, index);
                     if (token != null)
                     {
                         token.StartIndex = index;
-                        结果.Add(token);
-                        index += token.值.Length;
+                        result.Add(token);
+                        index += token.Value.Length;
                         break;
                     }
                 }
                 // 无识别器能识别当前字符，跳过当前字符
                 if (token == null) index++;
             }
-
-            return 结果;
+            return result;
         }
 
         private readonly List<识别器> 识别器列表 = new List<识别器>

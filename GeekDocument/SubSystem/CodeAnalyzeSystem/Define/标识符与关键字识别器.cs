@@ -2,12 +2,12 @@
 {
     public class 标识符与关键字识别器 : 识别器
     {
-        public override 词法单元? 识别(string 语句, int startIndex)
+        public override Token? 识别(string 语句, int startIndex)
         {
             // 如果第一个字符不是字母也不是“@”，说明不是标识符或关键字
             if (!char.IsLetter(语句[startIndex]) && 语句[startIndex] != '@') return null;
 
-            词法单元 result = new 词法单元();
+            Token result = new Token();
             int index = startIndex;
             int state = 0;
             bool accepted = false;
@@ -21,7 +21,7 @@
                         // 如果是字母或“@”，进入状态“1”
                         if (char.IsLetter(语句[index]) || 语句[index] == '@')
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                             state = 1;
                         }
@@ -30,7 +30,7 @@
                         // 字母、数字、下划线，继续留在状态“1”
                         if (char.IsLetter(语句[index]) || char.IsDigit(语句[index]) || 语句[index] == '_')
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                         }
                         // 否则，进入状态“2”
@@ -43,10 +43,10 @@
                 }
             }
 
-            if (关键字.Contains(result.值)) result.类型 = "关键字";
-            else if (类型关键字.Contains(result.值)) result.类型 = "类型关键字";
-            else if (控制流关键字.Contains(result.值)) result.类型 = "控制流关键字";
-            else result.类型 = "标识符";
+            if (关键字.Contains(result.Value)) result.Type = "关键字";
+            else if (类型关键字.Contains(result.Value)) result.Type = "类型关键字";
+            else if (控制流关键字.Contains(result.Value)) result.Type = "控制流关键字";
+            else result.Type = "标识符";
             return result;
         }
 

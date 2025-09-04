@@ -52,12 +52,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         private void UpdatePropertyPanel(Block block)
         {
+            if (_currentBlock == block) return;
+            _currentBlock = block;
             _panelBox.Children.Clear();
             TextPropertyPanel? panel = null;
-            switch (block.Type)
+            switch (_currentBlock.Type)
             {
                 case BlockType.Text:
-                    panel = new TextPropertyPanel { Block = (BlockText)block };
+                    panel = new TextPropertyPanel { Block = (BlockText)_currentBlock };
                     break;
                 case BlockType.SplitLine:
                     break;
@@ -94,6 +96,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         private void PropertyChanged() => GetComponent<PageComponent>().HandlePropertyChanged();
 
         private Grid _panelBox;
+        private Block? _currentBlock = null;
         private GridLength _zeroLength = new GridLength(0);
     }
 }

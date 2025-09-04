@@ -2,12 +2,12 @@
 {
     public class 预处理指令识别器 : 识别器
     {
-        public override 词法单元? 识别(string 语句, int startIndex)
+        public override Token? 识别(string 语句, int startIndex)
         {
             // 如果第一个字符不是“#”，说明不是指令
             if (语句[startIndex] != '#') return null;
 
-            词法单元 result = new 词法单元 { 类型 = "预处理指令" };
+            Token result = new Token { Type = "预处理指令" };
             int index = startIndex;
             int state = 0;
             bool accepted = false;
@@ -19,7 +19,7 @@
                 {
                     case 0:
                         // 添加第一个字符“#”，进入状态“1”，读取指令名称
-                        result.值 += 语句[index];
+                        result.Value += 语句[index];
                         index++;
                         state = 1;
                         break;
@@ -27,7 +27,7 @@
                         // 遇到空格，开始读取参数
                         if (char.IsWhiteSpace(语句[index]))
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                             state = 2;
                         }
@@ -39,7 +39,7 @@
                         // 其他字符，视为名称的一部分
                         else
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                         }
                         break;
@@ -51,7 +51,7 @@
                         }
                         else
                         {
-                            result.值 += 语句[index];
+                            result.Value += 语句[index];
                             index++;
                         }
                         break;

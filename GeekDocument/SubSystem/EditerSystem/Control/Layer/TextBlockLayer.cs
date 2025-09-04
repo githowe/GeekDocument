@@ -107,14 +107,63 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override void InputText(string text)
         {
-            // 插入文本
-            Block.Content = Block.Content.Insert(_charIndex, text);
-            _charIndex += text.Length;
-            // 更新视图数据与视图
-            Block.UpdateViewData(BlockWidth);
-            Update();
-            // 同步光标
-            SyncIBeam();
+            // 未包含换行符
+            if (!text.Contains('\n'))
+            {
+                // 插入文本
+                Block.Content = Block.Content.Insert(_charIndex, text);
+                _charIndex += text.Length;
+                // 更新视图数据与视图
+                Block.UpdateViewData(BlockWidth);
+                Update();
+                // 同步光标
+                SyncIBeam();
+            }
+            else
+            {
+                // 分割成行列表
+                List<string> lineList = text.Split('\n').ToList();
+                // 获取并删除光标后文本
+                string tailText = Block.Content.Substring(_charIndex);
+                Block.Content = Block.Content.Substring(0, _charIndex);
+                // 追加第一行文本
+                AppendText(lineList[0]);
+                // 获取自身索引
+                int selfIndex = Page.获取块索引(this);
+                // 只有两行
+                if (lineList.Count == 2)
+                {
+                    // 创建文本块并继承当前块的属性
+                    BlockText block = Block.CloneWithoutContent();
+                    // 设置块内容：第二行文本 + 光标后文本
+                    block.Content = lineList[1] + tailText;
+                    Page.插入块(block, selfIndex + 1);
+                    // 获取新插入的块并移动光标至拼接处
+                    BlockLayer? blockLayer = Page.获取块(selfIndex + 1);
+                    blockLayer?.MoveIBeamToIndex(lineList[1].Length);
+                }
+                else
+                {
+                    // 生成中间行的块列表
+                    List<Block> blockList = new List<Block>();
+                    for (int index = 1; index < lineList.Count - 1; index++)
+                    {
+                        BlockText block = Block.CloneWithoutContent();
+                        block.Content = lineList[index];
+                        blockList.Add(block);
+                    }
+                    // 插入块列表
+                    Page.插入块列表(blockList, selfIndex + 1);
+                    // 生成最后一行的块
+                    BlockText lastBlock = Block.CloneWithoutContent();
+                    lastBlock.Content = lineList.Last() + tailText;
+                    // 插入最后一块
+                    Page.插入块(lastBlock, selfIndex + 1 + blockList.Count);
+                    // 获取最后一块并移动光标至拼接处
+                    BlockLayer? blockLayer = Page.获取块(selfIndex + 1 + blockList.Count);
+                    blockLayer?.MoveIBeamToIndex(lineList.Last().Length);
+                }
+            }
         }
 
         public override void MoveIBeamToPoint(Point point)
@@ -146,7 +195,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
             TextLine? 字符索引所在行 = null;
             List<int> 字符索引列表 = new List<int>();
-            int 行索引 = 0;
 
             // 字符索引处于文本块末尾
             if (_charIndex == Block.Content.Length)
@@ -154,7 +202,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 字符索引所在行 = Block.ViewData.Last();
                 字符索引列表 = 字符索引所在行.GetCharIndexList();
                 字符索引列表.Add(_charIndex);
-                行索引 = Block.ViewData.Count - 1;
             }
             else
             {
@@ -168,22 +215,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                         字符索引所在行 = textLine;
                         break;
                     }
-                    行索引++;
                 }
             }
-            // 如果没有找到，抛出异常
             if (字符索引所在行 == null) throw new Exception("未找到字符索引所在行");
 
             _currentLine = 字符索引所在行;
-            // 获取文本行每个字符横坐标
-            List<double> xList = 字符索引所在行.GetXList(Canvas.GetLeft(this));
             // 获取字符索引在行中的索引
             int indexInLine = 字符索引列表.IndexOf(_charIndex);
+            // 获取文本行每个字符横坐标
+            List<double> xList = 字符索引所在行.GetXList(Canvas.GetLeft(this));
             // 获取字符横坐标
             double x = xList[indexInLine];
             // 计算当前行的纵坐标
-            double y = Canvas.GetTop(this) + 行索引 * (Block.FontSize + Block.LineSpace);
-            // 移动光标
+            double y = GetLineY(_currentLine);
             Page.移动光标(x.RoundInt(), (int)y, Block.FontSize);
         }
 

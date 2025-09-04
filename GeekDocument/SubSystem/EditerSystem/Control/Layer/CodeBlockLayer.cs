@@ -117,13 +117,63 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override void InputText(string text)
         {
-            int lineIndex = Block.LineList.IndexOf(_currentLine);
-            int charIndexInLine = _charIndex - GetLineStartIndex(_currentLine);
-            Block.插入文本(lineIndex, charIndexInLine, text);
-            Update();
-            _charIndex += text.Length;
-            SyncIBeam();
-            Page.更新光标横坐标();
+            if (!text.Contains('\n'))
+            {
+                int lineIndex = Block.LineList.IndexOf(_currentLine);
+                int charIndexInLine = _charIndex - GetLineStartIndex(_currentLine);
+                Block.插入文本(lineIndex, charIndexInLine, text);
+                Update();
+                _charIndex += text.Length;
+                SyncIBeam();
+                Page.更新光标横坐标();
+            }
+            else
+            {
+                // 分割成行列表
+                List<string> lineList = text.Split('\n').ToList();
+                // 获取当前行索引和行内字符索引
+                int lineIndex = Block.LineList.IndexOf(_currentLine);
+                int charIndexInLine = _charIndex - GetLineStartIndex(_currentLine);
+                // 获取当前行光标后文本
+                string tailText = _currentLine.Text.Substring(charIndexInLine);
+                // 更新当前行对应的源代码行：移除光标后文本并加上第一行文本
+                Block.SourceLineList[lineIndex] = Block.SourceLineList[lineIndex].Substring(0, charIndexInLine) + lineList[0];
+                // 只有两行
+                if (lineList.Count == 2)
+                {
+                    // 插入新行：第二行文本 + 光标后文本
+                    Block.SourceLineList.Insert(lineIndex + 1, lineList[1] + tailText);
+                    Block.UpdateSouceCode();
+                    Update();
+                    // 更新当前行
+                    _currentLine = Block.LineList[lineIndex + 1];
+                    int lineStartIndex = GetLineStartIndex(_currentLine);
+                    _charIndex = lineStartIndex + lineList[1].Length;
+                    SyncIBeam();
+                    Page.更新光标横坐标();
+                }
+                else
+                {
+                    // 生成中间行列表
+                    List<string> middleLineList = new List<string>();
+                    for (int index = 1; index < lineList.Count - 1; index++)
+                        middleLineList.Add(lineList[index]);
+                    // 插入中间行
+                    Block.SourceLineList.InsertRange(lineIndex + 1, middleLineList);
+                    // 插入最后一行：最后一行文本 + 光标后文本
+                    int lastIndex = lineIndex + 1 + middleLineList.Count;
+                    Block.SourceLineList.Insert(lastIndex, lineList.Last() + tailText);
+                    // 更新块
+                    Block.UpdateSouceCode();
+                    Update();
+                    // 更新当前行
+                    _currentLine = Block.LineList[lastIndex];
+                    int lineStartIndex = GetLineStartIndex(_currentLine);
+                    _charIndex = lineStartIndex + lineList.Last().Length;
+                    SyncIBeam();
+                    Page.更新光标横坐标();
+                }
+            }
         }
 
         public override void MoveIBeamToPoint(Point point)
