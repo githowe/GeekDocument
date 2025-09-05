@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
+using GeekDocument.SubSystem.DirectWriteSystem;
 using GeekDocument.SubSystem.DocLibSystem;
 using GeekDocument.SubSystem.EditerSystem.Tool;
 using GeekDocument.SubSystem.EventSystem;
@@ -35,6 +36,7 @@ namespace GeekDocument
             CacheManager.Instance.Init();
             StyleManager.Instance.Init();
             // 初始化系统服务
+            DWriteTool.Instance.Init();
             EM.Instance.Init();
             FM.Instance.Init();
             ImageLoader.Instance.Init();
