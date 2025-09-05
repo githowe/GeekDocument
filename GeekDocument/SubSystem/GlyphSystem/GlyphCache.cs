@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.DirectWriteSystem;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -84,8 +85,12 @@ namespace GeekDocument.SubSystem.GlyphSystem
             Typeface typeface = new Typeface(family, style, weight, FontStretches.Normal);
             if (typeface.TryGetGlyphTypeface(out GlyphTypeface glyphTypeface))
             {
+                FontMetrics metrics = DWriteTool.Instance.GetFontMetrics(fontFamily, bold, italic);
+                double typeHeight = (metrics.TypoAscender - metrics.TypoDescender) / (double)metrics.UnitsPerEm;
+                double typeBaseLine = metrics.TypoAscender / (double)metrics.UnitsPerEm;
+
                 // 生成字形
-                GlyphRun? glyphRun = GenerateGlyphRun(glyphTypeface, c, fontSize);
+                GlyphRun? glyphRun = GenerateGlyphRun(glyphTypeface, c, fontSize, typeBaseLine, typeHeight);
                 if (glyphRun == null) return null;
                 // 创建字形图片
                 GlyphImage glyphImage = new GlyphImage
@@ -99,7 +104,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
                 // 没有墨迹区域，则无需生成字形图片的渲染数据
                 if (box.IsEmpty) return glyphImage;
                 // 计算基线位置：相对于画布左上角
-                double baseLine = fontSize * (glyphTypeface.Baseline / glyphTypeface.Height);
+                double baseLine = fontSize * (typeBaseLine / typeHeight);
                 // 制定检测区域。扩展大小暂定为4像素
                 double left = Math.Floor(box.X) - 4;
                 double top = Math.Floor(baseLine + box.Y) - 4;
@@ -188,10 +193,13 @@ namespace GeekDocument.SubSystem.GlyphSystem
             return null;
         }
 
-        private GlyphRun? GenerateGlyphRun(GlyphTypeface typeface, char c, int fontSize)
+        private GlyphRun? GenerateGlyphRun(GlyphTypeface typeface, char c, int fontSize, double typeBaseLine, double typeHeight)
         {
-            double baseLine = fontSize * (typeface.Baseline / typeface.Height);
-            double pixelEachEM = fontSize / typeface.Height;
+            // double baseLine = fontSize * (typeface.Baseline / typeface.Height);
+            // double pixelEachEM = fontSize / typeface.Height;
+
+            double baseLine = fontSize * (typeBaseLine / typeHeight);
+            double pixelEachEM = fontSize / typeHeight;
 
             // 查找字符对应的字形索引
             if (!typeface.CharacterToGlyphMap.TryGetValue(c, out ushort index))
