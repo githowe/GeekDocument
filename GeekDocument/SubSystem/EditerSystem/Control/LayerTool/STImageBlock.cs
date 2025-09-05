@@ -93,6 +93,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             // 图片区
             //     图片前
             //         有前块 - 移动光标至前块末尾
+            //             前块为空 - 删除前块
+            //             前块不为空 - 移动光标至前块末尾
             //         无前块 - 无操作
             //     图片后 - 删除块
             // 图注区
@@ -100,15 +102,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             //     光标前有字符 - 删除字符
             //     光标前无字符 - 左移光标(移动至图片后)
 
-            var 图片区 = _backspace.NewNode("图片区", () => Layer.处于图片区, null);
+            StateNode 图片区 = _backspace.NewNode("图片区", () => Layer.处于图片区, null);
 
-            var 图片前 = _backspace.NewNode("图片前", () => Layer.CharIndex == 0, null, 图片区);
-            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 图片前);
+            StateNode 图片前 = _backspace.NewNode("图片前", () => Layer.CharIndex == 0, null, 图片区);
+            StateNode 有前块 = _backspace.NewNode("有前块", () => Layer.HasPrevBlock, null, 图片前);
+            _backspace.NewNode("前块为空", () => Layer.PrevBlockIsEmpty, Layer.删除前块, 有前块);
+            _backspace.NewNode("前块不为空", () => !Layer.PrevBlockIsEmpty, Layer.移动光标至前块末尾, 有前块);
             _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 图片前);
 
             _backspace.NewNode("图片后", () => Layer.CharIndex == 1, Layer.用退格键删除块, 图片区);
 
-            var 图注区 = _backspace.NewNode("图注区", () => !Layer.处于图片区, null);
+            StateNode 图注区 = _backspace.NewNode("图注区", () => !Layer.处于图片区, null);
             _backspace.NewNode("无字符", () => Layer.EmptyCaption, Layer.删除图注, 图注区);
             _backspace.NewNode("光标前有字符", () => Layer.CharIndex > 2, Layer.用退格键删除字符, 图注区);
             _backspace.NewNode("光标前无字符", () => Layer.CharIndex == 2, Layer.左移光标, 图注区);

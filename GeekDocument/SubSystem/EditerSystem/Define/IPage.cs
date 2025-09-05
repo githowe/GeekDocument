@@ -33,6 +33,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         bool 有下一个块(BlockLayer block);
 
+        bool 上一个块为空(BlockLayer block);
+
         public BlockLayer? 获取上一个块(BlockLayer block);
 
         public BlockLayer? 获取下一个块(BlockLayer block);
@@ -44,5 +46,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         void 移除块(BlockLayer block);
 
         BlockLayer? 获取块(int index);
+
+        void 删除上一个块(BlockLayer block);
     }
 }

@@ -33,6 +33,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
         }
 
+        public override bool IsEmpty => false;
+
         #endregion
 
         #region object 方法
@@ -63,10 +65,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
             _stateTree.Init(this);
         }
-
-        #endregion
-
-        #region 公开方法
 
         #endregion
 

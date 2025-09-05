@@ -24,6 +24,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override int CharIndexMax => Block.Content.Length;
 
+        public override bool IsEmpty => Block.Content == "";
+
         #endregion
 
         #region object 方法
@@ -319,8 +321,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         #endregion
 
         #region 状态树接口
-
-        public bool IsEmpty => Block.Content == "";
 
         public int TextLength => Block.Content.Length;
 

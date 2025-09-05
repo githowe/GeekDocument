@@ -24,9 +24,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// <summary>块高度：根据内容动态生成</summary>
         public abstract int BlockHeight { get; }
 
-        public virtual int CharIndex => -1;
+        /// <summary>字符索引</summary>
+        public abstract int CharIndex { get; }
 
-        public virtual int CharIndexMax => -1;
+        /// <summary>最大字符索引</summary>
+        public abstract int CharIndexMax { get; }
+
+        /// <summary>是否为空</summary>
+        public abstract bool IsEmpty { get; }
 
         #endregion
 
@@ -91,6 +96,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public bool HasPrevBlock => Page.有上一个块(this);
 
         public bool HasNextBlock => Page.有下一个块(this);
+
+        public bool PrevBlockIsEmpty => Page.上一个块为空(this);
+
+        public void 删除前块() => Page.删除上一个块(this);
 
         public void 移动光标至前块末尾() => Page.移动光标至前块末尾(this);
 

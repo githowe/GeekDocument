@@ -61,6 +61,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public HighlightResult HighlightResult => _highlightResult;
 
+        public bool IsEmpty => SourceCode.Length == 0;
+
         #endregion
 
         #region Block 方法

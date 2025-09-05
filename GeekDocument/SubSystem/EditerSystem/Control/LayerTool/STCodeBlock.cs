@@ -88,12 +88,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
         {
             // 单行
             //    空行
-            //        有前块 - 删除块
+            //        有前块 - 用退格键删除块
             //        无前块 - 替换为文本块
             //    非空行
             //        光标前有字符 - 删除字符
             //        光标前无字符
-            //            有前块 - 移动光标至前块末尾
+            //            有前块
+            //                前块为空 - 删除前块
+            //                前块不为空 - 移动光标至前块末尾
             //            无前块 - 无操作
             // 多行
             //     空行
@@ -106,7 +108,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             //         光标前无字符
             //             有上一行 - 合并当前行至上一行
             //             无上一行
-            //                 有前块 - 移动光标至前块末尾
+            //                 有前块
+            //                     前块为空 - 删除前块
+            //                     前块不为空 - 移动光标至前块末尾
             //                 无前块 - 无操作
 
             StateNode 单行 = _backspace.NewNode("单行", () => Layer.LineCount == 1, null);
@@ -118,7 +122,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             StateNode 非空行 = _backspace.NewNode("非空行", () => !Layer.EmptyLine, null, 单行);
             _backspace.NewNode("光标前有字符", () => Layer.光标前有字符, Layer.删除字符, 非空行);
             StateNode 光标前无字符 = _backspace.NewNode("光标前无字符", () => !Layer.光标前有字符, null, 非空行);
-            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 光标前无字符);
+            StateNode 有前块 = _backspace.NewNode("有前块", () => Layer.HasPrevBlock, null, 光标前无字符);
+            _backspace.NewNode("前块为空", () => Layer.PrevBlockIsEmpty, Layer.删除前块, 有前块);
+            _backspace.NewNode("前块不为空", () => !Layer.PrevBlockIsEmpty, Layer.移动光标至前块末尾, 有前块);
             _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 光标前无字符);
 
             StateNode 多行 = _backspace.NewNode("多行", () => Layer.LineCount > 1, null);
@@ -132,7 +138,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             光标前无字符 = _backspace.NewNode("光标前无字符", () => !Layer.光标前有字符, null, 非空行);
             _backspace.NewNode("有上一行", () => Layer.HasPrevLine, Layer.合并当前行至上一行, 光标前无字符);
             无上一行 = _backspace.NewNode("无上一行", () => !Layer.HasPrevLine, null, 光标前无字符);
-            _backspace.NewNode("有前块", () => Layer.HasPrevBlock, Layer.移动光标至前块末尾, 无上一行);
+            有前块 = _backspace.NewNode("有前块", () => Layer.HasPrevBlock, null, 无上一行);
+            _backspace.NewNode("前块为空", () => Layer.PrevBlockIsEmpty, Layer.删除前块, 有前块);
+            _backspace.NewNode("前块不为空", () => !Layer.PrevBlockIsEmpty, Layer.移动光标至前块末尾, 有前块);
             _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 无上一行);
         }
 

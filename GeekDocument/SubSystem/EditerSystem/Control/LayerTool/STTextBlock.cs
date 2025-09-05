@@ -90,8 +90,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
             //     无前块 - 无操作
             // 光标前无字符
             //     有前块
-            //         可以合并 - 合并块
-            //         不可合并 - 移动光标至前块末尾
+            //         前块为空 - 删除前块
+            //         前块不为空
+            //             可以合并 - 合并块
+            //             不可合并 - 移动光标至前块末尾
             //     无前块 - 无操作
             // 光标前有字符 - 删除字符
 
@@ -101,8 +103,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool
 
             StateNode 光标前无字符 = _backspace.NewNode("光标前无字符", () => Layer.CharIndex == 0, null);
             StateNode 有前块 = _backspace.NewNode("有前块", () => Layer.HasPrevBlock, null, 光标前无字符);
-            _backspace.NewNode("可以合并", Layer.能否合并, Layer.合并块, 有前块);
-            _backspace.NewNode("不可合并", () => !Layer.能否合并(), Layer.移动光标至前块末尾, 有前块);
+            _backspace.NewNode("前块为空", () => Layer.PrevBlockIsEmpty, Layer.删除前块, 有前块);
+            StateNode 前块不为空 = _backspace.NewNode("前块不为空", () => !Layer.PrevBlockIsEmpty, null, 有前块);
+            _backspace.NewNode("可以合并", Layer.能否合并, Layer.合并块, 前块不为空);
+            _backspace.NewNode("不可合并", () => !Layer.能否合并(), Layer.移动光标至前块末尾, 前块不为空);
             _backspace.NewNode("无前块", () => !Layer.HasPrevBlock, 无操作, 光标前无字符);
 
             _backspace.NewNode("光标前有字符", () => Layer.CharIndex > 0, Layer.删除字符);

@@ -31,6 +31,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             }
         }
 
+        public override bool IsEmpty => Block.IsEmpty;
+
         #endregion
 
         #region SingleBoard 方法

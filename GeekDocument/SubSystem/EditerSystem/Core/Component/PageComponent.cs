@@ -169,6 +169,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             return index < _blockLayerList.Count - 1;
         }
 
+        public bool 上一个块为空(BlockLayer block)
+        {
+            BlockLayer? prevBlock = 获取上一个块(block);
+            if (prevBlock == null) throw new Exception("没有上一个块");
+            return prevBlock.IsEmpty;
+        }
+
         public BlockLayer? 获取上一个块(BlockLayer block)
         {
             int index = _blockLayerList.IndexOf(block);
@@ -255,6 +262,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             return _blockLayerList[index];
         }
 
+        public void 删除上一个块(BlockLayer block)
+        {
+            BlockLayer? prevBlock = 获取上一个块(block);
+            if (prevBlock == null) throw new Exception("没有上一个块");
+            移除块(prevBlock);
+            UpdateBlockPoint();
+            _currentBlockLayer?.SyncIBeam();
+        }
+
         #endregion
 
         #region 公开方法
@@ -299,6 +315,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _currentBlockLayer = _blockLayerList[0];
             _currentBlockLayer.MoveIBeamToHead();
             GetComponent<IBeamComponent>().ReqEnable();
+            更新光标横坐标();
         }
 
         /// <summary>
@@ -391,7 +408,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             text = text.Replace("\t", "    ");
             // 统一换行符
             text = text.Replace("\r\n", "\n");
-            
+
             _currentBlockLayer?.InputText(text);
             更新光标横坐标();
 
