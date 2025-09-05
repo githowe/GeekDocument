@@ -1,0 +1,41 @@
+﻿<local:PropertyPanel x:Class="GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel.CodePropertyPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel"
+             xmlns:pb="clr-namespace:GeekDocument.SubSystem.EditerSystem.Control.PropertyBar"
+             mc:Ignorable="d" d:FontFamily="NSimSun"
+             d:DesignWidth="320" d:DesignHeight="600">
+    <Grid x:Name="MainGrid">
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Duration="0:0:0.5" To="1" Storyboard.TargetName="MainScrollBar" Storyboard.TargetProperty="Opacity"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetName="MainScrollBar" Storyboard.TargetProperty="Opacity" BeginTime="0:0:2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+        <StackPanel x:Name="MainStackPanel" VerticalAlignment="Top">
+            <StackPanel Orientation="Vertical" Margin="10">
+                <pb:TextInput x:Name="Bar_Language" Title="语言"/>
+                <pb:Selecter x:Name="Bar_Font" Title="第一字体" Margin="0,10,0,0"/>
+                <pb:Selecter x:Name="Bar_Font2" Title="第二字体" Margin="0,10,0,0" IsEnabled="False"/>
+                <pb:TextInput x:Name="Bar_Size" Title="字号" Margin="0,10,0,0"/>
+                <pb:TextInput x:Name="Bar_LineSpace" Title="行间距" Margin="0,10,0,0"/>
+                <pb:OnOff x:Name="Bar_ShowLineNumber" Title="显示行号" Margin="0,10,0,0"/>
+                <pb:OnOff x:Name="Bar_ShowLanguage" Title="显示语言" Margin="0,10,0,0"/>
+            </StackPanel>
+        </StackPanel>
+        <ScrollBar x:Name="MainScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="2" Opacity="0"
+                   SmallChange="1" ViewportSize="0" Minimum="0" Maximum="0"/>
+    </Grid>
+</local:PropertyPanel>

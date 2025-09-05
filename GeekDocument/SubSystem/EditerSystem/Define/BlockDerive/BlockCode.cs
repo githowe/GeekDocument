@@ -16,11 +16,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>字体</summary>
         public string FontFamily { get; set; } = "仿宋";
 
+        public string SecondFontFamily { get; set; } = "仿宋";
+
         /// <summary>字号</summary>
         public int FontSize { get; set; } = 16;
 
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 2;
+
+        /// <summary>显示行号</summary>
+        public bool ShowLineNumber { get; set; } = true;
+
+        /// <summary>显示语言</summary>
+        public bool ShowLanguage { get; set; } = true;
     }
 
     /// <summary>
@@ -36,16 +44,24 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public string Language { get; set; } = "C#";
 
         /// <summary>源代码</summary>
-        public string SourceCode { get; set; } = "public class Program\r\n{\r\n    static void Main()\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}";
+        public string SourceCode { get; set; } = "public class Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Hello World!\");\n    }\n}";
 
         /// <summary>字体</summary>
         public string FontFamily { get; set; } = "仿宋";
+
+        public string SecondFontFamily { get; set; } = "仿宋";
 
         /// <summary>字号</summary>
         public int FontSize { get; set; } = 16;
 
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 2;
+
+        /// <summary>显示行号</summary>
+        public bool ShowLineNumber { get; set; } = true;
+
+        /// <summary>显示语言</summary>
+        public bool ShowLanguage { get; set; } = true;
 
         #endregion
 
@@ -106,8 +122,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             Language = blockData.Language;
             SourceCode = blockData.SourceCode;
             FontFamily = blockData.FontFamily;
+            SecondFontFamily = blockData.SecondFontFamily;
             FontSize = blockData.FontSize;
             LineSpace = blockData.LineSpace;
+            ShowLineNumber = blockData.ShowLineNumber;
+            ShowLanguage = blockData.ShowLanguage;
         }
 
         public override string ToJson()
@@ -118,8 +137,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 Language = Language,
                 SourceCode = SourceCode,
                 FontFamily = FontFamily,
+                SecondFontFamily = SecondFontFamily,
                 FontSize = FontSize,
                 LineSpace = LineSpace,
+                ShowLineNumber = ShowLineNumber,
+                ShowLanguage = ShowLanguage
             };
             return JsonConvert.SerializeObject(blockData);
         }
@@ -199,6 +221,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         {
             SourceCode = SourceLineList.ToListString("\n");
             UpdateViewData();
+        }
+
+        public void UpdateLanguageLine()
+        {
+            _languageLine.Text = Language;
+            _languageLine.Size = FontSize;
+            _languageLine.UpdateGlyphImage();
         }
 
         #endregion

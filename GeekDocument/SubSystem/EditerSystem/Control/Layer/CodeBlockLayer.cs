@@ -50,15 +50,20 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             _blockHeight = Block.GetViewHeight() + _padding * 2;
             // 行号区宽度 = 最长行号宽度 + 双倍边距
             _numberAreaWidth = Block.NumberList.Last().GetWidth().RoundInt() + _padding * 2;
+            // 不显示行号
+            if (!Block.ShowLineNumber) _numberAreaWidth = 0;
             // 绘制底框
-            _dc.DrawRectangle(_行号背景, null, new Rect(0, 0, _numberAreaWidth, _blockHeight));
+            if (Block.ShowLineNumber) _dc.DrawRectangle(_行号背景, null, new Rect(0, 0, _numberAreaWidth, _blockHeight));
             _dc.DrawRectangle(_代码背景, null, new Rect(_numberAreaWidth, 0, BlockWidth - _numberAreaWidth, _blockHeight));
             // 绘制行号
             int y = _padding;
-            foreach (var line in Block.NumberList)
+            if (Block.ShowLineNumber)
             {
-                DrawLine(line, (_numberAreaWidth - _padding - line.GetWidth()).RoundInt(), y, 128, 128, 128);
-                y += Block.FontSize + Block.LineSpace;
+                foreach (var line in Block.NumberList)
+                {
+                    DrawLine(line, (_numberAreaWidth - _padding - line.GetWidth()).RoundInt(), y, 128, 128, 128);
+                    y += Block.FontSize + Block.LineSpace;
+                }
             }
             // 绘制代码
             y = _padding;
@@ -67,11 +72,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 DrawLine(line, _numberAreaWidth + _padding, y, 255, 255, 255, true);
                 y += Block.FontSize + Block.LineSpace;
             }
-            // 语言区大小
-            double languageAreaWidth = (Block.LanguageLine.GetWidth() + _padding).RoundInt();
-            double languageAreaHeight = Block.FontSize + _padding;
-            _dc.DrawRectangle(_行号背景, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
-            DrawLine(Block.LanguageLine, (BlockWidth - languageAreaWidth).RoundInt() + _padding / 2, _padding / 2, 255, 221, 103);
+            if (Block.ShowLanguage)
+            {
+                // 语言区大小
+                double languageAreaWidth = (Block.LanguageLine.GetWidth() + _padding).RoundInt();
+                double languageAreaHeight = Block.FontSize + _padding;
+                _dc.DrawRectangle(_行号背景, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
+                DrawLine(Block.LanguageLine, (BlockWidth - languageAreaWidth).RoundInt() + _padding / 2, _padding / 2, 255, 221, 103);
+            }
         }
 
         #endregion

@@ -55,7 +55,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             if (_currentBlock == block) return;
             _currentBlock = block;
             _panelBox.Children.Clear();
-            TextPropertyPanel? panel = null;
+            PropertyPanel? panel = null;
             switch (_currentBlock.Type)
             {
                 case BlockType.Text:
@@ -64,6 +64,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.SplitLine:
                     break;
                 case BlockType.Code:
+                    panel = new CodePropertyPanel { Block = (BlockCode)_currentBlock };
                     break;
                 case BlockType.List:
                     break;
