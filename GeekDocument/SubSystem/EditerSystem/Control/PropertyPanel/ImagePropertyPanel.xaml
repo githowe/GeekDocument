@@ -1,8 +1,8 @@
 ﻿<local:PropertyPanel x:Class="GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel.ImagePropertyPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel"
              xmlns:pb="clr-namespace:GeekDocument.SubSystem.EditerSystem.Control.PropertyBar"
              mc:Ignorable="d" d:FontFamily="NSimSun"
@@ -33,7 +33,6 @@
                     <pb:TextInput x:Name="Bar_ActualWidth" Title="实际渲染宽度" ReadOnly="True" Margin="0,10,0,0"/>
                     <pb:TextInput x:Name="Bar_ActualHeight" Title="实际渲染高度" ReadOnly="True" Margin="0,10,0,0"/>
                     <pb:OnOff x:Name="Bar_PixelArt" Title="像素画" Margin="0,10,0,0"/>
-
                 </StackPanel>
             </Expander>
             <Expander Header="图注" IsExpanded="True">

@@ -69,6 +69,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.Table:
                     break;
                 case BlockType.Formula:
+                    panel = new FormulaPropertyPanel { Block = (BlockFormula)_currentBlock };
                     break;
                 case BlockType.Chart:
                     break;

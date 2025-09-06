@@ -12,14 +12,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public int Size { get; set; } = 0;
 
-        /// <summary>期望渲染宽度</summary>
-        public int RenderWidth { get; set; } = 0;
-
         public int Align { get; set; } = 0;
 
         public int MarginTop { get; set; } = 0;
 
         public int MarginBottom { get; set; } = 0;
+
+        public int MarginLeft { get; set; } = 0;
+
+        public int MarginRight { get; set; } = 0;
     }
 
     /// <summary>
@@ -35,12 +36,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         #region 属性
 
-        public string Latex { get; set; } = @"\color[RGB]{255,255,255}{f(x)=\sqrt{x^2+y^2}}";
+        public string Latex { get; set; } = @"f(x)=\sqrt{x^2+y^2}";
 
         public int Size { get; set; } = 24;
 
-        /// <summary>期望渲染宽度</summary>
-        public int RenderWidth { get; set; } = 0;
+        public string Color { get; set; } = "FFFFFF";
 
         /// <summary>对齐方式</summary>
         public LineAlignType Align { get; set; } = LineAlignType.Center;
@@ -78,10 +78,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
             Latex = blockData.Latex;
             Size = blockData.Size;
-            RenderWidth = blockData.RenderWidth;
             Align = (LineAlignType)blockData.Align;
             MarginTop = blockData.MarginTop;
             MarginBottom = blockData.MarginBottom;
+            MarginLeft = blockData.MarginLeft;
+            MarginRight = blockData.MarginRight;
         }
 
         public override string ToJson()
@@ -90,10 +91,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             {
                 Latex = Latex,
                 Size = Size,
-                RenderWidth = RenderWidth,
                 Align = (int)Align,
                 MarginTop = MarginTop,
-                MarginBottom = MarginBottom
+                MarginBottom = MarginBottom,
+                MarginLeft = MarginLeft,
+                MarginRight = MarginRight,
             };
             return JsonConvert.SerializeObject(blockData);
         }
@@ -102,17 +104,21 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override void UpdateViewData(int blockWidth)
         {
-            XamlMath.TexFormulaParser 解析器 = WpfTeXFormulaParser.Instance;
-            XamlMath.TexFormula 公式 = 解析器.Parse(Latex);
-            byte[] sourceData = 公式.RenderToPng(Size, 0, 0, "Arial");
+            try
+            {
+                XamlMath.TexFormulaParser 解析器 = WpfTeXFormulaParser.Instance;
+                XamlMath.TexFormula 公式 = 解析器.Parse(Latex);
+                byte[] sourceData = 公式.RenderToPng(Size, 0, 0, "Arial");
 
-            ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(sourceData, "png");
-            SourceWidth = imageInfo.Width;
-            SourceHeight = imageInfo.Height;
-            PixelData = imageInfo.FrameList[0].PixelData;
-            // UpdateColor(255, 255, 255);
-            CalculateActualSize(blockWidth);
-            CalculateImageX(blockWidth);
+                ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(sourceData, "png");
+                SourceWidth = imageInfo.Width;
+                SourceHeight = imageInfo.Height;
+                PixelData = imageInfo.FrameList[0].PixelData;
+                UpdateColor(255, 255, 255);
+                CalculateActualSize(blockWidth);
+                CalculateImageX(blockWidth);
+            }
+            catch (Exception) { }
         }
 
         #endregion
@@ -141,22 +147,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// </summary>
         private void CalculateActualSize(int blockWidth)
         {
-            // 设置了渲染宽度
-            if (RenderWidth > 0)
-            {
-                // 没有超过块宽度
-                if (RenderWidth <= blockWidth) _actualWidth = RenderWidth;
-                // 超过块宽度，使用块宽度
-                else _actualWidth = blockWidth;
-            }
-            // 未设置渲染宽度，使用源宽度
-            else
-            {
-                // 没有超过块宽度
-                if (SourceWidth <= blockWidth) _actualWidth = SourceWidth;
-                // 超过块宽度，使用块宽度
-                else _actualWidth = blockWidth;
-            }
+            // 没有超过块宽度
+            if (SourceWidth <= blockWidth) _actualWidth = SourceWidth;
+            // 超过块宽度，使用块宽度
+            else _actualWidth = blockWidth;
 
             // 计算源图比例
             double ratio = (double)SourceHeight / SourceWidth;

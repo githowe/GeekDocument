@@ -22,9 +22,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel
             Bar_Width.LoadProperty(Block.RenderWidth.ToString());
             Bar_ActualWidth.LoadProperty(Block.RealRenderWidth.ToString());
             Bar_ActualHeight.LoadProperty(Block.RenderHeight.ToString());
-            // 像素画、对齐方式
+            // 像素画
             Bar_PixelArt.LoadProperty(Block.PixelArt);
-
             // 字体、字号
             List<string> fontNameList = new List<string>();
             InstalledFontCollection fonts = new InstalledFontCollection();
