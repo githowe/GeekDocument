@@ -657,6 +657,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 遍历块图层
             foreach (var layer in _blockLayerList)
             {
+                // 顶边距
+                y += layer.SourceBlock.MarginTop;
                 // 设置块坐标
                 Canvas.SetLeft(layer, x);
                 Canvas.SetTop(layer, y);
@@ -665,7 +667,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 // 记录块区域
                 _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
                 // 累加纵坐标
-                y += layer.BlockHeight + ParagraphInterval;
+                y += layer.BlockHeight + layer.SourceBlock.MarginBottom + ParagraphInterval;
             }
         }
 
@@ -682,13 +684,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 遍历块图层
             foreach (var layer in _blockLayerList)
             {
+                // 顶边距
+                y += layer.SourceBlock.MarginTop;
                 // 设置块坐标
                 Canvas.SetLeft(layer, x);
                 Canvas.SetTop(layer, y);
                 // 记录块区域
                 _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
                 // 累加纵坐标
-                y += layer.BlockHeight + ParagraphInterval;
+                y += layer.BlockHeight + layer.SourceBlock.MarginBottom + ParagraphInterval;
             }
         }
 
@@ -700,7 +704,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             int height = 0;
             // 累加块高度
             foreach (var layer in _blockLayerList)
-                height += layer.BlockHeight;
+                height += layer.BlockHeight + layer.SourceBlock.MarginTop + layer.SourceBlock.MarginBottom;
             // 累加块间距
             height += (_blockLayerList.Count - 1) * ParagraphInterval;
             // 累加上下内边距

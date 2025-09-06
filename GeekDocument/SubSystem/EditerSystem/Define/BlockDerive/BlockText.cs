@@ -27,6 +27,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 4;
 
+        public int MarginTop { get; set; } = 0;
+
+        public int MarginBottom { get; set; } = 0;
+
         public int CustomFirstLineIndent { get; set; } = 0;
 
         public bool UseCustomFirstLineIndent { get; set; } = false;
@@ -183,6 +187,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             TStyle = (TextStyle)blockData.TextStyle;
             Align = (LineAlignType)blockData.Align;
             LineSpace = blockData.LineSpace;
+            MarginTop = blockData.MarginTop;
+            MarginBottom = blockData.MarginBottom;
             CustomFirstLineIndent = blockData.CustomFirstLineIndent;
             UseCustomFirstLineIndent = blockData.UseCustomFirstLineIndent;
             LeftIndent = blockData.LeftIndent;
@@ -200,6 +206,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 TextStyle = (int)TStyle,
                 Align = (int)Align,
                 LineSpace = LineSpace,
+                MarginTop = MarginTop,
+                MarginBottom = MarginBottom,
                 CustomFirstLineIndent = CustomFirstLineIndent,
                 UseCustomFirstLineIndent = UseCustomFirstLineIndent,
                 LeftIndent = LeftIndent,
@@ -223,6 +231,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 TStyle = TStyle,
                 Align = Align,
                 LineSpace = LineSpace,
+                MarginTop = MarginTop,
+                MarginBottom = MarginBottom,
                 FirstLineIndent = FirstLineIndent,
                 CustomFirstLineIndent = CustomFirstLineIndent,
                 UseCustomFirstLineIndent = UseCustomFirstLineIndent,
@@ -243,6 +253,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             TStyle = TextStyle.Normal;
             Align = LineAlignType.Justify;
             LineSpace = 4;
+            MarginTop = 0;
+            MarginBottom = 0;
             CustomFirstLineIndent = 0;
             UseCustomFirstLineIndent = false;
             LeftIndent = 0;

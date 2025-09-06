@@ -31,6 +31,8 @@
                 <pb:Selecter x:Name="Bar_Font2" Title="第二字体" Margin="0,10,0,0" IsEnabled="False"/>
                 <pb:TextInput x:Name="Bar_Size" Title="字号" Margin="0,10,0,0"/>
                 <pb:TextInput x:Name="Bar_LineSpace" Title="行间距" Margin="0,10,0,0"/>
+                <pb:TextInput x:Name="Bar_MarginTop" Title="上边距" Margin="0,10,0,0"/>
+                <pb:TextInput x:Name="Bar_MarginBottom" Title="下边距" Margin="0,10,0,0"/>
                 <pb:OnOff x:Name="Bar_ShowLineNumber" Title="显示行号" Margin="0,10,0,0"/>
                 <pb:OnOff x:Name="Bar_ShowLanguage" Title="显示语言" Margin="0,10,0,0"/>
             </StackPanel>

@@ -22,8 +22,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel
             Bar_Font.LoadProperty(fontNameList, Block.FontFamily);
             Bar_Font2.LoadProperty(fontNameList, Block.SecondFontFamily);
             Bar_Size.LoadProperty(Block.FontSize.ToString());
-            // 行间距
+            // 行间距、上边距、下边距
             Bar_LineSpace.LoadProperty(Block.LineSpace.ToString());
+            Bar_MarginTop.LoadProperty(Block.MarginTop.ToString());
+            Bar_MarginBottom.LoadProperty(Block.MarginBottom.ToString());
             // 显示行号、语言
             Bar_ShowLineNumber.LoadProperty(Block.ShowLineNumber);
             Bar_ShowLanguage.LoadProperty(Block.ShowLanguage);
@@ -34,8 +36,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel
             Bar_Font.SelectionChanged += Font_SelectionChanged;
             Bar_Font2.SelectionChanged += Font2_SelectionChanged;
             Bar_Size.TextChanged += Size_TextChanged;
-            // 监听行间距
+            // 监听行间距、上边距、下边距
             Bar_LineSpace.TextChanged += LineSpace_TextChanged;
+            Bar_MarginTop.TextChanged += MarginTop_TextChanged;
+            Bar_MarginBottom.TextChanged += MarginBottom_TextChanged;
             // 监听显示行号、语言
             Bar_ShowLineNumber.Opened += ShowLineNumber_Opened;
             Bar_ShowLineNumber.Closed += ShowLineNumber_Closed;
@@ -81,6 +85,24 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel
             if (int.TryParse(text, out int lineSpace))
             {
                 Block.LineSpace = lineSpace;
+                PropertyChanged?.Invoke();
+            }
+        }
+
+        private void MarginTop_TextChanged(string text)
+        {
+            if (int.TryParse(text, out int marginTop))
+            {
+                Block.MarginTop = marginTop;
+                PropertyChanged?.Invoke();
+            }
+        }
+
+        private void MarginBottom_TextChanged(string text)
+        {
+            if (int.TryParse(text, out int marginBottom))
+            {
+                Block.MarginBottom = marginBottom;
                 PropertyChanged?.Invoke();
             }
         }

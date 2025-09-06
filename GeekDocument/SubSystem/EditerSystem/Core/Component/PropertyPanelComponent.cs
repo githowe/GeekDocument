@@ -1,11 +1,6 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using XLogic.Base.UI;

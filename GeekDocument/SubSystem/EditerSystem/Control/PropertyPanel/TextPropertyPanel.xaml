@@ -41,8 +41,8 @@
                     <pb:TextInput x:Name="Bar_LeftIndent" Title="左缩进" Margin="0,10,0,0" IsEnabled="False"/>
                     <pb:TextInput x:Name="Bar_RightIndent" Title="右缩进" Margin="0,10,0,0" IsEnabled="False"/>
                     <pb:TextInput x:Name="Bar_LineSpace" Title="行间距" Margin="0,10,0,0"/>
-                    <pb:TextInput x:Name="Bar_MarginTop" Title="段前距" Margin="0,10,0,0" IsEnabled="False"/>
-                    <pb:TextInput x:Name="Bar_MarginBottom" Title="段后距" Margin="0,10,0,0" IsEnabled="False"/>
+                    <pb:TextInput x:Name="Bar_MarginTop" Title="上边距" Margin="0,10,0,0"/>
+                    <pb:TextInput x:Name="Bar_MarginBottom" Title="下边距" Margin="0,10,0,0"/>
                 </StackPanel>
             </Expander>
         </StackPanel>

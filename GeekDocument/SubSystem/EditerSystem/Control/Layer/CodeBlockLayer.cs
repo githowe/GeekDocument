@@ -39,8 +39,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override void Init()
         {
-            _代码背景.Freeze();
-            _行号背景.Freeze();
+            _codeBack.Freeze();
+            _lineNumberBack.Freeze();
             _stateTree.Init(this);
         }
 
@@ -53,8 +53,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             // 不显示行号
             if (!Block.ShowLineNumber) _numberAreaWidth = 0;
             // 绘制底框
-            if (Block.ShowLineNumber) _dc.DrawRectangle(_行号背景, null, new Rect(0, 0, _numberAreaWidth, _blockHeight));
-            _dc.DrawRectangle(_代码背景, null, new Rect(_numberAreaWidth, 0, BlockWidth - _numberAreaWidth, _blockHeight));
+            if (Block.ShowLineNumber) _dc.DrawRectangle(_lineNumberBack, null, new Rect(0, 0, _numberAreaWidth, _blockHeight));
+            _dc.DrawRectangle(_codeBack, null, new Rect(_numberAreaWidth, 0, BlockWidth - _numberAreaWidth, _blockHeight));
             // 绘制行号
             int y = _padding;
             if (Block.ShowLineNumber)
@@ -77,7 +77,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 // 语言区大小
                 double languageAreaWidth = (Block.LanguageLine.GetWidth() + _padding).RoundInt();
                 double languageAreaHeight = Block.FontSize + _padding;
-                _dc.DrawRectangle(_行号背景, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
+                _dc.DrawRectangle(_lineNumberBack, null, new Rect(BlockWidth - languageAreaWidth, 0, languageAreaWidth, languageAreaHeight));
                 DrawLine(Block.LanguageLine, (BlockWidth - languageAreaWidth).RoundInt() + _padding / 2, _padding / 2, 255, 221, 103);
             }
         }
@@ -558,8 +558,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         #region 字段
 
-        private readonly Brush _代码背景 = new SolidColorBrush(Color.FromArgb(255, 24, 24, 24));
-        private readonly Brush _行号背景 = new SolidColorBrush(Color.FromArgb(255, 16, 16, 16));
+        private readonly Brush _codeBack = new SolidColorBrush(Color.FromArgb(255, 24, 24, 24));
+        private readonly Brush _lineNumberBack = new SolidColorBrush(Color.FromArgb(255, 16, 16, 16));
 
         private int _blockHeight = 0;
         private readonly int _padding = 16;

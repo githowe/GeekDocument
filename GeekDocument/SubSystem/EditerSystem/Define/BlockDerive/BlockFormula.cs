@@ -16,6 +16,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public int RenderWidth { get; set; } = 0;
 
         public int Align { get; set; } = 0;
+
+        public int MarginTop { get; set; } = 0;
+
+        public int MarginBottom { get; set; } = 0;
     }
 
     /// <summary>
@@ -76,6 +80,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             Size = blockData.Size;
             RenderWidth = blockData.RenderWidth;
             Align = (LineAlignType)blockData.Align;
+            MarginTop = blockData.MarginTop;
+            MarginBottom = blockData.MarginBottom;
         }
 
         public override string ToJson()
@@ -86,6 +92,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 Size = Size,
                 RenderWidth = RenderWidth,
                 Align = (int)Align,
+                MarginTop = MarginTop,
+                MarginBottom = MarginBottom
             };
             return JsonConvert.SerializeObject(blockData);
         }

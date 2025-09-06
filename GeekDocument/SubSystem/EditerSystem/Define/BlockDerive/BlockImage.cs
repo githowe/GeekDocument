@@ -26,6 +26,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public string FontFamily { get; set; } = "仿宋";
 
         public int FontSize { get; set; } = 16;
+
+        public int MarginTop { get; set; } = 0;
+
+        public int MarginBottom { get; set; } = 0;
     }
 
     /// <summary>
@@ -109,6 +113,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             Caption = blockData.Caption;
             FontFamily = blockData.FontFamily;
             FontSize = blockData.FontSize;
+            MarginTop = blockData.MarginTop;
+            MarginBottom = blockData.MarginBottom;
 
             LoadImage();
         }
@@ -124,6 +130,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 Caption = Caption,
                 FontFamily = FontFamily,
                 FontSize = FontSize,
+                MarginTop = MarginTop,
+                MarginBottom = MarginBottom,
             };
             return JsonConvert.SerializeObject(blockData);
         }

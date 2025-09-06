@@ -6,6 +6,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
     {
         public BlockType Type { get; set; } = BlockType.Text;
 
+        public int MarginTop { get; set; } = 0;
+
+        public int MarginBottom { get; set; } = 0;
+
         /// <summary>
         /// 初始化
         /// </summary>

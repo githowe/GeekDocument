@@ -24,6 +24,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>行间距</summary>
         public int LineSpace { get; set; } = 2;
 
+        public int MarginTop { get; set; } = 0;
+
+        public int MarginBottom { get; set; } = 0;
+
         /// <summary>显示行号</summary>
         public bool ShowLineNumber { get; set; } = true;
 
@@ -125,6 +129,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             SecondFontFamily = blockData.SecondFontFamily;
             FontSize = blockData.FontSize;
             LineSpace = blockData.LineSpace;
+            MarginTop = blockData.MarginTop;
+            MarginBottom = blockData.MarginBottom;
             ShowLineNumber = blockData.ShowLineNumber;
             ShowLanguage = blockData.ShowLanguage;
         }
@@ -140,6 +146,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 SecondFontFamily = SecondFontFamily,
                 FontSize = FontSize,
                 LineSpace = LineSpace,
+                MarginTop = MarginTop,
+                MarginBottom = MarginBottom,
                 ShowLineNumber = ShowLineNumber,
                 ShowLanguage = ShowLanguage
             };
