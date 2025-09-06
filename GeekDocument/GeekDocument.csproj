@@ -25,6 +25,12 @@
     <None Remove="Assets\Icon15\Folder.png" />
     <None Remove="Assets\Icon15\Italic.png" />
     <None Remove="Assets\Icon15\Lib.png" />
+    <None Remove="Assets\Icon15\PlayControl\First.png" />
+    <None Remove="Assets\Icon15\PlayControl\Last.png" />
+    <None Remove="Assets\Icon15\PlayControl\Next.png" />
+    <None Remove="Assets\Icon15\PlayControl\Pause.png" />
+    <None Remove="Assets\Icon15\PlayControl\Play.png" />
+    <None Remove="Assets\Icon15\PlayControl\Prev.png" />
     <None Remove="Assets\Icon15\SelectPath.png" />
     <None Remove="Assets\Icon15\SelectPath2.png" />
     <None Remove="Assets\Icon16\CloseFile.png" />
@@ -133,6 +139,12 @@
     <Resource Include="Assets\Icon15\Folder.png" />
     <Resource Include="Assets\Icon15\Italic.png" />
     <Resource Include="Assets\Icon15\Lib.png" />
+    <Resource Include="Assets\Icon15\PlayControl\First.png" />
+    <Resource Include="Assets\Icon15\PlayControl\Last.png" />
+    <Resource Include="Assets\Icon15\PlayControl\Next.png" />
+    <Resource Include="Assets\Icon15\PlayControl\Pause.png" />
+    <Resource Include="Assets\Icon15\PlayControl\Play.png" />
+    <Resource Include="Assets\Icon15\PlayControl\Prev.png" />
     <Resource Include="Assets\Icon15\SelectPath.png" />
     <Resource Include="Assets\Icon15\SelectPath2.png" />
     <Resource Include="Assets\Icon16\CloseFile.png" />

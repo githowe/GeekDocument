@@ -64,6 +64,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 case BlockType.List:
                     break;
                 case BlockType.Image:
+                    panel = new ImagePropertyPanel { Block = (BlockImage)_currentBlock };
                     break;
                 case BlockType.Table:
                     break;

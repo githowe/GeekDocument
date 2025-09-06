@@ -320,6 +320,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         protected override void OnUpdate()
         {
+            // 设置图片缩放模式
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
+            if (Block.PixelArt) RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.NearestNeighbor);
             // 绘制图片
             _dc.DrawImage(_display, new Rect(Block.ImageX, 0, Block.RealRenderWidth, Block.RenderHeight));
             // 绘制图注

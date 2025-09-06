@@ -13,6 +13,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
 
         public string Text { get; set; } = "";
 
+        public bool ReadOnly { get; set; } = false;
+
         public event Action<string> TextChanged;
 
         /// <summary>
@@ -22,6 +24,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
         {
             Block_Title.Text = Title;
             Input_Value.Text = text;
+            if (ReadOnly) Input_Value.IsReadOnly = true;
         }
 
         private void MainGrid_MouseEnter(object sender, MouseEventArgs e)

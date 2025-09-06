@@ -30,6 +30,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public int MarginTop { get; set; } = 0;
 
         public int MarginBottom { get; set; } = 0;
+
+        public int MarginLeft { get; set; } = 0;
+
+        public int MarginRight { get; set; } = 0;
     }
 
     /// <summary>
@@ -74,6 +78,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>总持续时长。单位：毫秒</summary>
         public int Duration { get; set; } = 0;
 
+        /// <summary>帧率</summary>
+        public double Fps
+        {
+            get
+            {
+                if (FrameList.Count < 2) return 0;
+                // 帧率 = 帧数 / 秒
+                return FrameList.Count / (Duration / 1000.0);
+            }
+        }
+
         /// <summary>源宽度</summary>
         public int SourceWidth { get; set; } = 0;
 
@@ -115,6 +130,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             FontSize = blockData.FontSize;
             MarginTop = blockData.MarginTop;
             MarginBottom = blockData.MarginBottom;
+            MarginLeft = blockData.MarginLeft;
+            MarginRight = blockData.MarginRight;
 
             LoadImage();
         }
@@ -132,6 +149,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 FontSize = FontSize,
                 MarginTop = MarginTop,
                 MarginBottom = MarginBottom,
+                MarginLeft = MarginLeft,
+                MarginRight = MarginRight,
             };
             return JsonConvert.SerializeObject(blockData);
         }
@@ -192,16 +211,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             switch (Align)
             {
                 case LineAlignType.Left:
-                    ImageX = 0;
+                    ImageX = MarginLeft;
                     break;
                 case LineAlignType.Center:
                     ImageX = (blockWidth - _actualWidth) / 2;
                     break;
                 case LineAlignType.Right:
-                    ImageX = blockWidth - _actualWidth;
-                    break;
-                case LineAlignType.Justify:
-                    ImageX = (blockWidth - _actualWidth) / 2;
+                    ImageX = blockWidth - MarginRight - _actualWidth;
                     break;
             }
         }

@@ -10,6 +10,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
 
         public int MarginBottom { get; set; } = 0;
 
+        public int MarginLeft { get; set; } = 0;
+
+        public int MarginRight { get; set; } = 0;
+
         /// <summary>
         /// 初始化
         /// </summary>
