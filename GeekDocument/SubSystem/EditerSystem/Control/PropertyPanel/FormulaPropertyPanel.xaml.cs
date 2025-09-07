@@ -26,10 +26,15 @@ public partial class FormulaPropertyPanel : PropertyPanel
         Bar_MarginLeft.LoadProperty(Block.MarginLeft.ToString());
         Bar_MarginRight.LoadProperty(Block.MarginRight.ToString());
 
+        // 监听公式、大小
         Bar_Latex.TextChanged += Latex_TextChanged;
         Bar_Size.TextChanged += Size_TextChanged;
+        // 监听布局
+        Bar_Align.ButtonChecked += Align_ButtonChecked;
         Bar_MarginTop.TextChanged += MarginTop_TextChanged;
         Bar_MarginBottom.TextChanged += MarginBottom_TextChanged;
+        Bar_MarginLeft.TextChanged += MarginLeft_TextChanged;
+        Bar_MarginRight.TextChanged += MarginRight_TextChanged;
     }
 
     private void Latex_TextChanged(string text)
@@ -52,10 +57,28 @@ public partial class FormulaPropertyPanel : PropertyPanel
         }
     }
 
+    private void Align_ButtonChecked(string name)
+    {
+        switch (name)
+        {
+            case "Left":
+                Block.Align = Define.LineAlignType.Left;
+                break;
+            case "Center":
+                Block.Align = Define.LineAlignType.Center;
+                break;
+            case "Right":
+                Block.Align = Define.LineAlignType.Right;
+                break;
+        }
+        PropertyChanged?.Invoke();
+    }
+
     private void MarginTop_TextChanged(string text)
     {
         if (int.TryParse(text, out int marginTop))
         {
+            if (marginTop < 0) return;
             Block.MarginTop = marginTop;
             PropertyChanged?.Invoke();
         }
@@ -65,7 +88,26 @@ public partial class FormulaPropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int marginBottom))
         {
+            if (marginBottom < 0) return;
             Block.MarginBottom = marginBottom;
+            PropertyChanged?.Invoke();
+        }
+    }
+
+    private void MarginLeft_TextChanged(string text)
+    {
+        if (int.TryParse(text, out int marginLeft))
+        {
+            Block.MarginLeft = marginLeft;
+            PropertyChanged?.Invoke();
+        }
+    }
+
+    private void MarginRight_TextChanged(string text)
+    {
+        if (int.TryParse(text, out int marginRight))
+        {
+            Block.MarginRight = marginRight;
             PropertyChanged?.Invoke();
         }
     }

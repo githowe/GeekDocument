@@ -121,6 +121,7 @@ public partial class TextPropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int lineSpace))
         {
+            if (lineSpace < 0) return;
             Block.LineSpace = lineSpace;
             PropertyChanged?.Invoke();
         }
@@ -130,6 +131,7 @@ public partial class TextPropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int marginTop))
         {
+            if (marginTop < 0) return;
             Block.MarginTop = marginTop;
             PropertyChanged?.Invoke();
         }
@@ -139,6 +141,7 @@ public partial class TextPropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int marginBottom))
         {
+            if (marginBottom < 0) return;
             Block.MarginBottom = marginBottom;
             PropertyChanged?.Invoke();
         }

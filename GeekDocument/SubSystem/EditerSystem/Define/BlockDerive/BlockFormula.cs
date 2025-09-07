@@ -166,16 +166,13 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             switch (Align)
             {
                 case LineAlignType.Left:
-                    ImageX = 0;
+                    ImageX = MarginLeft;
                     break;
                 case LineAlignType.Center:
                     ImageX = (blockWidth - _actualWidth) / 2;
                     break;
                 case LineAlignType.Right:
-                    ImageX = blockWidth - _actualWidth;
-                    break;
-                case LineAlignType.Justify:
-                    ImageX = (blockWidth - _actualWidth) / 2;
+                    ImageX = blockWidth - MarginRight - _actualWidth;
                     break;
             }
         }

@@ -40,6 +40,7 @@ public partial class ImagePropertyPanel : PropertyPanel
         Bar_PlayBar.AddTool(GetIcon("PlayControl/Next"), "Next", "下一帧");
         Bar_PlayBar.AddTool(GetIcon("PlayControl/Last"), "Last", "最后一帧");
         Bar_PlayBar.IsEnabled = false;
+        if (Block.FrameList.Count < 2) Group_Animate.Visibility = System.Windows.Visibility.Collapsed;
         // 布局
         Bar_Align.LoadProperty();
         Bar_Align.AddRadioButton(GetIcon("AlignLeft"), "Left");
@@ -74,8 +75,9 @@ public partial class ImagePropertyPanel : PropertyPanel
             // 设置目标渲染宽度
             Block.RenderWidth = width;
             PropertyChanged?.Invoke();
-            // 更新实际渲染宽度
+            // 更新实际渲染宽度、高度
             Bar_ActualWidth.LoadProperty(Block.RealRenderWidth.ToString());
+            Bar_ActualHeight.LoadProperty(Block.RenderHeight.ToString());
         }
     }
 
@@ -132,6 +134,7 @@ public partial class ImagePropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int marginTop))
         {
+            if (marginTop < 0) return;
             Block.MarginTop = marginTop;
             PropertyChanged?.Invoke();
         }
@@ -141,6 +144,7 @@ public partial class ImagePropertyPanel : PropertyPanel
     {
         if (int.TryParse(text, out int marginBottom))
         {
+            if (marginBottom < 0) return;
             Block.MarginBottom = marginBottom;
             PropertyChanged?.Invoke();
         }

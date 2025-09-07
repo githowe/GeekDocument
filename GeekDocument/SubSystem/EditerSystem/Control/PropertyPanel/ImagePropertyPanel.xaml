@@ -41,7 +41,7 @@
                     <pb:TextInput x:Name="Bar_Size" Title="字号" Margin="0,10,0,0"/>
                 </StackPanel>
             </Expander>
-            <Expander Header="动画" IsExpanded="True">
+            <Expander x:Name="Group_Animate" Header="动画" IsExpanded="True">
                 <StackPanel Orientation="Vertical" Margin="10">
                     <pb:TextInput x:Name="Bar_FrameCount" Title="帧数" ReadOnly="True"/>
                     <pb:TextInput x:Name="Bar_Fps" Title="帧率" ReadOnly="True" Margin="0,10,0,0"/>

@@ -657,15 +657,17 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 遍历块图层
             foreach (var layer in _blockLayerList)
             {
-                // 顶边距
+                // 累加上边距
                 y += layer.SourceBlock.MarginTop;
                 // 设置块坐标
                 Canvas.SetLeft(layer, x);
                 Canvas.SetTop(layer, y);
                 // 更新块图层，在此方法中绘制块内容
                 layer.Update();
+                // 块高度 = 块上下边距 + 块内容高度
+                double height = layer.SourceBlock.MarginTop + layer.BlockHeight + layer.SourceBlock.MarginBottom;
                 // 记录块区域
-                _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
+                _blockRectDict[layer] = new Rect(x, y - layer.SourceBlock.MarginTop, blockWidth, height);
                 // 累加纵坐标
                 y += layer.BlockHeight + layer.SourceBlock.MarginBottom + ParagraphInterval;
             }
@@ -684,13 +686,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 遍历块图层
             foreach (var layer in _blockLayerList)
             {
-                // 顶边距
+                // 累加上边距
                 y += layer.SourceBlock.MarginTop;
                 // 设置块坐标
                 Canvas.SetLeft(layer, x);
                 Canvas.SetTop(layer, y);
+                // 块高度 = 块上下边距 + 块内容高度
+                double height = layer.SourceBlock.MarginTop + layer.BlockHeight + layer.SourceBlock.MarginBottom;
                 // 记录块区域
-                _blockRectDict[layer] = new Rect(x, y, blockWidth, layer.BlockHeight);
+                _blockRectDict[layer] = new Rect(x, y - layer.SourceBlock.MarginTop, blockWidth, height);
                 // 累加纵坐标
                 y += layer.BlockHeight + layer.SourceBlock.MarginBottom + ParagraphInterval;
             }
