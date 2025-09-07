@@ -16,7 +16,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
             Block_Title.Text = Title;
         }
 
-        public void AddRadioButton(ImageSource icon, string name)
+        public void AddRadioButton(ImageSource? icon, string name)
         {
             // 创建单选框
             RadioButton button = new RadioButton

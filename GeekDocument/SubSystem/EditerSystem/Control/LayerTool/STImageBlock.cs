@@ -1,9 +1,4 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XLogic.Base.StateTree;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.LayerTool

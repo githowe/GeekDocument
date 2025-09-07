@@ -1,5 +1,4 @@
 ﻿using GeekDocument.SubSystem.GlyphSystem;
-using GeekDocument.SubSystem.OptionSystem;
 
 namespace GeekDocument.SubSystem.LayoutSystem
 {

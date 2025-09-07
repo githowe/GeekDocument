@@ -117,5 +117,17 @@ namespace XLogic.Base.Ex
             if (path.EndsWith("\\")) return path[..^1];
             return path;
         }
+
+        /// <summary>
+        /// 解析颜色代码。支持格式：#FFFFFF;FFFFFF
+        /// </summary>
+        public static (byte r, byte g, byte b) ParseColorCode(this string color)
+        {
+            if (color.StartsWith('#')) color = color.Substring(1);
+            byte r = Convert.ToByte(color.Substring(0, 2), 16);
+            byte g = Convert.ToByte(color.Substring(2, 2), 16);
+            byte b = Convert.ToByte(color.Substring(4, 2), 16);
+            return (r, g, b);
+        }
     }
 }

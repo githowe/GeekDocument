@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeekDocument.SubSystem.StyleSystem
+﻿namespace GeekDocument.SubSystem.StyleSystem
 {
     /// <summary>
     /// 定义各种样式的唯一编号

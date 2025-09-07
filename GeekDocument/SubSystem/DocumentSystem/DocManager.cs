@@ -3,7 +3,6 @@ using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.OptionSystem;
 using System.IO;
-using XLogic.Base;
 
 namespace GeekDocument.SubSystem.DocumentSystem
 {

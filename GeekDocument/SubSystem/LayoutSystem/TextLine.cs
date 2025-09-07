@@ -1,5 +1,4 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Define;
-using System.Windows.Media.TextFormatting;
 
 namespace GeekDocument.SubSystem.LayoutSystem
 {

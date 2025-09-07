@@ -16,7 +16,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
             Block_Title.Text = Title;
         }
 
-        public Button AddTool(ImageSource icon, string name, string toolTip = "")
+        public Button AddTool(ImageSource? icon, string name, string toolTip = "")
         {
             // 创建按钮
             Button tool = new Button

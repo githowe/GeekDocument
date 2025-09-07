@@ -18,7 +18,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
             Block_Title.Text = Title;
         }
 
-        public void AddCheckBox(ImageSource icon, string name)
+        public void AddCheckBox(ImageSource? icon, string name)
         {
             // 创建复选框
             CheckBox box = new CheckBox

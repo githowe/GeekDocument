@@ -1,9 +1,7 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem;
 using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
-using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
-using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using XLogic.Base.UI;
 

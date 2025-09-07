@@ -52,7 +52,7 @@ namespace XLogic.WpfControl
             int lastIndex = _firstIndex + visiableMax;
             if (lastIndex > _itemList.Count) lastIndex = _itemList.Count;
             // 计算索引范围
-            int rangeLength  = lastIndex - _firstIndex;
+            int rangeLength = lastIndex - _firstIndex;
             // 获取可视项列表
             List<TreeItem> visiableItemList = _itemList.GetRange(_firstIndex, rangeLength);
             // 更新每个控件
