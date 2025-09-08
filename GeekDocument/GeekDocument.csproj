@@ -53,6 +53,7 @@
     <None Remove="Assets\Icon16\Setting.png" />
     <None Remove="Assets\Icon16\Undo.png" />
     <None Remove="Assets\Logo2.png" />
+    <None Remove="Assets\WindowIcon\ColorPicker.png" />
     <None Remove="Assets\WindowIcon\DocumentOption.png" />
     <None Remove="Assets\WindowIcon\NewFile.png" />
     <None Remove="Assets\WindowIcon\Setting.png" />
@@ -102,6 +103,8 @@
     <None Remove="SubSystem\WindowSystem\Image\Break.png" />
     <None Remove="SubSystem\WindowSystem\Image\Error.png" />
     <None Remove="SubSystem\WindowSystem\Image\Info.png" />
+    <None Remove="SubSystem\WindowSystem\Image\Mark.png" />
+    <None Remove="SubSystem\WindowSystem\Image\PickFrame.png" />
     <None Remove="SubSystem\WindowSystem\Image\Warning.png" />
   </ItemGroup>
 
@@ -167,6 +170,7 @@
     <Resource Include="Assets\Icon16\Setting.png" />
     <Resource Include="Assets\Icon16\Undo.png" />
     <Resource Include="Assets\Icon16\Lib.png" />
+    <Resource Include="Assets\WindowIcon\ColorPicker.png" />
     <Resource Include="Assets\WindowIcon\DocumentOption.png" />
     <Resource Include="Assets\WindowIcon\NewFile.png" />
     <Resource Include="Assets\WindowIcon\Setting.png" />
@@ -215,6 +219,8 @@
     <Resource Include="SubSystem\WindowSystem\Image\Break.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Error.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Info.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\Mark.png" />
+    <Resource Include="SubSystem\WindowSystem\Image\PickFrame.png" />
     <Resource Include="SubSystem\WindowSystem\Image\Warning.png" />
   </ItemGroup>
 

@@ -1,6 +1,9 @@
-﻿using GeekDocument.SubSystem.OptionSystem;
+﻿using GeekDocument.AppTool.Ex;
+using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.WindowSystem.ColorPick;
 using System.Media;
 using System.Windows;
+using System.Windows.Media;
 using XLogic.Wpf.Window;
 
 namespace GeekDocument.SubSystem.WindowSystem
@@ -94,6 +97,22 @@ namespace GeekDocument.SubSystem.WindowSystem
         /// 显示应用选项对话框
         /// </summary>
         public static void ShowAppOptionDialog() => ShowSingletonWindow<OptionDialog>();
+
+        /// <summary>
+        /// 显示颜色选择器
+        /// </summary>
+        public static ColorPicker ShowColorPicker(Color color, Action<Color> updated, Action<Color> confirmed)
+        {
+            ColorPicker dialog = new ColorPicker
+            {
+                Owner = Main,
+                MainColor = color.ToUtilColor(),
+                OnColorChanged = updated,
+                OnColorConfirm = confirmed,
+            };
+            dialog.ShowDialog();
+            return dialog;
+        }
 
         /// <summary>对话框字典</summary>
         private static readonly Dictionary<Type, XDialog> _windowDict = new Dictionary<Type, XDialog>();

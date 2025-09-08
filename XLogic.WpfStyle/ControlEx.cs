@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace SmartLib.WPFStyle
+namespace Xlogic.WPFStyle
 {
     /// <summary>
     /// 控件扩展方法

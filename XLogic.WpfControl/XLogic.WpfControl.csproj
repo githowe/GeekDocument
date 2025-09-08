@@ -9,17 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Image\Arrow.png" />
     <None Remove="Image\Close_Item.png" />
     <None Remove="Styles\Image\Expand.png" />
     <None Remove="Styles\Image\Furl.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XLogic.Base\XLogic.Base.csproj" />
     <ProjectReference Include="..\XLogic.Windows\XLogic.Windows.csproj" />
     <ProjectReference Include="..\XLogic.WpfStyle\XLogic.WpfStyle.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Image\Arrow.png" />
     <Resource Include="Image\Close_Item.png" />
     <Resource Include="Styles\Image\Expand.png" />
     <Resource Include="Styles\Image\Furl.png" />

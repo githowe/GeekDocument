@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="GeekDocument.SubSystem.WindowSystem.ColorPick.ColorBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.WindowSystem.ColorPick"
+             mc:Ignorable="d" 
+             Width="256" Height="18"
+             MouseDown="UserControl_MouseDown" MouseMove="UserControl_MouseMove" MouseUp="UserControl_MouseUp"
+             MouseWheel="UserControl_MouseWheel" KeyDown="UserControl_KeyDown">
+    <Grid ClipToBounds="False" Background="Transparent">
+        <Grid Width="256" Height="8">
+            <Grid.Background>
+                <ImageBrush x:Name="Image_Color" ViewportUnits="Absolute" Viewport="0,0,256,8"/>
+            </Grid.Background>
+        </Grid>
+        <Grid x:Name="Grid_Mark" Width="1" HorizontalAlignment="Left" ClipToBounds="False">
+            <Image Width="1" Source="../Image/Mark.png" HorizontalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>

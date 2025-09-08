@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using GeekDocument.SubSystem.WindowSystem;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
@@ -30,7 +31,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyBar
 
         private void Grid_Color_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // WM.ShowColorPicker(Color, UpdateColor, UpdateColor);
+            WM.ShowColorPicker(Color, UpdateColor, UpdateColor);
         }
 
         private void UpdateColor(Color color)

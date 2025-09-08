@@ -1,0 +1,85 @@
+﻿<xww:XDialog x:Class="GeekDocument.SubSystem.WindowSystem.ColorPick.ColorPicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeekDocument.SubSystem.WindowSystem.ColorPick"
+        xmlns:ws="clr-namespace:GeekDocument.SubSystem.WindowSystem"
+        xmlns:xww="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
+        xmlns:tc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner" CustomIcon="WindowIcon/ColorPicker"
+        Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
+        FontFamily="../../../Assets/Font/#新宋体"
+        Title="颜色选择器" Width="276" SizeToContent="Height">
+    <Grid>
+        <Grid Margin="10" ClipToBounds="False">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="10"/>
+
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="256"/>
+                <RowDefinition Height="10"/>
+
+                <!-- 饱和度、亮度、红色、绿色、蓝色 -->
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="18"/>
+
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
+
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+
+            <tc:FrameLabel Text="颜色对比" Grid.Row="0"/>
+            <Grid x:Name="Grid_Old" Background="Black" Grid.Row="2" Width="128" HorizontalAlignment="Left"/>
+            <Grid x:Name="Grid_New" Background="White" Grid.Row="2" Width="128" HorizontalAlignment="Right"/>
+
+            <tc:FrameLabel Text="拾色器" Grid.Row="4"/>
+            <Grid x:Name="Grid_Cube" Width="256" Height="256" Grid.Row="6" ClipToBounds="True" Background="White"
+                  MouseDown="Grid_Cube_MouseDown" MouseMove="Grid_Cube_MouseMove" MouseUp="Grid_Cube_MouseUp">
+                <!-- 色谱 -->
+                <Image x:Name="ColorCube" Width="256" Height="256" Grid.Row="6"/>
+                <!-- 拾取框 -->
+                <Image x:Name="PickFrame" Source="../Image/PickFrame.png" Width="17" Height="17" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </Grid>
+
+            <local:ColorBar x:Name="Bar_S" Grid.Row="8" Focusable="True"/>
+            <local:ColorBar x:Name="Bar_Br" Grid.Row="10" Focusable="True"/>
+            <local:ColorBar x:Name="Bar_R" Grid.Row="12" Focusable="True"/>
+            <local:ColorBar x:Name="Bar_G" Grid.Row="14" Focusable="True"/>
+            <local:ColorBar x:Name="Bar_B" Grid.Row="16" Focusable="True"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="18">
+                <tc:FrameLabel Text="红" Width="50"/>
+                <tc:FrameLabel Text="绿" Width="50" Margin="10,0,0,0"/>
+                <tc:FrameLabel Text="蓝" Width="50" Margin="10,0,0,0"/>
+                <tc:FrameLabel Text="代码" Width="76" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="20">
+                <tc:NumericUpDown x:Name="Number_R" Width="50" Value="255" MinValue="0" MaxValue="255"/>
+                <tc:NumericUpDown x:Name="Number_G" Width="50" Margin="10,0,0,0" Value="255" MinValue="0" MaxValue="255"/>
+                <tc:NumericUpDown x:Name="Number_B" Width="50" Margin="10,0,0,0" Value="255" MinValue="0" MaxValue="255"/>
+                <TextBox x:Name="Text_Code" Text="#FFFFFF" Width="76" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <Grid Grid.Row="22" Background="#20FFFFFF"/>
+            <Button x:Name="OK" Style="{StaticResource ConfirmButton}" IsDefault="True" Content="确定" Grid.Row="24"/>
+        </Grid>
+    </Grid>
+</xww:XDialog>

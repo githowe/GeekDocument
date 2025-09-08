@@ -25,6 +25,14 @@ namespace XLogic.Wpf.Window
         /// </summary>
         protected virtual void OnCloseClick() => Close();
 
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+            Width += 2;
+            MinWidth += 2;
+            Left -= 1;
+        }
+
         private void BackGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed) DragMove();
