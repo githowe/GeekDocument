@@ -1,6 +1,6 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+﻿using GeekDocument.AppTool;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.WindowSystem;
-using System.Drawing.Text;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel;
 
@@ -14,13 +14,9 @@ public partial class CodePropertyPanel : PropertyPanel
     {
         // 语言
         Bar_Language.LoadProperty(Block.Language);
-        // 获取已安装字体列表
-        List<string> fontNameList = new List<string>();
-        InstalledFontCollection fonts = new InstalledFontCollection();
-        foreach (var font in fonts.Families) fontNameList.Add(font.Name);
         // 字体、字号
-        Bar_Font.LoadProperty(fontNameList, Block.FontFamily);
-        Bar_Font2.LoadProperty(fontNameList, Block.SecondFontFamily);
+        Bar_Font.LoadProperty(FontManager.FontList, Block.FontFamily);
+        Bar_Font2.LoadProperty(FontManager.FontList, Block.SecondFontFamily);
         Bar_Size.LoadProperty(Block.FontSize.ToString());
         // 行间距、上边距、下边距
         Bar_LineSpace.LoadProperty(Block.LineSpace.ToString());

@@ -1,6 +1,7 @@
 ﻿using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.StyleSystem;
 using Newtonsoft.Json;
+using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
@@ -100,7 +101,54 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             // 更新字的字形图片
             bool bold = TStyle == TextStyle.Bold || TStyle == TextStyle.BoldItalic;
             bool italic = TStyle == TextStyle.Italic || TStyle == TextStyle.BoldItalic;
-            foreach (var word in wordList) word.UpdateGlyphImage(FontFamily, FontSize, bold, italic);
+            foreach (var word in wordList)
+            {
+                List<string> fontList = new List<string>();
+                List<bool?> boldList = new List<bool?>();
+                List<bool?> italicList = new List<bool?>();
+                // 遍历字的字符索引
+                int index = 0;
+                foreach (var charIndex in word.CharIndexList)
+                {
+                    fontList.Add("");
+                    boldList.Add(null);
+                    italicList.Add(null);
+                    // 查找子样式
+                    if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+                    {
+                        // 遍历样式
+                        foreach (var style in subStyle.StyleList)
+                        {
+                            if (style.Type == AppendStyleType.Font)
+                            {
+                                AppendFont fontStyle = (AppendFont)style;
+                                fontList[index] = fontStyle.FontFamily;
+                            }
+                            else if (style.Type == AppendStyleType.Bold)
+                            {
+                                AppendBold boldStyle = (AppendBold)style;
+                                boldList[index] = boldStyle.Enable;
+                            }
+                            else if (style.Type == AppendStyleType.Italic)
+                            {
+                                AppendItalic italicStyle = (AppendItalic)style;
+                                italicList[index] = italicStyle.Enable;
+                            }
+                        }
+                    }
+                    index++;
+                }
+                // 没有子样式，则使用块样式
+                for (index = 0; index < word.CharIndexList.Count; index++)
+                {
+                    if (fontList[index] == "") fontList[index] = FontFamily;
+                    if (boldList[index] == null) boldList[index] = bold;
+                    if (italicList[index] == null) italicList[index] = italic;
+                }
+
+                word.UpdateGlyphImage(fontList, FontSize, boldList.Cast<bool>().ToList(), italicList.Cast<bool>().ToList());
+            }
+
             // 更新字号
             foreach (var word in wordList) word.Size = FontSize;
             // 更新字间距
@@ -175,6 +223,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             }
         }
 
+        public override void SetSubStyle(AppendStyle style, int startIndex, int endIndex)
+        {
+            for (int index = startIndex; index < endIndex; index++)
+            {
+                if (!_styleDict.ContainsKey(index)) _styleDict[index] = new SubStyle();
+                _styleDict[index].AddStyle(style);
+            }
+        }
+
         public override void LoadJson(string json)
         {
             TextBlockData? blockData = JsonConvert.DeserializeObject<TextBlockData>(json);
@@ -218,6 +275,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override int GetViewHeight() => _viewHeight;
 
+        public void ClearSubStyle(AppendStyleType type)
+        {
+            foreach (var subStyle in _styleDict.Values) subStyle.RemoveStyle(type);
+        }
+
         /// <summary>
         /// 克隆文本块，但不包含内容
         /// </summary>
@@ -243,6 +305,92 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         }
 
         /// <summary>
+        /// 获取指定索引处字符的字体
+        /// </summary>
+        public string GetFont(int charIndex)
+        {
+            // 获取子样式
+            if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+            {
+                // 遍历样式
+                foreach (var style in subStyle.StyleList)
+                {
+                    // 找到了字体样式则返回
+                    if (style.Type == AppendStyleType.Font)
+                    {
+                        AppendFont fontStyle = (AppendFont)style;
+                        return fontStyle.FontFamily;
+                    }
+                }
+            }
+            // 返回块样式
+            return FontFamily;
+        }
+
+        /// <summary>
+        /// 获取指定索引处字符的颜色
+        /// </summary>
+        public Color? GetColor(int charIndex)
+        {
+            // 获取子样式
+            if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+            {
+                // 遍历样式
+                foreach (var style in subStyle.StyleList)
+                {
+                    // 找到了颜色样式则返回
+                    if (style.Type == AppendStyleType.Color)
+                    {
+                        AppendColor colorStyle = (AppendColor)style;
+                        return new Color { R = colorStyle.R, G = colorStyle.G, B = colorStyle.B };
+                    }
+                }
+            }
+            // 返回空
+            return null;
+        }
+
+        public bool GetBold(int charIndex)
+        {
+            // 获取子样式
+            if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+            {
+                // 遍历样式
+                foreach (var style in subStyle.StyleList)
+                {
+                    // 找到了加粗样式则返回
+                    if (style.Type == AppendStyleType.Bold)
+                    {
+                        AppendBold boldStyle = (AppendBold)style;
+                        return boldStyle.Enable;
+                    }
+                }
+            }
+            // 返回块样式
+            return TStyle == TextStyle.Bold || TStyle == TextStyle.BoldItalic;
+        }
+
+        public bool GetItalic(int charIndex)
+        {
+            // 获取子样式
+            if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+            {
+                // 遍历样式
+                foreach (var style in subStyle.StyleList)
+                {
+                    // 找到了斜体样式则返回
+                    if (style.Type == AppendStyleType.Italic)
+                    {
+                        AppendItalic italicStyle = (AppendItalic)style;
+                        return italicStyle.Enable;
+                    }
+                }
+            }
+            // 返回块样式
+            return TStyle == TextStyle.Italic || TStyle == TextStyle.BoldItalic;
+        }
+
+        /// <summary>
         /// 重置样式
         /// </summary>
         private void ResetStyle()
@@ -263,5 +411,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         private readonly List<TextLine> _lineList = new List<TextLine>();
         private int _viewHeight = 0;
+
+        private Dictionary<int, SubStyle> _styleDict = new Dictionary<int, SubStyle>();
     }
 }

@@ -28,6 +28,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             }
         }
 
+        public event Action? SelectionChanged = null;
+
+        public event Action? SelectionCanceled = null;
+
         #endregion
 
         #region 生命周期
@@ -63,6 +67,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _layer.RectList = GetComponent<PageComponent>().GetSelectionRectList(_selection.Start, _selection.End);
             // 更新图层
             _layer.Update();
+            if (_selection.HasSelection) SelectionChanged?.Invoke();
+            else SelectionCanceled?.Invoke();
         }
 
         /// <summary>
@@ -76,6 +82,42 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             // 置空选区
             _selection.Start = null;
             _selection.End = null;
+            SelectionCanceled?.Invoke();
+        }
+
+        /// <summary>
+        /// 获取当前块的选择范围
+        /// </summary>
+        public (int start, int end) GetCurrentBlock_SelectRange()
+        {
+            if (_selection.HasSelection)
+            {
+                // 确定前后顺序
+                CharCursor first, second;
+                if (_selection.Start.CompareTo(_selection.End) <= 0)
+                {
+                    first = _selection.Start;
+                    second = _selection.End;
+                }
+                else
+                {
+                    first = _selection.End;
+                    second = _selection.Start;
+                }
+
+                // 起始索引
+                int startIndex = -1;
+                int blockIndex = GetComponent<PageComponent>().获取当前块索引();
+                if (first.BlockIndex < blockIndex) startIndex = 0;
+                else if (first.BlockIndex == blockIndex) startIndex = first.CharIndex;
+                // 结束索引
+                int endIndex = -1;
+                if (second.BlockIndex == blockIndex) endIndex = second.CharIndex;
+                else if (second.BlockIndex > blockIndex) endIndex = GetComponent<PageComponent>().获取块(blockIndex).CharIndexMax;
+
+                return (startIndex, endIndex);
+            }
+            return (-1, -1);
         }
 
         #endregion

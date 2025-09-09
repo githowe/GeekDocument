@@ -47,22 +47,27 @@ public class Word
     /// <summary>
     /// 更新字形图片
     /// </summary>
-    public void UpdateGlyphImage(string fontFamily, int fontSize, bool bold = false, bool italic = false)
+    public void UpdateGlyphImage(List<string> fontList, int fontSize, List<bool> boldList, List<bool> italicList)
     {
         List<GlyphImage> imageList = new List<GlyphImage>();
         double width = 0;
 
+        int index = 0;
         // 遍历字符
         foreach (var c in Text)
         {
+            string font = fontList[index];
+            bool bold = boldList[index];
+            bool italic = italicList[index];
             // 获取字形图片
-            GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(c, fontFamily, fontSize, bold, italic);
-            if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', fontFamily, fontSize, bold, italic);
+            GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(c, font, fontSize, bold, italic);
+            if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', font, fontSize, bold, italic);
             if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage(c, "新宋体", fontSize, bold, italic);
             if (glyphImage == null) glyphImage = GlyphCache.Instance.GetGlyphImage('□', "新宋体", fontSize, bold, italic);
-
+            // 添加字形图片并累加宽度
             imageList.Add(glyphImage);
             width += glyphImage.GlyphWidth;
+            index++;
         }
         // 更新字形图片列表和宽度
         GlyphImageList = imageList;

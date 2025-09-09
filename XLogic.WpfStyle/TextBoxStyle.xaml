@@ -13,7 +13,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Border x:Name="border" BorderBrush="#2C2C2C" BorderThickness="{TemplateBinding BorderThickness}" Background="#141414" Padding="4,0">
+                    <Border x:Name="border" BorderBrush="#464646" BorderThickness="{TemplateBinding BorderThickness}" Background="#141414" Padding="4,0">
                         <Grid>
                             <TextBlock x:Name="PlaceHolder" Text="{TemplateBinding Tag, Converter={StaticResource GetTagString}}"
                                        Foreground="#3C3C3C" VerticalAlignment="Center" Visibility="Hidden" Margin="2,0,0,0"/>
@@ -27,7 +27,7 @@
                         </Trigger>
                         <!-- 鼠标悬停 -->
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="BorderBrush" TargetName="border" Value="#787878"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="#8C8C8C"/>
                         </Trigger>
                         <!-- 获取焦点 -->
                         <Trigger Property="IsKeyboardFocused" Value="true">
@@ -37,7 +37,7 @@
                             <Setter TargetName="PlaceHolder" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsReadOnly" Value="True">
-                            <Setter Property="Foreground" Value="#40FFFFFF"/>
+                            <Setter Property="Foreground" Value="#60FFFFFF"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

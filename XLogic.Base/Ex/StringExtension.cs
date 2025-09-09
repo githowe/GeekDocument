@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace XLogic.Base.Ex
 {
@@ -128,6 +130,17 @@ namespace XLogic.Base.Ex
             byte g = Convert.ToByte(color.Substring(2, 2), 16);
             byte b = Convert.ToByte(color.Substring(4, 2), 16);
             return (r, g, b);
+        }
+
+        public static string GetMD5(this string source)
+        {
+            var md5 = MD5.Create();
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            byte[] hashByteArray = md5.ComputeHash(byteArray);
+            md5.Dispose();
+            StringBuilder builder = new StringBuilder();
+            foreach (var item in hashByteArray) builder.Append(item.ToString("x2"));
+            return builder.ToString();
         }
     }
 }

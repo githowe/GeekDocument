@@ -12,6 +12,7 @@
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="Block_Title" Text="标题" Foreground="#8C8C8C" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Grid x:Name="Grid_Color" Background="White" Grid.Column="1" Cursor="Hand" MouseLeftButtonDown="Grid_Color_MouseLeftButtonDown"/>
+        <TextBox x:Name="Input_Code" Grid.Column="1" Width="80" HorizontalAlignment="Left" TextChanged="Input_Code_TextChanged"/>
+        <Grid x:Name="Grid_Color" Background="White" Grid.Column="1" Cursor="Hand" Margin="90,0,0,0" MouseLeftButtonDown="Grid_Color_MouseLeftButtonDown"/>
     </Grid>
 </local:PropertyBarBase>

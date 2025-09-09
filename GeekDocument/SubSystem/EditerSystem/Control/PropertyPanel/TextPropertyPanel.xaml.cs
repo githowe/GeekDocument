@@ -1,7 +1,10 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define;
+﻿using GeekDocument.AppTool;
+using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+using GeekDocument.SubSystem.StyleSystem;
 using GeekDocument.SubSystem.WindowSystem;
-using System.Drawing.Text;
+using System.Windows;
+using System.Windows.Media;
 using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel;
@@ -18,12 +21,19 @@ public partial class TextPropertyPanel : PropertyPanel
 
     public override void Init()
     {
-        // 获取已安装字体列表
-        List<string> fontNameList = new List<string>();
-        InstalledFontCollection fonts = new InstalledFontCollection();
-        foreach (var font in fonts.Families) fontNameList.Add(font.Name);
+        if (SelectStartIndex >= 0 && SelectEndIndex >= 0)
+            LoadSelectedProperty();
+        else
+            LoadBlockProperty();
+    }
+
+    /// <summary>
+    /// 加载块属性
+    /// </summary>
+    private void LoadBlockProperty()
+    {
         // 字体、字号、颜色
-        Bar_Font.LoadProperty(fontNameList, Block.FontFamily);
+        Bar_Font.LoadProperty(FontManager.FontList, Block.FontFamily);
         Bar_Size.LoadProperty(Block.FontSize.ToString());
         var (r, g, b) = Block.Color.ParseColorCode();
         Bar_Color.LoadProperty(r, g, b);
@@ -50,9 +60,10 @@ public partial class TextPropertyPanel : PropertyPanel
         Bar_MarginTop.LoadProperty(Block.MarginTop.ToString());
         Bar_MarginBottom.LoadProperty(Block.MarginBottom.ToString());
 
-        // 监听字体、字号
+        // 监听字体、字号、颜色
         Bar_Font.SelectionChanged += Font_SelectionChanged;
         Bar_Size.TextChanged += Size_TextChanged;
+        Bar_Color.ColorChanged += Color_ColorChanged;
         // 监听样式
         Bar_Style.BoxChecked += Style_BoxChecked;
         Bar_Style.BoxUnchecked += Bar_Style_BoxUnchecked;
@@ -66,9 +77,99 @@ public partial class TextPropertyPanel : PropertyPanel
         Bar_MarginBottom.TextChanged += MarginBottom_TextChanged;
     }
 
+    /// <summary>
+    /// 加载选中属性
+    /// </summary>
+    private void LoadSelectedProperty()
+    {
+        // 隐藏不相关属性
+        Bar_Size.Visibility = Visibility.Collapsed;
+        Group_02.Visibility = Visibility.Collapsed;
+
+        // 字体、颜色
+        string font = Block.GetFont(SelectStartIndex);
+        Color? color = Block.GetColor(SelectStartIndex);
+        Bar_Font.LoadProperty(FontManager.FontList, font);
+        if (color != null)
+            Bar_Color.LoadProperty(color.Value.R, color.Value.G, color.Value.B);
+        else
+        {
+            var (r, g, b) = Block.Color.ParseColorCode();
+            Bar_Color.LoadProperty(r, g, b);
+        }
+        // 样式
+        bool bold = Block.GetBold(SelectStartIndex);
+        bool italic = Block.GetItalic(SelectStartIndex);
+        Bar_Style.LoadProperty();
+        Bar_Style.AddCheckBox(GetIcon("Bold"), "Bold");
+        Bar_Style.AddCheckBox(GetIcon("Italic"), "Italic");
+        Bar_Style.SetChecked("Bold", bold);
+        Bar_Style.SetChecked("Italic", italic);
+
+        // 监听字体、颜色
+        Bar_Font.SelectionChanged += Font_SelectionChanged_Select;
+        Bar_Color.ColorChanged += Color_ColorChanged_Select;
+        // 监听样式
+        Bar_Style.BoxChecked += Style_BoxChecked_Select;
+        Bar_Style.BoxUnchecked += Bar_Style_BoxUnchecked_Select;
+    }
+
+    private void Font_SelectionChanged_Select(string text)
+    {
+        AppendFont style = new AppendFont
+        {
+            FontFamily = text
+        };
+        Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        PropertyChanged?.Invoke();
+    }
+
+    private void Color_ColorChanged_Select(Color color)
+    {
+        AppendColor style = new AppendColor
+        {
+            R = color.R,
+            G = color.G,
+            B = color.B,
+        };
+        Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        PropertyChanged?.Invoke();
+    }
+
+    private void Style_BoxChecked_Select(string name)
+    {
+        if (name == "Bold")
+        {
+            AppendBold style = new AppendBold { Enable = true };
+            Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        }
+        else if (name == "Italic")
+        {
+            AppendItalic style = new AppendItalic { Enable = true };
+            Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        }
+        PropertyChanged?.Invoke();
+    }
+
+    private void Bar_Style_BoxUnchecked_Select(string name)
+    {
+        if (name == "Bold")
+        {
+            AppendBold style = new AppendBold { Enable = false };
+            Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        }
+        else if (name == "Italic")
+        {
+            AppendItalic style = new AppendItalic { Enable = false };
+            Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        }
+        PropertyChanged?.Invoke();
+    }
+
     private void Font_SelectionChanged(string font)
     {
         Block.FontFamily = font;
+        Block.ClearSubStyle(AppendStyleType.Font);
         PropertyChanged?.Invoke();
     }
 
@@ -86,13 +187,24 @@ public partial class TextPropertyPanel : PropertyPanel
         }
     }
 
+    private void Color_ColorChanged(Color color)
+    {
+        Block.Color = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+        Block.ClearSubStyle(AppendStyleType.Color);
+        PropertyChanged?.Invoke();
+    }
+
     private void Style_BoxChecked(string name)
     {
+        if (name == "Bold") Block.ClearSubStyle(AppendStyleType.Bold);
+        else Block.ClearSubStyle(AppendStyleType.Italic);
         UpdateTextStyle();
     }
 
     private void Bar_Style_BoxUnchecked(string name)
     {
+        if (name == "Bold") Block.ClearSubStyle(AppendStyleType.Bold);
+        else Block.ClearSubStyle(AppendStyleType.Italic);
         UpdateTextStyle();
     }
 

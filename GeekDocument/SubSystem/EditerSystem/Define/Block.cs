@@ -34,6 +34,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Define
         /// </summary>
         public virtual void ApplyStyle(StyleSheet? style) { }
 
+        /// <summary>
+        /// 设置子样式。即为子元素设置样式
+        /// </summary>
+        public virtual void SetSubStyle(AppendStyle style, int startIndex, int endIndex) { }
+
         public abstract void LoadJson(string json);
 
         public abstract string ToJson();

@@ -1,6 +1,6 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+﻿using GeekDocument.AppTool;
+using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.WindowSystem;
-using System.Drawing.Text;
 using System.Windows.Controls;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel;
@@ -23,10 +23,7 @@ public partial class ImagePropertyPanel : PropertyPanel
         // 像素画
         Bar_PixelArt.LoadProperty(Block.PixelArt);
         // 字体、字号
-        List<string> fontNameList = new List<string>();
-        InstalledFontCollection fonts = new InstalledFontCollection();
-        foreach (var font in fonts.Families) fontNameList.Add(font.Name);
-        Bar_Font.LoadProperty(fontNameList, Block.FontFamily);
+        Bar_Font.LoadProperty(FontManager.FontList, Block.FontFamily);
         Bar_Size.LoadProperty(Block.FontSize.ToString());
         // 帧数、帧率、播放控制
         Bar_FrameCount.LoadProperty(Block.FrameList.Count.ToString());

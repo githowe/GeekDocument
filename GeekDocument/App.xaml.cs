@@ -1,4 +1,5 @@
-﻿using GeekDocument.SubSystem.CacheSystem;
+﻿using GeekDocument.AppTool;
+using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.DirectWriteSystem;
 using GeekDocument.SubSystem.DocLibSystem;
 using GeekDocument.SubSystem.EditerSystem.Tool;
@@ -36,6 +37,7 @@ namespace GeekDocument
             CacheManager.Instance.Init();
             StyleManager.Instance.Init();
             // 初始化系统服务
+            FontManager.Init();
             DWriteTool.Instance.Init();
             EM.Instance.Init();
             FM.Instance.Init();

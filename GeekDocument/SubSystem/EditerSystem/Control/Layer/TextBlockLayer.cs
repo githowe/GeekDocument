@@ -38,10 +38,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         public override void Init()
         {
-            byte red = byte.Parse(Block.Color.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            byte green = byte.Parse(Block.Color.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            byte blue = byte.Parse(Block.Color.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-            _textColor = Color.FromRgb(red, green, blue);
             _rowLinePen.Freeze();
             _stateTree.Init(this);
         }
@@ -524,6 +520,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
 
         protected override void OnUpdate()
         {
+            byte red = byte.Parse(Block.Color.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte green = byte.Parse(Block.Color.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte blue = byte.Parse(Block.Color.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            _textColor = Color.FromRgb(red, green, blue);
+
             int y = 0;
             // 没有行时，绘制空行线
             if (Block.ViewData.Count == 0 && Options.Instance.View.ShowRowLine)
@@ -565,14 +566,20 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                     index++;
                     continue;
                 }
+                // 字符索引
+                int charIndex = word.CharIndexList.First();
                 // 字横坐标
                 double word_x = line.XList[index];
                 // 绘制字的字形
                 foreach (var image in word.GlyphImageList)
                 {
                     Point leftTop = new Point((word_x + image.Origin.X).Round(), y + image.Origin.Y);
-                    _dc.DrawImage(image.GetBitmap(_textColor.R, _textColor.G, _textColor.B), new Rect(leftTop, new Size(image.RenderWidth, image.RenderHeight)));
+                    // 获取字符颜色
+                    Color? color = Block.GetColor(charIndex);
+                    if (color == null) _dc.DrawImage(image.GetBitmap(_textColor.R, _textColor.G, _textColor.B), new Rect(leftTop, new Size(image.RenderWidth, image.RenderHeight)));
+                    else _dc.DrawImage(image.GetBitmap(color.Value.R, color.Value.G, color.Value.B), new Rect(leftTop, new Size(image.RenderWidth, image.RenderHeight)));
                     word_x += image.GlyphWidth;
+                    charIndex++;
                 }
                 // 移动至下一个字
                 index++;

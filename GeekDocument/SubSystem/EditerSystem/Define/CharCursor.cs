@@ -37,6 +37,14 @@
 
         public CharCursor? End { get; set; } = null;
 
-        public bool HasSelection => Start != null && End != null;
+        public bool HasSelection
+        {
+            get
+            {
+                if (Start == null || End == null) return false;
+                if (End.SameAs(Start)) return false;
+                return true;
+            }
+        }
     }
 }

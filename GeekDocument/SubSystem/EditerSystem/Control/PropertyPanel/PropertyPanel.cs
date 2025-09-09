@@ -6,6 +6,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.PropertyPanel
 {
     public class PropertyPanel : UserControl
     {
+        public int SelectStartIndex { get; set; } = -1;
+
+        public int SelectEndIndex { get; set; } = -1;
+
         public Action? PropertyChanged { get; set; } = null;
 
         public virtual void Init() { }

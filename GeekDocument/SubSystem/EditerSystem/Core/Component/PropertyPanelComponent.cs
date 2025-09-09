@@ -24,6 +24,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _host.Tool_Close.Click += Tool_Close_Click;
             // 监听组件
             GetComponent<PageComponent>().CurrentBlockChanged += PageComponent_CurrentBlockChanged;
+            GetComponent<SelectComponent>().SelectionChanged += SelectComponent_SelectionChanged;
+            GetComponent<SelectComponent>().SelectionCanceled += SelectComponent_SelectionCanceled;
         }
 
         private void Tool_Open_Click(object sender, RoutedEventArgs e)
@@ -45,9 +47,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             UpdatePropertyPanel(block);
         }
 
-        private void UpdatePropertyPanel(Block block)
+        private void SelectComponent_SelectionChanged()
         {
-            if (_currentBlock == block) return;
+            UpdatePropertyPanel();
+        }
+
+        private void SelectComponent_SelectionCanceled()
+        {
+            UpdatePropertyPanel();
+        }
+
+        private void UpdatePropertyPanel()
+        {
+            Block block = GetComponent<PageComponent>().CurrentBlock;
             _currentBlock = block;
             _panelBox.Children.Clear();
             PropertyPanel? panel = null;
@@ -80,6 +92,56 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             }
             if (panel != null)
             {
+                // 获取当前块的选中索引范围
+                var (startIndex, endIndex) = GetComponent<SelectComponent>().GetCurrentBlock_SelectRange();
+                panel.SelectStartIndex = startIndex;
+                panel.SelectEndIndex = endIndex;
+                _panelBox.Children.Add(panel);
+                panel.Init();
+                panel.PropertyChanged = PropertyChanged;
+            }
+        }
+
+        private void UpdatePropertyPanel(Block block)
+        {
+            if (_currentBlock == block) return;
+
+            _currentBlock = block;
+            _panelBox.Children.Clear();
+            PropertyPanel? panel = null;
+            switch (_currentBlock.Type)
+            {
+                case BlockType.Text:
+                    panel = new TextPropertyPanel { Block = (BlockText)_currentBlock };
+                    break;
+                case BlockType.SplitLine:
+                    break;
+                case BlockType.Code:
+                    panel = new CodePropertyPanel { Block = (BlockCode)_currentBlock };
+                    break;
+                case BlockType.List:
+                    break;
+                case BlockType.Image:
+                    panel = new ImagePropertyPanel { Block = (BlockImage)_currentBlock };
+                    break;
+                case BlockType.Table:
+                    break;
+                case BlockType.Formula:
+                    panel = new FormulaPropertyPanel { Block = (BlockFormula)_currentBlock };
+                    break;
+                case BlockType.Chart:
+                    break;
+                case BlockType.Model:
+                    break;
+                case BlockType.Audio:
+                    break;
+            }
+            if (panel != null)
+            {
+                // 获取当前块的选中索引范围
+                var (startIndex, endIndex) = GetComponent<SelectComponent>().GetCurrentBlock_SelectRange();
+                panel.SelectStartIndex = startIndex;
+                panel.SelectEndIndex = endIndex;
                 _panelBox.Children.Add(panel);
                 panel.Init();
                 panel.PropertyChanged = PropertyChanged;

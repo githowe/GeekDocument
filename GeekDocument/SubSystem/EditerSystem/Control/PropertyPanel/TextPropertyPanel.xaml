@@ -33,7 +33,7 @@
                     <pb:CheckBoxBar x:Name="Bar_Style" Title="样式" Margin="0,10,0,0"/>
                 </StackPanel>
             </Expander>
-            <Expander Header="段落" IsExpanded="True">
+            <Expander x:Name="Group_02" Header="段落" IsExpanded="True">
                 <StackPanel Orientation="Vertical" Margin="10">
                     <pb:RadioButtonBar x:Name="Bar_Align" Title="对齐方式" IsEnabled="False"/>
                     <pb:OnOff x:Name="Bar_CustonIndent" Title="自定义首行缩进" Margin="0,10,0,0"/>
