@@ -47,7 +47,7 @@ public class Word
     /// <summary>
     /// 更新字形图片
     /// </summary>
-    public void UpdateGlyphImage(List<string> fontList, int fontSize, List<bool> boldList, List<bool> italicList)
+    public void UpdateGlyphImage(List<string> fontList, int fontSize, List<bool> boldList, List<bool> italicList, bool oneStyle = true)
     {
         List<GlyphImage> imageList = new List<GlyphImage>();
         double width = 0;
@@ -67,7 +67,7 @@ public class Word
             // 添加字形图片并累加宽度
             imageList.Add(glyphImage);
             width += glyphImage.GlyphWidth;
-            index++;
+            if (!oneStyle) index++;
         }
         // 更新字形图片列表和宽度
         GlyphImageList = imageList;

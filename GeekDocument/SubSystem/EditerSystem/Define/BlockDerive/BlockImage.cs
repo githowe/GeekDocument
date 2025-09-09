@@ -236,7 +236,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             // 生成字列表
             List<Word> wordList = WordSpliter.Instance.ToWordList(Caption);
             // 更新字的字形图片、字号、字间距
-            foreach (var word in wordList) word.UpdateGlyphImage(FontFamily.PackToList(), FontSize, false.PackToList(), false.PackToList());
+            foreach (var word in wordList) word.UpdateGlyphImage(FontFamily.PackToList(), FontSize, false.PackToList(), false.PackToList(), true);
             foreach (var word in wordList) word.Size = FontSize;
             for (int index = 0; index < wordList.Count - 1; index++)
             {
