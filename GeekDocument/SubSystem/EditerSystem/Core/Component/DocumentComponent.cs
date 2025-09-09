@@ -119,10 +119,10 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             string backPath = BackupFile(_host.DocumentPath);
             try
             {
-                // 打开文件
-                FileStream fileStream = new FileStream(_host.DocumentPath, FileMode.Create);
                 // 生成存档数据
                 byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(Document);
+                // 打开文件
+                FileStream fileStream = new FileStream(_host.DocumentPath, FileMode.Create);
                 // 写入存档数据并关闭
                 fileStream.Write(archiveData, 0, archiveData.Length);
                 fileStream.Close();

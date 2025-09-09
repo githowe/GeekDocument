@@ -4,9 +4,6 @@ namespace GeekDocument.SubSystem.EditerSystem.Define;
 
 public class SubStyle
 {
-    /// <summary>元素索引</summary>
-    public int ElementIndex { get; set; } = -1;
-
     public List<AppendStyle> StyleList { get; set; } = new List<AppendStyle>();
 
     public void AddStyle(AppendStyle style)

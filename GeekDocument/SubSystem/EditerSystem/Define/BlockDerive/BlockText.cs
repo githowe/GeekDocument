@@ -2,9 +2,21 @@
 using GeekDocument.SubSystem.StyleSystem;
 using Newtonsoft.Json;
 using System.Windows.Media;
+using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 {
+    public class SubStyleData
+    {
+        public int StartIndex { get; set; } = -1;
+
+        public int EndIndex { get; set; } = -1;
+
+        public string StyleJson { get; set; } = "";
+
+        public override string ToString() => $"{StartIndex}-{EndIndex}: {StyleJson}";
+    }
+
     public class TextBlockData
     {
         /// <summary>内容</summary>
@@ -39,6 +51,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public int LeftIndent { get; set; } = 0;
 
         public int RightIndent { get; set; } = 0;
+
+        public List<SubStyleData> SubStyleList { get; set; } = new List<SubStyleData>();
     }
 
     /// <summary>
@@ -250,6 +264,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             UseCustomFirstLineIndent = blockData.UseCustomFirstLineIndent;
             LeftIndent = blockData.LeftIndent;
             RightIndent = blockData.RightIndent;
+            LoadSubStyleData(blockData.SubStyleList);
         }
 
         public override string ToJson()
@@ -269,6 +284,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 UseCustomFirstLineIndent = UseCustomFirstLineIndent,
                 LeftIndent = LeftIndent,
                 RightIndent = RightIndent,
+                SubStyleList = GetSubStyleData()
             };
             return JsonConvert.SerializeObject(blockData);
         }
@@ -409,9 +425,116 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             RightIndent = 0;
         }
 
+        private List<SubStyleData> GetSubStyleData()
+        {
+            List<SubStyleData> result = new List<SubStyleData>();
+
+            Dictionary<AppendStyleType, AppendStyle?> _currentStyleDict = new Dictionary<AppendStyleType, AppendStyle?>
+            {
+                { AppendStyleType.Font, null },
+                { AppendStyleType.Bold, null },
+                { AppendStyleType.Italic, null },
+                { AppendStyleType.Color, null },
+            };
+            Dictionary<AppendStyleType, SubStyleData?> styleDataDict = new Dictionary<AppendStyleType, SubStyleData?>
+            {
+                { AppendStyleType.Font, null },
+                { AppendStyleType.Bold, null },
+                { AppendStyleType.Italic, null },
+                { AppendStyleType.Color, null },
+            };
+
+            // 获取排序后的索引列表
+            List<int> indexList = new List<int>(_styleDict.Keys);
+            indexList.Sort();
+            // 遍历索引列表
+            int prevIndex = -1;
+            foreach (var index in indexList)
+            {
+                // 索引不连续，结束所有样式
+                if (prevIndex != -1 && index != prevIndex + 1)
+                {
+                    foreach (var type in _currentStyleDict.Keys.ToList())
+                    {
+                        if (_currentStyleDict[type] != null)
+                        {
+                            result.Add(styleDataDict[type]!);
+                            _currentStyleDict[type] = null;
+                            styleDataDict[type] = null;
+                        }
+                    }
+                }
+                prevIndex = index;
+                // 获取子样式
+                SubStyle subStyle = _styleDict[index];
+                foreach (var item in subStyle.StyleList)
+                {
+                    // 当前样式为空，则添加当前样式并创建样式数据
+                    if (_currentStyleDict[item.Type] == null)
+                    {
+                        _currentStyleDict[item.Type] = item;
+                        styleDataDict[item.Type] = new SubStyleData
+                        {
+                            StartIndex = index,
+                            EndIndex = index + 1,
+                            StyleJson = item.ToJson()
+                        };
+                    }
+                    else
+                    {
+                        // 样式相同，则更新结束索引
+                        if (_currentStyleDict[item.Type]!.SameAs(item)) styleDataDict[item.Type]!.EndIndex++;
+                        // 样式不同，则添加当前样式并置空当前样式
+                        else
+                        {
+                            result.Add(styleDataDict[item.Type]!);
+                            _currentStyleDict[item.Type] = null;
+                            styleDataDict[item.Type] = null;
+                        }
+                    }
+                }
+            }
+            // 添加剩余样式
+            foreach (var item in styleDataDict)
+            {
+                if (item.Value != null) result.Add(item.Value);
+            }
+
+            return result;
+        }
+
+        private void LoadSubStyleData(List<SubStyleData> subStyleList)
+        {
+            foreach (var item in subStyleList)
+            {
+                List<string>? data = JsonConvert.DeserializeObject<List<string>>(item.StyleJson);
+                if (data == null || data.Count == 0) continue;
+
+                AppendStyle? appendStyle = null;
+                switch (data[0])
+                {
+                    case "Font":
+                        appendStyle = new AppendFont { FontFamily = data[1] };
+                        break;
+                    case "Bold":
+                        appendStyle = new AppendBold { Enable = bool.Parse(data[1]) };
+                        break;
+                    case "Italic":
+                        appendStyle = new AppendItalic { Enable = bool.Parse(data[1]) };
+                        break;
+                    case "Color":
+                        var (r, g, b) = data[1].ParseColorCode();
+                        appendStyle = new AppendColor { R = r, G = g, B = b };
+                        break;
+                }
+                if (appendStyle == null) continue;
+                SetSubStyle(appendStyle, item.StartIndex, item.EndIndex);
+            }
+        }
+
         private readonly List<TextLine> _lineList = new List<TextLine>();
         private int _viewHeight = 0;
 
-        private Dictionary<int, SubStyle> _styleDict = new Dictionary<int, SubStyle>();
+        private readonly Dictionary<int, SubStyle> _styleDict = new Dictionary<int, SubStyle>();
     }
 }
