@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Core.Component;
+using System.Windows.Input;
 using XLogic.Wpf.Behavior;
 using XLogic.Wpf.Tool;
 
@@ -17,7 +18,14 @@ public class EditTool : ToolBase<InteractionComponent>
 
     public override void OnLeftButtonDown(BehaviorArgs? args = null)
     {
-        Invoke("点击页面");
+        if (_host.HitedType == HitedElementType.Page) Invoke("点击页面");
+        else if (_host.HitedType == HitedElementType.Link)
+        {
+            // Ctrl + 单击：打开链接
+            if (Keyboard.Modifiers == ModifierKeys.Control) _host.OpenLink();
+            // 否则，视为点击页面
+            else Invoke("点击页面");
+        }
     }
 
     private void 移动()

@@ -49,6 +49,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// <summary>光标横坐标。此横坐标是为了上下移动光标时保持在一条直线上</summary>
         public int IBeamX { get; set; } = 0;
 
+        /// <summary>悬停块</summary>
+        public BlockLayer HoveredBlockLayer
+        {
+            get
+            {
+                if (_hoveredBlockLayer == null) throw new Exception("悬停块为空");
+                return _hoveredBlockLayer;
+            }
+        }
+
         /// <summary>当前块</summary>
         public Block CurrentBlock
         {
@@ -322,6 +332,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             _currentBlockLayer.MoveIBeamToHead();
             GetComponent<IBeamComponent>().ReqEnable();
             更新光标横坐标();
+        }
+
+        /// <summary>
+        /// 处理鼠标移动
+        /// </summary>
+        public void HandleMouseMove(Point point)
+        {
+            _hoveredBlockLayer = GetBlockByPoint(point);
         }
 
         /// <summary>
@@ -789,6 +807,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// <summary>块区域表</summary>
         private readonly Dictionary<BlockLayer, Rect> _blockRectDict = new Dictionary<BlockLayer, Rect>();
 
+        private BlockLayer? _hoveredBlockLayer = null;
         private BlockLayer? _currentBlockLayer = null;
 
         /// <summary>页面高度（包含上下外边距）</summary>

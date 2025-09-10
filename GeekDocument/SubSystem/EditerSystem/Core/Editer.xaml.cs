@@ -55,6 +55,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
             _selectComponent = _componentBox.AddComponent<SelectComponent>(this, "选择组件");
             _toolBarComponent = _componentBox.AddComponent<ToolBarComponent>(this, "工具栏组件");
             _propertyPanelComponent = _componentBox.AddComponent<PropertyPanelComponent>(this, "属性面板组件");
+            _componentBox.AddComponent<TipComponent>(this, "提示组件");
             // 初始化组件
             _componentBox.Init();
         }
@@ -63,6 +64,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Core
         /// 处理按键按下
         /// </summary>
         public void HandleKeyDown(KeyEventArgs e) => _interactionComponent.HandleKeyDown(e);
+
+        /// <summary>
+        /// 处理按键松开
+        /// </summary>
+        public void HandleKeyUp(KeyEventArgs e) => _interactionComponent.HandleKeyUp(e);
 
         /// <summary>
         /// 处理文本输入

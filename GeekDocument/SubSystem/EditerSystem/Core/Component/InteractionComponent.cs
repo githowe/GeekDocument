@@ -1,4 +1,7 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define;
+﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
+using GeekDocument.SubSystem.EditerSystem.Control.PopupBar;
+using GeekDocument.SubSystem.EditerSystem.Define;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Input;
 using XLogic.Base.UI;
@@ -6,10 +9,26 @@ using XLogic.Base.UI;
 namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 {
     /// <summary>
+    /// 命中元素类型
+    /// </summary>
+    public enum HitedElementType
+    {
+        Page,
+        Link,
+        Image,
+    }
+
+    /// <summary>
     /// 交互组件。处理鼠标、键盘事件
     /// </summary>
     public class InteractionComponent : Component<Editer>
     {
+        #region 属性
+
+        public HitedElementType HitedType => _hitedType;
+
+        #endregion
+
         #region 生命周期
 
         protected override void Init()
@@ -63,6 +82,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void HandleKeyDown(KeyEventArgs e)
         {
+            UpdateKeyModifier();
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
                 if (_editKeyDict.TryGetValue(e.Key, out EditKey editKey))
@@ -85,9 +105,30 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             }
         }
 
+        /// <summary>
+        /// 处理按键松开
+        /// </summary>
+        public void HandleKeyUp(KeyEventArgs e)
+        {
+            UpdateKeyModifier();
+        }
+
         #endregion
 
         #region 工具方法
+
+        /// <summary>
+        /// 打开链接
+        /// </summary>
+        public void OpenLink()
+        {
+            // 使用默认浏览器打开链接
+            if (_hitedLink != "") System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = _hitedLink,
+                UseShellExecute = true
+            });
+        }
 
         /// <summary>
         /// 停止光标闪烁
@@ -108,7 +149,49 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
         /// </summary>
         public void HandleMouseMove()
         {
+            Point mousePoint = Mouse.GetPosition(_host.DocArea);
+            mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
+            GetComponent<PageComponent>().HandleMouseMove(mousePoint);
+            // 更新命中元素类型
+            UpdatedHitedElementType();
+            // 如果命中链接，则显示跳转提示
+            if (_hitedType == HitedElementType.Link)
+            {
+                _hitedLink = GetComponent<PageComponent>().HoveredBlockLayer.GetHoverLink(mousePoint);
+                GetComponent<TipComponent>().ShowTip($"Ctrl+单击跳转：{_hitedLink}");
+                if (Keyboard.Modifiers == ModifierKeys.Control) _host.DocArea.Cursor = Cursors.Hand;
+                else _host.DocArea.Cursor = Cursors.IBeam;
+            }
+            else
+            {
+                _hitedLink = "";
+                GetComponent<TipComponent>().HideTip();
+                _host.DocArea.Cursor = Cursors.IBeam;
+            }
+        }
 
+        /// <summary>
+        /// 更新命中元素类型
+        /// </summary>
+        public void UpdatedHitedElementType()
+        {
+            _hitedType = HitedElementType.Page;
+            // 获取鼠标相对于页面的坐标
+            Point mousePoint = Mouse.GetPosition(_host.DocArea);
+            mousePoint.Y += GetComponent<PageComponent>().Offset - 16;
+            // 获取悬停块
+            BlockLayer hovered = GetComponent<PageComponent>().HoveredBlockLayer;
+            // 位于图片上
+            if (hovered.SourceBlock.Type == BlockType.Image)
+            {
+                _hitedType = HitedElementType.Page;
+            }
+            // 位于文本块或代码块上
+            if (hovered.SourceBlock.Type is BlockType.Text or BlockType.Code)
+            {
+                // 获取悬停处链接
+                if (hovered.GetHoverLink(mousePoint) != "") _hitedType = HitedElementType.Link;
+            }
         }
 
         /// <summary>
@@ -205,12 +288,37 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         #endregion
 
+        #region 私有方法
+
+        private void UpdateKeyModifier()
+        {
+            _modifier = Keyboard.Modifiers;
+            HandleModifiChanged();
+        }
+
+        /// <summary>
+        /// 处理修饰键变化
+        /// </summary>
+        private void HandleModifiChanged()
+        {
+            if (_hitedType != HitedElementType.Link) return;
+            if (_modifier == ModifierKeys.Control) _host.DocArea.Cursor = Cursors.Hand;
+            else _host.DocArea.Cursor = Cursors.IBeam;
+        }
+
+        #endregion
+
         #region 字段
 
         private EditTool _tool;
 
         private readonly Dictionary<Key, EditKey> _editKeyDict = new Dictionary<Key, EditKey>();
         private readonly List<Key> _ctrlEditKeyList = new List<Key>();
+
+        private HitedElementType _hitedType = HitedElementType.Page;
+        private ModifierKeys _modifier = ModifierKeys.None;
+
+        private string _hitedLink = "";
 
         #endregion
     }

@@ -96,6 +96,16 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// </summary>
         public virtual string GetSelectedText(int startIndex, int endIndex) => "";
 
+        /// <summary>
+        /// 获取链接区域列表
+        /// </summary>
+        public virtual List<Rect> GetLinkRectList() { return new List<Rect>(); }
+
+        /// <summary>
+        /// 获取悬停链接
+        /// </summary>
+        public virtual string GetHoverLink(Point point) { return ""; }
+
         #region 状态树接口
 
         public bool HasPrevBlock => Page.有上一个块(this);

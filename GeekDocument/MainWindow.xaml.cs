@@ -53,6 +53,7 @@ namespace GeekDocument
             Panel_DocLib.LoadDocumentLib();
 
             KeyDown += MainWindow_KeyDown;
+            KeyUp += MainWindow_KeyUp;
             TextInput += MainWindow_TextInput;
         }
 
@@ -63,6 +64,16 @@ namespace GeekDocument
             if (e.Handled) return;
             // 处理编辑器按键
             HandleEditerKey(e);
+        }
+
+        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            // 无编辑器，忽略按键
+            if (TabControl_Doc.Items.Count == 0) return;
+            // 获取当前选中的选项卡
+            if (TabControl_Doc.SelectedItem is TabContrlItem selectedItem)
+                if (selectedItem.Content is Editer editer)
+                    editer.HandleKeyUp(e);
         }
 
         private void MainWindow_TextInput(object sender, TextCompositionEventArgs e)

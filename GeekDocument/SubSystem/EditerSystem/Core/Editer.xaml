@@ -229,6 +229,8 @@
                 <!-- 文档滚动条 -->
                 <ScrollBar x:Name="PageScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0" Grid.Row="1"
                            SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>
+                <!-- 提示框 -->
+                <Canvas x:Name="TipBox"/>
             </Grid>
             <!-- 属性面板区域 -->
             <Grid Background="#262626" Grid.Column="1">

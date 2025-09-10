@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using XamlMath.Utils;
 using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
@@ -321,6 +322,50 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             return Block.Content.Substring(startIndex, endIndex - startIndex);
         }
 
+        public override string GetHoverLink(Point point)
+        {
+            foreach (var linkInfo in Block.LinkInfoList)
+            {
+                List<Rect> rectList = new List<Rect>();
+                // 计算下划线的起始坐标与结束坐标
+                var lineStart = GetCharIndexPoint(linkInfo.StartIndex);
+                var lineEnd = GetCharIndexPoint(linkInfo.EndIndex);
+                // 该坐标是相对于块的坐标，需要转换为相对于画布的坐标
+                lineStart.x += Canvas.GetLeft(this).RoundInt();
+                lineStart.y += Canvas.GetTop(this).RoundInt() - 2;
+                lineEnd.x += Canvas.GetLeft(this).RoundInt();
+                lineEnd.y += Canvas.GetTop(this).RoundInt() - 2;
+                // 单行
+                if (lineStart.lineIndex == lineEnd.lineIndex)
+                    rectList.Add(new Rect(new Point(lineStart.x, lineStart.y - Block.FontSize), new Point(lineEnd.x, lineStart.y)));
+                // 双行
+                else if (lineStart.lineIndex + 1 == lineEnd.lineIndex)
+                {
+                    rectList.Add(new Rect(new Point(lineStart.x, lineStart.y - Block.FontSize), new Point(Canvas.GetLeft(this) + BlockWidth, lineStart.y)));
+                    rectList.Add(new Rect(new Point(Canvas.GetLeft(this), lineEnd.y - Block.FontSize), new Point(lineEnd.x, lineEnd.y)));
+                }
+                // 多行
+                else
+                {
+                    rectList.Add(new Rect(new Point(lineStart.x, lineStart.y - Block.FontSize), new Point(Canvas.GetLeft(this) + BlockWidth, lineStart.y)));
+                    for (int lineIndex = lineStart.lineIndex + 1; lineIndex < lineEnd.lineIndex; lineIndex++)
+                    {
+                        double y = Canvas.GetTop(this) + GetLineY(Block.ViewData[lineIndex]);
+                        rectList.Add(new Rect(new Point(Canvas.GetLeft(this), y), new Point(Canvas.GetLeft(this) + BlockWidth, y + Block.FontSize)));
+                    }
+                    rectList.Add(new Rect(new Point(Canvas.GetLeft(this), lineEnd.y - Block.FontSize), new Point(lineEnd.x, lineEnd.y)));
+                }
+                // 判断鼠标坐标是否在链接区域内
+                foreach (var rect in rectList)
+                {
+                    if (rect.Contains(point))
+                        return linkInfo.Url;
+                }
+            }
+
+            return "";
+        }
+
         #endregion
 
         #region 状态树接口
@@ -557,37 +602,32 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 DrawTextLine(line, y);
                 y += Block.FontSize + Block.LineSpace;
             }
-            // 如果有链接，则绘制下划线
-            if (Block.HasLink())
+            // 遍历链接
+            foreach (var linkInfo in Block.LinkInfoList)
             {
-                List<LinkInfo> linkList = Block.GetLinkInfo();
-                // 遍历链接
-                foreach (var linkInfo in linkList)
+                // 计算下划线的起始位置与结束位置
+                var lineStart = GetCharIndexPoint(linkInfo.StartIndex);
+                var lineEnd = GetCharIndexPoint(linkInfo.EndIndex);
+                // 单行
+                if (lineStart.lineIndex == lineEnd.lineIndex)
+                    _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(lineEnd.x, lineStart.y - 0.5));
+                // 双行
+                else if (lineStart.lineIndex + 1 == lineEnd.lineIndex)
                 {
-                    // 计算下划线的起始位置与结束位置
-                    var lineStart = GetCharIndexPoint(linkInfo.StartIndex);
-                    var lineEnd = GetCharIndexPoint(linkInfo.EndIndex);
-                    // 单行
-                    if (lineStart.lineIndex == lineEnd.lineIndex)
-                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(lineEnd.x, lineStart.y - 0.5));
-                    // 双行
-                    else if (lineStart.lineIndex + 1 == lineEnd.lineIndex)
+                    _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
+                    _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
+                }
+                // 多行
+                else
+                {
+                    _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
+                    double liney = lineStart.y + Block.FontSize + Block.LineSpace;
+                    for (int lineIndex = lineStart.lineIndex + 1; lineIndex < lineEnd.lineIndex; lineIndex++)
                     {
-                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
-                        _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
+                        _dc.DrawLine(_linkLinePen, new Point(0, liney - 0.5), new Point(BlockWidth, liney - 0.5));
+                        liney += Block.FontSize + Block.LineSpace;
                     }
-                    // 多行
-                    else
-                    {
-                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
-                        double liney = lineStart.y + Block.FontSize + Block.LineSpace;
-                        for (int lineIndex = lineStart.lineIndex + 1; lineIndex < lineEnd.lineIndex; lineIndex++)
-                        {
-                            _dc.DrawLine(_linkLinePen, new Point(0, liney - 0.5), new Point(BlockWidth, liney - 0.5));
-                            liney += Block.FontSize + Block.LineSpace;
-                        }
-                        _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
-                    }
+                    _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
                 }
             }
         }

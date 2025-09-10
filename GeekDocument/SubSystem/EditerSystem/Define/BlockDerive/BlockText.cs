@@ -114,6 +114,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public List<TextLine> ViewData => _lineList;
 
+        public List<LinkInfo> LinkInfoList => _linkInfoList;
+
         #endregion
 
         public override void UpdateViewData(int blockWidth)
@@ -253,6 +255,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 if (!_styleDict.ContainsKey(index)) _styleDict[index] = new SubStyle();
                 _styleDict[index].AddStyle(style);
             }
+            UpdateLinkInfo();
         }
 
         public override void LoadJson(string json)
@@ -310,6 +313,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                     if (subStyle.StyleList.Count == 0) _styleDict.Remove(index);
                 }
             }
+            UpdateLinkInfo();
         }
 
         public void ClearSubStyle(AppendStyleType type)
@@ -445,7 +449,19 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             return "";
         }
 
-        public bool HasLink()
+        /// <summary>
+        /// 更新链接信息
+        /// </summary>
+        public void UpdateLinkInfo()
+        {
+            if (HasLink()) _linkInfoList = GetLinkInfo();
+            else _linkInfoList.Clear();
+        }
+
+        /// <summary>
+        /// 有链接
+        /// </summary>
+        private bool HasLink()
         {
             foreach (var pair in _styleDict)
                 foreach (var item in pair.Value.StyleList)
@@ -456,7 +472,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         /// <summary>
         /// 获取链接信息
         /// </summary>
-        public List<LinkInfo> GetLinkInfo()
+        private List<LinkInfo> GetLinkInfo()
         {
             List<LinkInfo> result = new List<LinkInfo>();
             List<SubStyleData> styleData = GetSubStyleData();
@@ -606,11 +622,14 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 if (appendStyle == null) continue;
                 SetSubStyle(appendStyle, item.StartIndex, item.EndIndex);
             }
+            UpdateLinkInfo();
         }
 
         private readonly List<TextLine> _lineList = new List<TextLine>();
         private int _viewHeight = 0;
 
         private readonly Dictionary<int, SubStyle> _styleDict = new Dictionary<int, SubStyle>();
+
+        private List<LinkInfo> _linkInfoList = new List<LinkInfo>();
     }
 }
