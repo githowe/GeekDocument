@@ -151,6 +151,12 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
 
         public int 获取块索引(BlockLayer block) => _blockLayerList.IndexOf(block);
 
+        public BlockLayer 获取当前块()
+        {
+            if (_currentBlockLayer == null) throw new Exception("当前块为空");
+            return _currentBlockLayer;
+        }
+
         public int 获取当前块索引()
         {
             if (_currentBlockLayer == null) throw new Exception("当前块为空");

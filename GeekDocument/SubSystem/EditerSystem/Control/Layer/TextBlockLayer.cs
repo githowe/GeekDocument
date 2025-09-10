@@ -4,6 +4,7 @@ using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.LayoutSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.StyleSystem;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -39,6 +40,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         public override void Init()
         {
             _rowLinePen.Freeze();
+            _linkLinePen.Freeze();
             _stateTree.Init(this);
         }
 
@@ -314,6 +316,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
             Update();
         }
 
+        public override string GetSelectedText(int startIndex, int endIndex)
+        {
+            return Block.Content.Substring(startIndex, endIndex - startIndex);
+        }
+
         #endregion
 
         #region 状态树接口
@@ -550,6 +557,58 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
                 DrawTextLine(line, y);
                 y += Block.FontSize + Block.LineSpace;
             }
+            // 如果有链接，则绘制下划线
+            if (Block.HasLink())
+            {
+                List<LinkInfo> linkList = Block.GetLinkInfo();
+                // 遍历链接
+                foreach (var linkInfo in linkList)
+                {
+                    // 计算下划线的起始位置与结束位置
+                    var lineStart = GetCharIndexPoint(linkInfo.StartIndex);
+                    var lineEnd = GetCharIndexPoint(linkInfo.EndIndex);
+                    // 单行
+                    if (lineStart.lineIndex == lineEnd.lineIndex)
+                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(lineEnd.x, lineStart.y - 0.5));
+                    // 双行
+                    else if (lineStart.lineIndex + 1 == lineEnd.lineIndex)
+                    {
+                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
+                        _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
+                    }
+                    // 多行
+                    else
+                    {
+                        _dc.DrawLine(_linkLinePen, new Point(lineStart.x, lineStart.y - 0.5), new Point(BlockWidth, lineStart.y - 0.5));
+                        double liney = lineStart.y + Block.FontSize + Block.LineSpace;
+                        for (int lineIndex = lineStart.lineIndex + 1; lineIndex < lineEnd.lineIndex; lineIndex++)
+                        {
+                            _dc.DrawLine(_linkLinePen, new Point(0, liney - 0.5), new Point(BlockWidth, liney - 0.5));
+                            liney += Block.FontSize + Block.LineSpace;
+                        }
+                        _dc.DrawLine(_linkLinePen, new Point(0, lineEnd.y - 0.5), new Point(lineEnd.x, lineEnd.y - 0.5));
+                    }
+                }
+            }
+        }
+
+        private (int x, int y, int lineIndex) GetCharIndexPoint(int charIndex)
+        {
+            // 获取字符索引所在行
+            int lineIndex = GetLineIndex(charIndex);
+            if (lineIndex == -1) throw new Exception("获取字符索引所在行失败");
+            TextLine 字符索引所在行 = Block.ViewData[lineIndex];
+            // 获取字符索引在行中的索引
+            List<int> 字符索引列表 = 字符索引所在行.GetCharIndexList();
+            // 获取字符索引在行中的索引
+            int indexInLine = 字符索引列表.IndexOf(charIndex);
+            // 获取文本行每个字符横坐标
+            List<double> xList = 字符索引所在行.GetXList(0);
+            // 获取字符横坐标
+            double x = xList[indexInLine];
+            // 计算当前行的纵坐标
+            double y = GetLineY(字符索引所在行) - Canvas.GetTop(this) + 2;
+            return (x.RoundInt(), (int)y + Block.FontSize, lineIndex);
         }
 
         /// <summary>
@@ -734,6 +793,8 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         private Color _textColor = Color.FromRgb(255, 255, 255);
         /// <summary>行线画笔</summary>
         private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);
+        /// <summary>链接线画笔</summary>
+        private readonly Pen _linkLinePen = new Pen(Brushes.White, 1);
 
         /// <summary>当前行</summary>
         private TextLine? _currentLine = null;

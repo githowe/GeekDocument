@@ -3,6 +3,7 @@ using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.StyleSystem;
 using GeekDocument.SubSystem.WindowSystem;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using XLogic.Base.Ex;
@@ -83,35 +84,42 @@ public partial class TextPropertyPanel : PropertyPanel
     private void LoadSelectedProperty()
     {
         // 隐藏不相关属性
-        Bar_Size.Visibility = Visibility.Collapsed;
+        Group_01.Visibility = Visibility.Collapsed;
         Group_02.Visibility = Visibility.Collapsed;
+        // 显示选中相关属性
+        Group_03.Visibility = Visibility.Visible;
 
         // 字体、颜色
         string font = Block.GetFont(SelectStartIndex);
         Color? color = Block.GetColor(SelectStartIndex);
-        Bar_Font.LoadProperty(FontManager.FontList, font);
+        Bar_Font2.LoadProperty(FontManager.FontList, font);
         if (color != null)
-            Bar_Color.LoadProperty(color.Value.R, color.Value.G, color.Value.B);
+            Bar_Color2.LoadProperty(color.Value.R, color.Value.G, color.Value.B);
         else
         {
             var (r, g, b) = Block.Color.ParseColorCode();
-            Bar_Color.LoadProperty(r, g, b);
+            Bar_Color2.LoadProperty(r, g, b);
         }
         // 样式
         bool bold = Block.GetBold(SelectStartIndex);
         bool italic = Block.GetItalic(SelectStartIndex);
-        Bar_Style.LoadProperty();
-        Bar_Style.AddCheckBox(GetIcon("Bold"), "Bold");
-        Bar_Style.AddCheckBox(GetIcon("Italic"), "Italic");
-        Bar_Style.SetChecked("Bold", bold);
-        Bar_Style.SetChecked("Italic", italic);
+        Bar_Style2.LoadProperty();
+        Bar_Style2.AddCheckBox(GetIcon("Bold"), "Bold");
+        Bar_Style2.AddCheckBox(GetIcon("Italic"), "Italic");
+        Bar_Style2.SetChecked("Bold", bold);
+        Bar_Style2.SetChecked("Italic", italic);
+        // 链接
+        string link = Block.GetLink(SelectStartIndex);
+        Bar_Link.LoadProperty(link);
 
         // 监听字体、颜色
-        Bar_Font.SelectionChanged += Font_SelectionChanged_Select;
-        Bar_Color.ColorChanged += Color_ColorChanged_Select;
+        Bar_Font2.SelectionChanged += Font_SelectionChanged_Select;
+        Bar_Color2.ColorChanged += Color_ColorChanged_Select;
         // 监听样式
-        Bar_Style.BoxChecked += Style_BoxChecked_Select;
-        Bar_Style.BoxUnchecked += Bar_Style_BoxUnchecked_Select;
+        Bar_Style2.BoxChecked += Style_BoxChecked_Select;
+        Bar_Style2.BoxUnchecked += Bar_Style_BoxUnchecked_Select;
+        // 监听链接
+        Bar_Link.TextChanged += Link_TextChanged;
     }
 
     private void Font_SelectionChanged_Select(string text)
@@ -161,6 +169,21 @@ public partial class TextPropertyPanel : PropertyPanel
         else if (name == "Italic")
         {
             AppendItalic style = new AppendItalic { Enable = false };
+            Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
+        }
+        PropertyChanged?.Invoke();
+    }
+
+    private void Link_TextChanged(string text)
+    {
+        string url = "";
+        MatchCollection matches = Regex.Matches(text, @"https?://[^\s""'<>]+");
+        if (matches.Count > 0) url = matches[0].Value;
+        if (url == "")
+            Block.RemoveSubStyle(AppendStyleType.Link, SelectStartIndex, SelectEndIndex);
+        else
+        {
+            AppendLink style = new AppendLink { Url = url };
             Block.SetSubStyle(style, SelectStartIndex, SelectEndIndex);
         }
         PropertyChanged?.Invoke();

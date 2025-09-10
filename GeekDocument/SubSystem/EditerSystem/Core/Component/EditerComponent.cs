@@ -1,10 +1,13 @@
-﻿using GeekDocument.SubSystem.EditerSystem.Define;
+﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
+using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.StyleSystem;
 using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
+using System.Text.RegularExpressions;
 using XLogic.Base.UI;
 
 namespace GeekDocument.SubSystem.EditerSystem.Core.Component;
@@ -46,6 +49,9 @@ public class EditerComponent : Component<Editer>
                 break;
             case "Tool_Code":
                 InsertCodeBlock();
+                break;
+            case "Tool_Link":
+                InsertLink();
                 break;
         }
     }
@@ -141,10 +147,7 @@ public class EditerComponent : Component<Editer>
     private void InsertFormula()
     {
         // 创建公式块
-        BlockFormula block = new BlockFormula
-        {
-
-        };
+        BlockFormula block = new BlockFormula();
         block.Init();
         // 插入块
         GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
@@ -165,5 +168,46 @@ public class EditerComponent : Component<Editer>
         block.Init();
         // 插入块
         GetComponent<PageComponent>().插入块(block, GetComponent<PageComponent>().获取当前块索引() + 1);
+    }
+
+    /// <summary>
+    /// 插入链接
+    /// </summary>
+    private void InsertLink()
+    {
+        // 获取当前块
+        BlockLayer currentBlock = GetComponent<PageComponent>().获取当前块();
+        if (currentBlock.SourceBlock.Type is BlockType.Text or BlockType.Code)
+        {
+            InsertLinkDialog dialog = new InsertLinkDialog();
+            // 获取当前块选中范围
+            var (start, end) = GetComponent<SelectComponent>().GetCurrentBlock_SelectRange();
+            if (start != -1 && end != -1)
+            {
+                // 获取选中文本
+                string text = currentBlock.GetSelectedText(start, end);
+                // 识别选中文本中的网页链接
+                MatchCollection matches = Regex.Matches(text, @"https?://[^\s""'<>]+");
+                if (matches.Count > 0) dialog.Url = matches[0].Value;
+            }
+            // 显示对话框
+            if (dialog.ShowDialog() == true)
+            {
+                // 创建链接样式
+                AppendLink style = new AppendLink { Url = dialog.Url };
+                // 无选中，则先插入文本
+                if (start == -1 || end == -1)
+                {
+                    start = currentBlock.CharIndex;
+                    end = start + dialog.Url.Length;
+                    GetComponent<PageComponent>().HandleTextInput(dialog.Url);
+                }
+                // 添加链接样式
+                currentBlock.SourceBlock.SetSubStyle(style, start, end);
+                currentBlock.Update();
+                _host.Saved = false;
+            }
+        }
+        else WM.ShowErrorTip("当前块不支持插入链接");
     }
 }

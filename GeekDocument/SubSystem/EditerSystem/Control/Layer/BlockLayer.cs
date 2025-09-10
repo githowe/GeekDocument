@@ -91,6 +91,11 @@ namespace GeekDocument.SubSystem.EditerSystem.Control.Layer
         /// </summary>
         public virtual void ApplyStyle(StyleSheet? styleSheet) { }
 
+        /// <summary>
+        /// 获取选中文本
+        /// </summary>
+        public virtual string GetSelectedText(int startIndex, int endIndex) => "";
+
         #region 状态树接口
 
         public bool HasPrevBlock => Page.有上一个块(this);

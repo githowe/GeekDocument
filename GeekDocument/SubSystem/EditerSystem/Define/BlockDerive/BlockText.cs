@@ -55,6 +55,15 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
         public List<SubStyleData> SubStyleList { get; set; } = new List<SubStyleData>();
     }
 
+    public class LinkInfo
+    {
+        public int StartIndex { get; set; } = -1;
+
+        public int EndIndex { get; set; } = -1;
+
+        public string Url { get; set; } = "";
+    }
+
     /// <summary>
     /// 文本块
     /// </summary>
@@ -291,6 +300,18 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
 
         public override int GetViewHeight() => _viewHeight;
 
+        public void RemoveSubStyle(AppendStyleType type, int startIndex, int endIndex)
+        {
+            for (int index = startIndex; index < endIndex; index++)
+            {
+                if (_styleDict.TryGetValue(index, out SubStyle? subStyle))
+                {
+                    subStyle.RemoveStyle(type);
+                    if (subStyle.StyleList.Count == 0) _styleDict.Remove(index);
+                }
+            }
+        }
+
         public void ClearSubStyle(AppendStyleType type)
         {
             foreach (var subStyle in _styleDict.Values) subStyle.RemoveStyle(type);
@@ -406,6 +427,56 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
             return TStyle == TextStyle.Italic || TStyle == TextStyle.BoldItalic;
         }
 
+        public string GetLink(int charIndex)
+        {
+            if (_styleDict.TryGetValue(charIndex, out SubStyle? subStyle))
+            {
+                // 遍历样式
+                foreach (var style in subStyle.StyleList)
+                {
+                    // 找到了链接样式则返回
+                    if (style.Type == AppendStyleType.Link)
+                    {
+                        AppendLink linkStyle = (AppendLink)style;
+                        return linkStyle.Url;
+                    }
+                }
+            }
+            return "";
+        }
+
+        public bool HasLink()
+        {
+            foreach (var pair in _styleDict)
+                foreach (var item in pair.Value.StyleList)
+                    if (item.Type == AppendStyleType.Link) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取链接信息
+        /// </summary>
+        public List<LinkInfo> GetLinkInfo()
+        {
+            List<LinkInfo> result = new List<LinkInfo>();
+            List<SubStyleData> styleData = GetSubStyleData();
+            foreach (var style in styleData)
+            {
+                List<string>? data = JsonConvert.DeserializeObject<List<string>>(style.StyleJson);
+                if (data == null || data.Count == 0) continue;
+                if (data[0] == "Link")
+                {
+                    result.Add(new LinkInfo
+                    {
+                        StartIndex = style.StartIndex,
+                        EndIndex = style.EndIndex,
+                        Url = data[1]
+                    });
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// 重置样式
         /// </summary>
@@ -435,6 +506,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 { AppendStyleType.Bold, null },
                 { AppendStyleType.Italic, null },
                 { AppendStyleType.Color, null },
+                { AppendStyleType.Link, null },
             };
             Dictionary<AppendStyleType, SubStyleData?> styleDataDict = new Dictionary<AppendStyleType, SubStyleData?>
             {
@@ -442,6 +514,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                 { AppendStyleType.Bold, null },
                 { AppendStyleType.Italic, null },
                 { AppendStyleType.Color, null },
+                { AppendStyleType.Link, null },
             };
 
             // 获取排序后的索引列表
@@ -525,6 +598,9 @@ namespace GeekDocument.SubSystem.EditerSystem.Define.BlockDerive
                     case "Color":
                         var (r, g, b) = data[1].ParseColorCode();
                         appendStyle = new AppendColor { R = r, G = g, B = b };
+                        break;
+                    case "Link":
+                        appendStyle = new AppendLink { Url = data[1] };
                         break;
                 }
                 if (appendStyle == null) continue;

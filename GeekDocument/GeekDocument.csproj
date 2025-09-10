@@ -55,6 +55,7 @@
     <None Remove="Assets\Logo2.png" />
     <None Remove="Assets\WindowIcon\ColorPicker.png" />
     <None Remove="Assets\WindowIcon\DocumentOption.png" />
+    <None Remove="Assets\WindowIcon\Link.png" />
     <None Remove="Assets\WindowIcon\NewFile.png" />
     <None Remove="Assets\WindowIcon\Setting.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Delete.png" />
@@ -172,6 +173,7 @@
     <Resource Include="Assets\Icon16\Lib.png" />
     <Resource Include="Assets\WindowIcon\ColorPicker.png" />
     <Resource Include="Assets\WindowIcon\DocumentOption.png" />
+    <Resource Include="Assets\WindowIcon\Link.png" />
     <Resource Include="Assets\WindowIcon\NewFile.png" />
     <Resource Include="Assets\WindowIcon\Setting.png" />
     <Resource Include="SubSystem\DocumentSystem\Image\Delete.png" />
