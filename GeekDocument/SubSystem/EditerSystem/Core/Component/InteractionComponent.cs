@@ -1,7 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Control.Layer;
-using GeekDocument.SubSystem.EditerSystem.Control.PopupBar;
 using GeekDocument.SubSystem.EditerSystem.Define;
-using System.Security.Policy;
 using System.Windows;
 using System.Windows.Input;
 using XLogic.Base.UI;
