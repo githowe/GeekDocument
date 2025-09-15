@@ -4,6 +4,10 @@ public class 元素行
 {
     #region 属性
 
+    public double Left { get; set; } = double.NaN;
+
+    public double Top { get; set; } = double.NaN;
+
     public double 行宽 { get; set; } = 0;
 
     public double 行高 { get; private set; } = 0;
@@ -24,6 +28,12 @@ public class 元素行
     public double 最后一个元素右边距 { get; private set; } = 0;
 
     #endregion
+
+    public override string ToString()
+    {
+        if (元素列表.Count == 0) return "空";
+        return "非空行";
+    }
 
     #region 公开方法
 
@@ -68,7 +78,6 @@ public class 元素行
 
     public void 更新元素坐标(水平对齐方式 水平 = 水平对齐方式.Justify, 垂直对齐方式 垂直 = 垂直对齐方式.Bottom)
     {
-        // 注意：元素的坐标为行内坐标
         更新元素横坐标(水平);
         更新元素纵坐标(垂直);
     }
@@ -244,7 +253,7 @@ public class 元素行
     private void 横向排列元素()
     {
         行状态 状态 = 行状态.空;
-        double 横坐标 = 0;
+        double 横坐标 = Left;
         int index = 0;
         while (index < 元素列表.Count)
         {
@@ -380,13 +389,13 @@ public class 元素行
         switch (对齐)
         {
             case 垂直对齐方式.Top:
-                foreach (var item in 元素列表) item.Top = 0;
+                foreach (var item in 元素列表) item.Top = Top;
                 break;
             case 垂直对齐方式.Center:
-                foreach (var item in 元素列表) item.Top = (行高 - item.ActualHeight) / 2;
+                foreach (var item in 元素列表) item.Top = Top + (行高 - item.ActualHeight) / 2;
                 break;
             case 垂直对齐方式.Bottom:
-                foreach (var item in 元素列表) item.Top = 行高 - item.ActualHeight;
+                foreach (var item in 元素列表) item.Top = Top + 行高 - item.ActualHeight;
                 break;
         }
     }

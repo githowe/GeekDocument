@@ -20,7 +20,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
 
         public GlyphImage? GetCodeGlyphImage(char c) => GetGlyphImage(c, "仿宋", 16, false, false);
 
-        public GlyphImage? GetGlyphImage(char c, string fontFamily, int fontSize, bool bold = false, bool italic = false)
+        public GlyphImage? GetGlyphImage(char c, string fontFamily, double fontSize, bool bold = false, bool italic = false)
         {
             // 生成节点路径
             List<string> path = GeneratePath(c, fontFamily, fontSize, bold, italic);
@@ -34,7 +34,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
             return node.Image;
         }
 
-        private List<string> GeneratePath(char c, string fontFamily, int fontSize, bool bold, bool italic)
+        private List<string> GeneratePath(char c, string fontFamily, double fontSize, bool bold, bool italic)
         {
             string boldStr = bold ? "B" : "N";
             string italicStr = italic ? "I" : "N";
@@ -77,7 +77,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
             return current;
         }
 
-        private GlyphImage? GenerateGlyphImage(char c, string fontFamily, int fontSize, bool bold, bool italic)
+        private GlyphImage? GenerateGlyphImage(char c, string fontFamily, double fontSize, bool bold, bool italic)
         {
             FontFamily family = new FontFamily(fontFamily);
             FontStyle style = italic ? FontStyles.Italic : FontStyles.Normal;
@@ -193,7 +193,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
             return null;
         }
 
-        private GlyphRun? GenerateGlyphRun(GlyphTypeface typeface, char c, int fontSize, double typeBaseLine, double typeHeight)
+        private GlyphRun? GenerateGlyphRun(GlyphTypeface typeface, char c, double fontSize, double typeBaseLine, double typeHeight)
         {
             // double baseLine = fontSize * (typeface.Baseline / typeface.Height);
             // double pixelEachEM = fontSize / typeface.Height;

@@ -27,7 +27,7 @@ namespace GeekDocument.SubSystem.OptionSystem
             Panel_PageOption.Toggle_Link.IsChecked = CacheManager.Instance.Cache.Application.PagePaddingLink;
             // 首行缩进、段间距
             Panel_ParagraphOption.Input_FirstLineIndent.Text = document.FirstLineIndent.ToString();
-            Panel_ParagraphOption.Input_ParagraphInterval.Text = document.ParagraphInterval.ToString();
+            Panel_ParagraphOption.Input_ParagraphInterval.Text = document.BlockInterval.ToString();
         }
 
         private void Default_Click(object sender, RoutedEventArgs e)

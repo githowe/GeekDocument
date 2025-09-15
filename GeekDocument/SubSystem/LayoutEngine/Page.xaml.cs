@@ -16,6 +16,15 @@ namespace GeekDocument.SubSystem.LayoutEngine
         /// <summary>块间距</summary>
         public double BlockInterval { get; set; } = 16;
 
+        /// <summary>首行缩进</summary>
+        public int FirstLineIndent { get; set; } = 0;
+
+        /// <summary>默认正文字体</summary>
+        public string TextFont { get; set; } = "霞鹜文楷";
+
+        /// <summary>默认正文字号。单位：像素</summary>
+        public int TextSize { get; set; } = 16;
+
         /// <summary>块元素列表</summary>
         public List<块元素> BlockList { get; set; } = new List<块元素>();
 
@@ -24,11 +33,17 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         public void Init()
         {
+            // 更新边距标记
+            double leftMargin = PagePadding.Left - _markSize;
+            double topMargin = PagePadding.Top - _markSize;
+            double rightMargin = PagePadding.Right - _markSize;
+            double bottomMargin = PagePadding.Bottom - _markSize;
+            Mark_01.Margin = new Thickness(leftMargin, topMargin, 0, 0);
+            Mark_02.Margin = new Thickness(0, topMargin, rightMargin, 0);
+            Mark_03.Margin = new Thickness(leftMargin, 0, 0, bottomMargin);
+            Mark_04.Margin = new Thickness(0, 0, rightMargin, bottomMargin);
             // 添加块至画布
-            foreach (var block in BlockList)
-            {
-                BlockBox.Children.Add(block);
-            }
+            foreach (var block in BlockList) BlockBox.Children.Add(block);
         }
 
         public void 更新页面()
@@ -80,5 +95,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             }
             return result;
         }
+
+        private readonly double _markSize = 24;
     }
 }

@@ -48,7 +48,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem
             archiveFile.PageData.PageWidth = document.PageWidth.ToString();
             archiveFile.PageData.Padding = document.Padding.ToString();
             archiveFile.PageData.FirstLineIndent = document.FirstLineIndent;
-            archiveFile.PageData.ParagraphInterval = document.ParagraphInterval;
+            archiveFile.PageData.ParagraphInterval = document.BlockInterval;
             // 设置资源数据
             {
                 // 资源大小

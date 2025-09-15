@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.GlyphSystem;
+using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
@@ -8,14 +9,26 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
     /// </summary>
     public class 字 : 布局元素
     {
+        public 字() => 类型 = 元素类型.字;
+
         #region 属性
 
-        public 字类型 类型 { get; set; } = 字类型.Chinese;
+        public 字类型 字类型 { get; set; } = 字类型.Chinese;
 
         public string 文本 { get; set; } = "";
 
-        /// <summary>字号列表。数量须与文本长度一致</summary>
-        public List<double> 字号列表 { get; set; } = new List<double>();
+        #endregion
+
+        #region 动态属性
+
+        /// <summary>字形图片列表</summary>
+        public List<GlyphImage> GlyphImageList { get; set; } = new List<GlyphImage>();
+
+        public List<string> 字体列表 { get; set; } = new List<string> { "霞鹜文楷" };
+
+        public List<double> 字号列表 { get; set; } = new List<double> { 16 };
+
+        public List<double> 字宽列表 { get; set; } = new List<double>();
 
         #endregion
 
@@ -24,7 +37,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public override string ToString()
         {
             string type = IsSpace ? "空白" : 文本;
-            return $"{type}：{Left}";
+            return $"{type}：{ActualWidth}";
         }
 
         #endregion
@@ -33,13 +46,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void Init()
         {
-            if (文本 == " ") 类型 = 字类型.Space;
-            if (类型 == 字类型.Space) IsSpace = true;
-            if (类型 == 字类型.English) CanBreak = true;
-
-            _space.Freeze();
-            _text.Freeze();
-            _widthChanged.Freeze();
+            if (文本 == " ") 字类型 = 字类型.Space;
+            if (字类型 == 字类型.Space) IsSpace = true;
+            if (字类型 == 字类型.English) CanBreak = true;
         }
 
         public override void UpdateLayout()
@@ -54,13 +63,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             ActualHeight = 字号列表[0];
             foreach (var item in 文本)
             {
+                // 获取字形样式
+                string font = 字体列表[0];
+                double size = 字号列表[0];
+                // 生成字形图片
+                GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(item, font, size, false, false);
+                if (glyphImage == null) throw new Exception("生成字形图片失败");
+                GlyphImageList.Add(glyphImage);
+                字宽列表.Add(glyphImage.GlyphWidth);
                 // 累加宽度
-                ActualWidth += 字号列表[index];
+                ActualWidth += glyphImage.GlyphWidth;
                 // 取最大高度
                 if (字号列表[index] > ActualHeight) ActualHeight = 字号列表[index];
                 index++;
             }
-            _initWidth = ActualWidth;
         }
 
         public override double 压缩元素()
@@ -117,13 +133,18 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 断开;
         }
 
-        public override void 绘图(DrawingContext dc, double left, double top)
+        public override void 绘图(DrawingContext dc)
         {
-            // left = Math.Round(left);
-            // top = Math.Round(top);
-            Brush brush = IsSpace ? _space : _text;
-            if (IsSpace && ActualWidth + RightMargin != _initWidth) brush = _widthChanged;
-            dc.DrawRectangle(brush, null, new Rect(left, top, ActualWidth, ActualHeight));
+            // 不绘制空格
+            if (IsSpace) return;
+
+            double word_x = Math.Round(Left);
+            double word_y = Math.Round(Top);
+            foreach (var image in GlyphImageList)
+            {
+                Point leftTop = new Point(word_x + image.Origin.X, word_y + image.Origin.Y);
+                dc.DrawImage(image.GetBitmap(), new Rect(leftTop, new Size(image.RenderWidth, image.RenderHeight)));
+            }
         }
 
         #endregion
@@ -137,11 +158,5 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         }
 
         #endregion
-
-        /// <summary>初始宽度</summary>
-        private double _initWidth = 0;
-        private Brush _space = Brushes.BurlyWood;
-        private Brush _text = Brushes.LightGray;
-        private Brush _widthChanged = Brushes.OrangeRed;
     }
 }

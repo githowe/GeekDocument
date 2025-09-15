@@ -82,7 +82,7 @@ public class EditerComponent : Component<Editer>
         document.Padding.Left = dialog.Panel_PageOption.Left;
         document.Padding.Right = dialog.Panel_PageOption.Right;
         document.FirstLineIndent = int.Parse(dialog.Panel_ParagraphOption.Input_FirstLineIndent.Text);
-        document.ParagraphInterval = int.Parse(dialog.Panel_ParagraphOption.Input_ParagraphInterval.Text);
+        document.BlockInterval = int.Parse(dialog.Panel_ParagraphOption.Input_ParagraphInterval.Text);
         // 加载文档选项
         GetComponent<DocumentComponent>().LoadDocumentOption();
         // 更新页面

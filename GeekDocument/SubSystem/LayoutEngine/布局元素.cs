@@ -4,6 +4,10 @@ namespace GeekDocument.SubSystem.LayoutEngine;
 
 public class 布局元素
 {
+    public 元素类型 类型 { get; set; } = 元素类型.Unknown;
+
+    public 布局元素? Parent { get; set; } = null;
+
     public double Left { get; set; } = double.NaN;
 
     public double Top { get; set; } = double.NaN;
@@ -70,5 +74,8 @@ public class 布局元素
 
     public virtual 布局元素 断开(double 最大宽度) { return this; }
 
-    public virtual void 绘图(DrawingContext dc, double left, double top) { }
+    /// <summary>
+    /// 绘图。注意，坐标为相对于绘图上下文的坐标，而元素的Left和Top为相对于父元素的坐标，所以该坐标由调用方计算出绝对坐标后传入
+    /// </summary>
+    public virtual void 绘图(DrawingContext dc) { }
 }

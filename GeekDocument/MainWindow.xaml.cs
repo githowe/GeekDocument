@@ -3,8 +3,8 @@ using GeekDocument.SubSystem.ArchiveSystem.Define;
 using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
-using GeekDocument.SubSystem.EditerSystem.Core;
-using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystemNew.Core;
+using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.OptionSystem;
@@ -122,7 +122,7 @@ namespace GeekDocument
             CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
             CacheManager.Instance.SaveCache();
             // 添加已打开的文档
-            DocManager.Instance.AddOpenedDocument(document, filePath);
+            // DocManager.Instance.AddOpenedDocument(document, filePath);
         }
 
         #endregion
@@ -361,7 +361,7 @@ namespace GeekDocument
                     PageWidth = Options.Instance.Page.PageWidth,
                     Padding = Options.Instance.Page.PagePadding,
                     FirstLineIndent = Options.Instance.Paragraph.FirstLineIndent,
-                    ParagraphInterval = Options.Instance.Paragraph.ParagraphInterval,
+                    BlockInterval = Options.Instance.Paragraph.ParagraphInterval,
                 };
                 // 添加标题块
                 BlockText title = new BlockText
@@ -373,23 +373,23 @@ namespace GeekDocument
                     UseCustomFirstLineIndent = true,
                 };
                 title.UpdateViewData(document.PageWidth);
-                document.BlockList.Add(title);
+                // document.BlockList.Add(title);
                 // 在磁盘中新建文件
                 string filePath = $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc";
                 FileStream fileStream = File.Create(filePath);
                 // 刷新文档库
                 Panel_DocLib.RefreshDocumentLib();
                 // 保存文档数据至文件
-                byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(document);
+                /*byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(document);
                 fileStream.Write(archiveData, 0, archiveData.Length);
-                fileStream.Close();
+                fileStream.Close();*/
                 // 打开新建的文档
                 OpenDocument(document, dialog.DocumentName, filePath);
                 // 添加打开记录
                 CacheManager.Instance.Cache.DocumentManager.AddRecentDocument($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
                 CacheManager.Instance.SaveCache();
                 // 添加已打开的文档
-                DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
+                // DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
             }
         }
 

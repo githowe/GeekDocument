@@ -55,7 +55,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
                 PageWidth = pageOption.PageWidth,
                 Padding = pageOption.PagePadding,
                 FirstLineIndent = Options.Instance.Paragraph.FirstLineIndent,
-                ParagraphInterval = Options.Instance.Paragraph.ParagraphInterval
+                BlockInterval = Options.Instance.Paragraph.ParagraphInterval
             };
             // 读取文本文件
             foreach (var line in File.ReadAllLines("D:/示例文档3.txt"))
@@ -104,7 +104,7 @@ namespace GeekDocument.SubSystem.EditerSystem.Core.Component
             pageComponent.PageWidth = (int)_host.DocArea.Width;
             pageComponent.Padding = Document.Padding;
             pageComponent.FirstLineIndent = Document.FirstLineIndent;
-            pageComponent.ParagraphInterval = Document.ParagraphInterval;
+            pageComponent.ParagraphInterval = Document.BlockInterval;
         }
 
         /// <summary>

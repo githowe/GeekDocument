@@ -5,6 +5,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 图片 : 布局元素
     {
+        public 图片() => 类型 = 元素类型.图片;
+
         #region 属性
 
         public string SourcePath { get; set; } = "";
@@ -84,11 +86,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             RightMargin -= rightMax * 比例;
         }
 
-        public override void 绘图(DrawingContext dc, double left, double top)
+        public override void 绘图(DrawingContext dc)
         {
-            left = Math.Round(left);
-            top = Math.Round(top);
-            dc.DrawRectangle(Brushes.DarkMagenta, null, new Rect(left, top, ActualWidth, ActualHeight));
+            double x = Math.Round(Left);
+            double y = Math.Round(Top);
+            dc.DrawRectangle(Brushes.DarkMagenta, null, new Rect(x, y, ActualWidth, ActualHeight));
         }
 
         #endregion

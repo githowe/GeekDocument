@@ -35,8 +35,8 @@ public class Document
     /// <summary>首行缩进</summary>
     public int FirstLineIndent { get; set; } = 0;
 
-    /// <summary>段间距</summary>
-    public int ParagraphInterval { get; set; } = 0;
+    /// <summary>块间距</summary>
+    public int BlockInterval { get; set; } = 0;
 
     /// <summary>
     /// 加载存档
@@ -55,7 +55,7 @@ public class Document
         PageWidth = int.Parse(archive.PageData.PageWidth);
         Padding = new PageThickness(archive.PageData.Padding);
         FirstLineIndent = archive.PageData.FirstLineIndent;
-        ParagraphInterval = archive.PageData.ParagraphInterval;
+        BlockInterval = archive.PageData.ParagraphInterval;
         // 加载资源数据
         {
             int offset = 0;

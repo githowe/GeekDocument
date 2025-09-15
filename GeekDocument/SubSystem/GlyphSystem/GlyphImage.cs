@@ -25,7 +25,7 @@ namespace GeekDocument.SubSystem.GlyphSystem
 
         public override string ToString() => C.ToString();
 
-        public BitmapSource? GetBitmap(byte r, byte g, byte b)
+        public BitmapSource? GetBitmap(byte r = 255, byte g = 255, byte b = 255)
         {
             if (AlphaData.Length == 0) return null;
 
