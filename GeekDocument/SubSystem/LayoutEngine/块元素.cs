@@ -41,7 +41,8 @@ public class 块元素 : SingleBoard
         // 元素最大宽度 = 块宽度 - 块左边距 - 块右边距
         double maxWidth = BlockWidth - BlockMargin.Left - BlockMargin.Right;
         // 设置元素最大宽度并计算元素大小
-        根元素.MaxWidth = maxWidth;
+        if (double.IsNaN(根元素.MaxWidth)) 根元素.MaxWidth = maxWidth;
+        if (根元素.MaxWidth > maxWidth) 根元素.MaxWidth = maxWidth;
         根元素.Measure();
         // 根据元素实际大小与对齐方式设置元素坐标
         根元素.Left = BlockMargin.Left;
@@ -66,12 +67,6 @@ public class 块元素 : SingleBoard
         根元素.Top = 0;
         // 排列元素
         根元素.Arrange();
-        /*// 更新根元素坐标，这个坐标是相对于块的
-        根元素.Left = 根元素.LeftMargin;
-        根元素.Top = 0;
-        // 设置最大宽度并更新布局
-        根元素.MaxWidth = maxWidth;
-        根元素.UpdateLayout();*/
         // 高度 = 根元素高度 + 上边距 + 下边距
         BlockHeight = 根元素.ActualHeight + BlockMargin.Top + BlockMargin.Bottom;
     }

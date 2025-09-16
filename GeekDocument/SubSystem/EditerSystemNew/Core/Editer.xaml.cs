@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystemNew.Define;
+using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.IO;
@@ -116,7 +117,6 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             {
                 Text = File.ReadAllText("D:/示例文档3.txt"),
             };
-            段落元素.Init();
 
             块 段落块 = new 块
             {
@@ -125,17 +125,67 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             };
             document.块列表.Add(段落块);
 
-            图片 图片元素 = new 图片
+            图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
+            段落元素.内嵌元素列表.Add(new 段落内嵌元素
             {
-                水平对齐 = 水平对齐方式.Center,
-            };
-            图片元素.Init();
+                LineIndex = 2,
+                CharIndex = 20,
+                ElementList = new List<布局元素> { 图片元素 }
+            });
+
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif", pixelArt: true);
+            图片元素.Caption = "臭臭泥";
+            段落元素.内嵌元素列表.Add(new 段落内嵌元素
+            {
+                LineIndex = 5,
+                CharIndex = 16,
+                ElementList = new List<布局元素> { 图片元素 }
+            });
+
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\0114005b7847b1a80120d8c0319ff7.gif", 180, true);
+            图片元素.CaptionMaxWidthType = 图注最大宽度.指定宽度;
+            图片元素.CaptionMaxWidth = 0;
             块 图片块 = new 块
             {
                 类型 = 块类型.图片,
                 根元素 = 图片元素,
             };
             document.块列表.Add(图片块);
+        }
+
+        private 图片 创建图片元素(string path, double maxWidth = double.NaN, bool pixelArt = false)
+        {
+            ImageFileData fileData = ImageManager.Instance.GetImageFileData(path);
+            string hash = LoadImage(fileData);
+            图片 element = new 图片
+            {
+                SourceHash = hash,
+                水平对齐 = 水平对齐方式.Center,
+                MaxWidth = maxWidth,
+                PixelArt = pixelArt,
+                Caption = Path.GetFileName(path),
+            };
+            element.Init();
+            return element;
+        }
+
+        /// <summary>
+        /// 加载图片
+        /// </summary>
+        private string LoadImage(ImageFileData fileData)
+        {
+            // 获取图片信息，获取成功则直接返回
+            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(fileData.Hash);
+            if (imageInfo != null) return fileData.Hash;
+            // 加载图片
+            imageInfo = ImageLoader.Instance.LoadImageFile(fileData.Data, fileData.Type);
+            // 加载失败时返回空
+            if (imageInfo == null) return "";
+            // 缓存文件数据和解码结果
+            ImageManager.Instance.AddFileData(fileData);
+            ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
+            // 返回图片哈希
+            return fileData.Hash;
         }
 
         #endregion

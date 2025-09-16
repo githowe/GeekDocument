@@ -80,6 +80,21 @@ public class 元素行
     {
         更新元素横坐标(水平);
         更新元素纵坐标(垂直);
+        foreach (var item in 元素列表)
+           if (item.类型 != 元素类型.字) item.Arrange();
+    }
+
+    public double 获取实际宽度()
+    {
+        double width = 0;
+        foreach (var item in 元素列表)
+            width += item.LeftMargin + item.ActualWidth + item.RightMargin;
+        if (元素列表.Count > 1)
+        {
+            width -= 元素列表[0].LeftMargin;
+            width -= 元素列表.Last().RightMargin;
+        }
+        return width;
     }
 
     #endregion
@@ -98,6 +113,8 @@ public class 元素行
         // 如果是压缩后才能添加元素，设置此标记为真
         已压缩 = false;
 
+        // 无限行宽，直接添加
+        if (double.IsPositiveInfinity(行宽)) return true;
         // 空白元素可以无限添加，不管行有没有满
         if (元素.IsSpace) return true;
         // 没有元素，直接添加。可断开元素已在外部处理
@@ -296,10 +313,12 @@ public class 元素行
     {
         // 左对齐无需更新横坐标
         if (对齐 == 水平对齐方式.Left) return;
+        // 宽度无限时无需更新横坐标
+        if (double.IsPositiveInfinity(行宽)) return;
 
         // 全部元素宽度 = 最后一个元素横坐标 + 最后一个元素实际宽度
         布局元素 最后一个元素 = 元素列表.Last();
-        double 全部元素宽度 = 最后一个元素.Left + 最后一个元素.ActualWidth;
+        double 全部元素宽度 = 最后一个元素.Left + 最后一个元素.ActualWidth - Left;
         // 根据对齐方式，偏移元素横坐标
         double offset = 0;
         if (对齐 == 水平对齐方式.Center) offset = (行宽 - 全部元素宽度) / 2;

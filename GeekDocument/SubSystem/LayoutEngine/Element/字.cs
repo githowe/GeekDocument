@@ -112,10 +112,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             字 断开 = new 字();
             while (true)
             {
-                // Todo：这里应该加字符宽度，先用字号代替字符宽度
-
                 // 当前宽度加上第一个字符宽度没有超过最大宽度时，将第一个字符加入断开部分
-                if (断开.ActualWidth + 字号列表[0] < 最大宽度)
+                if (断开.ActualWidth + 字宽列表[0] < 最大宽度)
                 {
                     // 分离一个字符
                     断开.文本 += 文本[0];
@@ -138,6 +136,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             // 不绘制空格
             if (IsSpace) return;
+
+            // dc.DrawRectangle(Brushes.DimGray, null, new Rect(Left, Top, ActualWidth, ActualHeight));
+            // return;
 
             double word_x = Math.Round(Left);
             double word_y = Math.Round(Top);

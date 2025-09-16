@@ -20,6 +20,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public string Text { get; set; } = "";
 
+        public string Font { get; set; } = "霞鹜文楷";
+
         public double FontSize { get; set; } = 16;
 
         public double 首行缩进 { get; set; } = 32;
@@ -29,22 +31,37 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public List<段落内嵌元素> 内嵌元素列表 { get; set; } = new List<段落内嵌元素>();
 
+        /// <summary>纯文本模式。该模式只允许包含字元素</summary>
+        public bool PlainText { get; set; } = false;
+
         #endregion
 
         #region 布局元素 方法
 
-        public override void Init()
-        {
-
-        }
-
         public override void Measure()
         {
+            // 没有设置最大宽度时，不符合规范，直接抛异常
+            if (double.IsNaN(MaxWidth)) throw new Exception("段落未设置最大宽度");
+            // 小于或等于零视为无限宽度
+            if (MaxWidth <= 0) MaxWidth = double.PositiveInfinity;
+            // 设置实际宽度为最大宽度
             ActualWidth = MaxWidth;
-            生成内嵌元素();
+
+            计算内嵌元素大小();
             生成字元素();
             分割行();
             更新高度();
+
+            // 如果实际宽度为无限，需更新为内容实际宽度
+            if (double.IsPositiveInfinity(ActualWidth))
+            {
+                ActualWidth = 0;
+                foreach (var item in 总元素行列表)
+                {
+                    double lineWidth = item.获取实际宽度();
+                    if (lineWidth > ActualWidth) ActualWidth = lineWidth;
+                }
+            }
         }
 
         public override void Arrange()
@@ -72,15 +89,35 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         }
 
+        /// <summary>
+        /// 适配内容实际宽度
+        /// </summary>
+        public void FitContentWidth()
+        {
+            ActualWidth = 0;
+            foreach (var 行 in 总元素行列表)
+            {
+                行.行宽 = 行.获取实际宽度();
+                if (行.行宽 > ActualWidth) ActualWidth = 行.行宽;
+            }
+        }
+
         #endregion
 
         #region 私有方法
 
-        private void 生成内嵌元素()
+        private void 计算内嵌元素大小()
         {
             foreach (var 内嵌元素 in 内嵌元素列表)
                 foreach (var element in 内嵌元素.ElementList)
+                {
+                    element.Parent = this;
+                    // 内嵌元素没有设置最大宽度时，设置为段落最大宽度
+                    if (double.IsNaN(element.MaxWidth)) element.MaxWidth = MaxWidth;
+                    // 或者最大宽度大于段落最大宽度时，设置为段落最大宽度
+                    else if (element.MaxWidth > MaxWidth) element.MaxWidth = MaxWidth;
                     element.Measure();
+                }
         }
 
         private void 生成字元素()
@@ -98,6 +135,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     {
                         Parent = this,
                         文本 = c.ToString(),
+                        字体列表 = new List<string> { Font },
                         字号列表 = new List<double> { FontSize },
                     };
                     element.Init();

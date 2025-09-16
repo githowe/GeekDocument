@@ -1,6 +1,16 @@
 ﻿using GeekDocument.SubSystem.ImageSystem;
+using GeekDocument.SubSystem.TimeSystem;
+using GeekDocument.SubSystem.WindowSystem;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+
+public enum 图注最大宽度
+{
+    跟随图片,
+    指定宽度
+}
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
@@ -13,13 +23,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         /// <summary>源哈希值</summary>
         public string SourceHash { get; set; } = "";
 
+        public double ImageWidth { get; set; } = 0;
+
         /// <summary>是否为像素画</summary>
         public bool PixelArt { get; set; } = false;
 
         /// <summary>图注</summary>
         public string? Caption { get; set; } = null;
 
-        public string FontFamily { get; set; } = "霞鹜文楷";
+        public 图注最大宽度 CaptionMaxWidthType { get; set; } = 图注最大宽度.跟随图片;
+
+        /// <summary>图注最大宽度</summary>
+        public double CaptionMaxWidth { get; set; } = double.NaN;
+
+        public string Font { get; set; } = "霞鹜文楷";
 
         public int FontSize { get; set; } = 16;
 
@@ -59,7 +76,62 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void Measure()
         {
-            适配大小();
+            适配图片大小();
+            _imageActualWidth = ActualWidth;
+            _imageActualHeight = ActualHeight;
+            if (Caption != null)
+            {
+                图注 = new 段落
+                {
+                    Text = Caption,
+                    首行缩进 = 0,
+                    Font = Font,
+                    FontSize = FontSize,
+                    PlainText = true,
+                };
+
+                // 跟随图片时，设置图注最大宽度为图片最大宽度
+                if (CaptionMaxWidthType == 图注最大宽度.跟随图片)
+                {
+                    if (double.IsNaN(MaxWidth)) throw new Exception("图片未设置最大宽度");
+                    if (MaxWidth <= 0) 图注.MaxWidth = double.PositiveInfinity;
+                    else 图注.MaxWidth = MaxWidth;
+                }
+                else
+                {
+                    if (double.IsNaN(CaptionMaxWidth)) throw new Exception("图注未设置最大宽度");
+                    if (CaptionMaxWidth <= 0) 图注.MaxWidth = double.PositiveInfinity;
+                    else 图注.MaxWidth = CaptionMaxWidth;
+                }
+                // 计算图注大小并匹配内容宽度
+                图注.Measure();
+                图注.FitContentWidth();
+                // 更新实际大小
+                if (图注.ActualWidth > ActualWidth) ActualWidth = 图注.ActualWidth;
+                ActualHeight += 图注.ActualHeight + 4;
+            }
+        }
+
+        public override void Arrange()
+        {
+            if (图注 != null)
+            {
+                // 图注居中至图片
+                if (图注.ActualWidth < _imageActualWidth)
+                {
+                    double offset = (_imageActualWidth - 图注.ActualWidth) / 2;
+                    图注.Left = Left + offset;
+                }
+                // 图片居中至图注
+                else if (图注.ActualWidth > _imageActualWidth)
+                {
+                    _imageOffset = (图注.ActualWidth - _imageActualWidth) / 2;
+                    图注.Left = Left;
+                }
+                else 图注.Left = Left;
+                图注.Top = Top + _imageActualHeight + 4;
+                图注.Arrange();
+            }
         }
 
         public override double 压缩左边距()
@@ -93,9 +165,16 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void 绘图(DrawingContext dc)
         {
-            double x = Math.Round(Left);
+            double x = Math.Round(Left + _imageOffset);
             double y = Math.Round(Top);
-            dc.DrawRectangle(Brushes.DarkMagenta, null, new Rect(x, y, ActualWidth, ActualHeight));
+
+            // 设置图片缩放模式（先注释掉，因为该设置对 WriteableBitmap 无效）
+            /*if (PixelArt) RenderOptions.SetBitmapScalingMode(_display, BitmapScalingMode.NearestNeighbor);
+            else RenderOptions.SetBitmapScalingMode(_display, BitmapScalingMode.HighQuality);*/
+            // 绘制图片
+            dc.DrawImage(_display, new Rect(x, y, _imageActualWidth, _imageActualHeight));
+            // 绘制图注
+            图注?.绘图(dc);
         }
 
         #endregion
@@ -104,26 +183,103 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         private void LoadImage()
         {
-
-        }
-
-        private void 适配大小()
-        {
-            // 无效值
-            if (MaxWidth < 0 || MaxHeight < 0)
+            // 获取图片信息
+            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(SourceHash);
+            if (imageInfo == null)
             {
-                ActualWidth = 0;
-                ActualHeight = 0;
+                WM.ShowErrorTip($"加载图片块“{Caption}”失败：找不到图片信息");
                 return;
             }
+            SourceWidth = imageInfo.Width;
+            SourceHeight = imageInfo.Height;
+            FrameList = imageInfo.FrameList;
+            Duration = imageInfo.Duration;
+            // 初始化显示器
+            InitDisplay();
+        }
+
+        private void InitDisplay()
+        {
+            // 创建显示器
+            _display = new WriteableBitmap(SourceWidth, SourceHeight, 96, 96, PixelFormats.Bgra32, null);
+            // 将第一帧写入显示器
+            ImageFrame frameData = FrameList[0];
+            _sourceIntRect = new Int32Rect(0, 0, SourceWidth, SourceHeight);
+            _display.WritePixels(_sourceIntRect, frameData.PixelData, SourceWidth * 4, 0);
+            // 只有一帧时，冻结以提升性能（先注释掉，因为冻结后无法修改缩放渲染质量）
+            // if (FrameList.Count == 1) _display.Freeze();
+            // 动态图片，则启动定时器
+            if (FrameList.Count > 1)
+            {
+                _timer.Interval = TimeSpan.FromMilliseconds(1000 / 40.0);
+                _timer.Tick += Timer_Tick;
+                _timer.Start();
+                _startMs = AppWatch.Instance.Milliseconds;
+            }
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            int milliseconds = (int)((AppWatch.Instance.Milliseconds - _startMs) % Duration);
+            ImageFrame? render = null;
+            foreach (var frame in FrameList)
+            {
+                if (milliseconds >= frame.Timestamp) render = frame;
+                else break;
+            }
+            if (render == null) return;
+            _display?.WritePixels(_sourceIntRect, render.PixelData, SourceWidth * 4, 0);
+        }
+
+        private void 适配图片大小()
+        {
+            // 无手动设置图片宽度时，适配原图大小
+            if (ImageWidth <= 0)
+            {
+                适配原图大小();
+                return;
+            }
+            // 先缩放，再适配
+            缩放至宽度();
             // 无限制
-            if (double.IsNaN(MaxWidth) && double.IsNaN(MaxHeight))
+            if (MaxWidth <= 0 || MaxHeight <= 0 || (double.IsNaN(MaxWidth) && double.IsNaN(MaxHeight)))
+                return;
+            // 限制了宽度
+            if (MaxWidth > 0 && double.IsNaN(MaxHeight))
+            {
+                if (ActualWidth > MaxWidth) 适配缩放后宽度();
+            }
+            // 限制了高度
+            else if (double.IsNaN(MaxWidth) && MaxHeight > 0)
+            {
+                if (ActualHeight > MaxHeight) 适配缩放后高度();
+            }
+            // 限制了宽度和高度
+            else if (MaxWidth > 0 && MaxHeight > 0)
+            {
+                if (ActualWidth / (double)ActualHeight > MaxWidth / (double)MaxHeight) 适配缩放后宽度();
+                else 适配缩放后高度();
+            }
+        }
+
+        private void 缩放至宽度()
+        {
+            double scale = ImageWidth / SourceWidth;
+            ActualWidth = ImageWidth;
+            ActualHeight = Math.Round(SourceHeight * scale);
+        }
+
+        private void 适配原图大小()
+        {
+            // 无限制
+            if (MaxWidth <= 0 || MaxHeight <= 0 || (double.IsNaN(MaxWidth) && double.IsNaN(MaxHeight)))
             {
                 ActualWidth = SourceWidth;
                 ActualHeight = SourceHeight;
+                return;
             }
             // 限制了宽度
-            else if (MaxWidth > 0 && double.IsNaN(MaxHeight))
+            if (MaxWidth > 0 && double.IsNaN(MaxHeight))
             {
                 适配宽度();
             }
@@ -154,6 +310,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
+        private void 适配缩放后宽度()
+        {
+            if (ActualWidth <= MaxWidth) return;
+            double scale = MaxWidth / ActualWidth;
+            ActualWidth = MaxWidth;
+            ActualHeight = Math.Round(ActualHeight * scale);
+        }
+
         private void 适配高度()
         {
             if (SourceHeight <= MaxHeight)
@@ -167,6 +331,32 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 ActualWidth = Math.Round(SourceWidth * (MaxHeight / SourceHeight));
             }
         }
+
+        private void 适配缩放后高度()
+        {
+            if (ActualHeight <= MaxHeight) return;
+            double scale = MaxHeight / ActualHeight;
+            ActualHeight = MaxHeight;
+            ActualWidth = Math.Round(ActualWidth * scale);
+        }
+
+        #endregion
+
+        #region 字段
+
+        private double _imageActualWidth = 0;
+        private double _imageActualHeight = 0;
+
+        /// <summary>可写位图。当作图片显示器</summary>
+        private WriteableBitmap? _display = null;
+        private Int32Rect _sourceIntRect = new Int32Rect();
+
+        private readonly DispatcherTimer _timer = new DispatcherTimer(DispatcherPriority.Normal);
+        private long _startMs = 0;
+
+        private 段落? 图注 = null;
+
+        private double _imageOffset = 0;
 
         #endregion
     }
