@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.ImageSystem;
+using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
@@ -9,11 +10,43 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 属性
 
-        public string SourcePath { get; set; } = "";
+        /// <summary>源哈希值</summary>
+        public string SourceHash { get; set; } = "";
 
-        public int SourceWidth { get; set; } = 1280;
+        /// <summary>是否为像素画</summary>
+        public bool PixelArt { get; set; } = false;
 
-        public int SourceHeight { get; set; } = 720;
+        /// <summary>图注</summary>
+        public string? Caption { get; set; } = null;
+
+        public string FontFamily { get; set; } = "霞鹜文楷";
+
+        public int FontSize { get; set; } = 16;
+
+        #endregion
+
+        #region 运行时属性
+
+        public int SourceWidth { get; set; } = 480;
+
+        public int SourceHeight { get; set; } = 270;
+
+        /// <summary>帧列表</summary>
+        public List<ImageFrame> FrameList { get; set; } = new List<ImageFrame>();
+
+        /// <summary>总持续时长。单位：毫秒</summary>
+        public int Duration { get; set; } = 0;
+
+        /// <summary>帧率</summary>
+        public double Fps
+        {
+            get
+            {
+                if (FrameList.Count < 2) return 0;
+                // 帧率 = 帧数 / 秒
+                return FrameList.Count / (Duration / 1000.0);
+            }
+        }
 
         #endregion
 
@@ -21,40 +54,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void Init()
         {
-            if (SourcePath != "") LoadImage();
+            if (SourceHash != "") LoadImage();
         }
 
-        public override void UpdateLayout()
+        public override void Measure()
         {
-            // 无效值
-            if (MaxWidth < 0 || MaxHeight < 0)
-            {
-                ActualWidth = 0;
-                ActualHeight = 0;
-                return;
-            }
-            // 无限制
-            if (double.IsNaN(MaxWidth) && double.IsNaN(MaxHeight))
-            {
-                ActualWidth = SourceWidth;
-                ActualHeight = SourceHeight;
-            }
-            // 限制了宽度
-            else if (MaxWidth > 0 && double.IsNaN(MaxHeight))
-            {
-                适配宽度();
-            }
-            // 限制了高度
-            else if (double.IsNaN(MaxWidth) && MaxHeight > 0)
-            {
-                适配高度();
-            }
-            // 限制了宽度和高度
-            else if (MaxWidth > 0 && MaxHeight > 0)
-            {
-                if (SourceWidth / (double)SourceHeight > MaxWidth / (double)MaxHeight) 适配宽度();
-                else 适配高度();
-            }
+            适配大小();
         }
 
         public override double 压缩左边距()
@@ -100,6 +105,39 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private void LoadImage()
         {
 
+        }
+
+        private void 适配大小()
+        {
+            // 无效值
+            if (MaxWidth < 0 || MaxHeight < 0)
+            {
+                ActualWidth = 0;
+                ActualHeight = 0;
+                return;
+            }
+            // 无限制
+            if (double.IsNaN(MaxWidth) && double.IsNaN(MaxHeight))
+            {
+                ActualWidth = SourceWidth;
+                ActualHeight = SourceHeight;
+            }
+            // 限制了宽度
+            else if (MaxWidth > 0 && double.IsNaN(MaxHeight))
+            {
+                适配宽度();
+            }
+            // 限制了高度
+            else if (double.IsNaN(MaxWidth) && MaxHeight > 0)
+            {
+                适配高度();
+            }
+            // 限制了宽度和高度
+            else if (MaxWidth > 0 && MaxHeight > 0)
+            {
+                if (SourceWidth / (double)SourceHeight > MaxWidth / (double)MaxHeight) 适配宽度();
+                else 适配高度();
+            }
         }
 
         private void 适配宽度()

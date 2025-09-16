@@ -38,14 +38,40 @@ public class 块元素 : SingleBoard
     public void UpdateElementLayout()
     {
         if (根元素 == null) throw new Exception("更新布局失败，根元素为空");
-        // 最大宽度 = 宽度 - 左边距 - 右边距
+        // 元素最大宽度 = 块宽度 - 块左边距 - 块右边距
         double maxWidth = BlockWidth - BlockMargin.Left - BlockMargin.Right;
-        // 更新根元素坐标，这个坐标是相对于块的
+        // 设置元素最大宽度并计算元素大小
+        根元素.MaxWidth = maxWidth;
+        根元素.Measure();
+        // 根据元素实际大小与对齐方式设置元素坐标
+        根元素.Left = BlockMargin.Left;
+        if (根元素.ActualWidth < maxWidth)
+        {
+            switch (根元素.水平对齐)
+            {
+                case 水平对齐方式.Left:
+                    根元素.Left = BlockMargin.Left;
+                    break;
+                case 水平对齐方式.Center:
+                    根元素.Left = BlockMargin.Left + (maxWidth - 根元素.ActualWidth) / 2;
+                    break;
+                case 水平对齐方式.Right:
+                    根元素.Left = BlockMargin.Left + (maxWidth - 根元素.ActualWidth);
+                    break;
+                case 水平对齐方式.Justify:
+                    根元素.Left = BlockMargin.Left;
+                    break;
+            }
+        }
+        根元素.Top = 0;
+        // 排列元素
+        根元素.Arrange();
+        /*// 更新根元素坐标，这个坐标是相对于块的
         根元素.Left = 根元素.LeftMargin;
         根元素.Top = 0;
         // 设置最大宽度并更新布局
         根元素.MaxWidth = maxWidth;
-        根元素.UpdateLayout();
+        根元素.UpdateLayout();*/
         // 高度 = 根元素高度 + 上边距 + 下边距
         BlockHeight = 根元素.ActualHeight + BlockMargin.Top + BlockMargin.Bottom;
     }

@@ -3,6 +3,15 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
+    public class 段落内嵌元素
+    {
+        public int LineIndex { get; set; } = 0;
+
+        public int CharIndex { get; set; } = 0;
+
+        public List<布局元素> ElementList { get; set; } = new List<布局元素>();
+    }
+
     public class 段落 : 布局元素
     {
         public 段落() => 类型 = 元素类型.段落;
@@ -18,21 +27,30 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         /// <summary>行间距</summary>
         public double LineSpace { get; set; } = 4;
 
+        public List<段落内嵌元素> 内嵌元素列表 { get; set; } = new List<段落内嵌元素>();
+
         #endregion
 
         #region 布局元素 方法
 
         public override void Init()
         {
-            Text = Text.Replace("\r\n", "\n");
-            _lineList = Text.Split('\n').ToList();
+
         }
 
-        public override void UpdateLayout()
+        public override void Measure()
         {
             ActualWidth = MaxWidth;
-            生成布局元素();
-            更新元素布局();
+            生成内嵌元素();
+            生成字元素();
+            分割行();
+            更新高度();
+        }
+
+        public override void Arrange()
+        {
+            排列行();
+            更新行内布局();
         }
 
         public override void 绘图(DrawingContext dc)
@@ -58,8 +76,18 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 私有方法
 
-        private void 生成布局元素()
+        private void 生成内嵌元素()
         {
+            foreach (var 内嵌元素 in 内嵌元素列表)
+                foreach (var element in 内嵌元素.ElementList)
+                    element.Measure();
+        }
+
+        private void 生成字元素()
+        {
+            Text = Text.Replace("\r\n", "\n");
+            _lineList = Text.Split('\n').ToList();
+            int lineIndex = 0;
             foreach (var line in _lineList)
             {
                 子段落 子段落 = new 子段落();
@@ -73,8 +101,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                         字号列表 = new List<double> { FontSize },
                     };
                     element.Init();
-                    element.UpdateLayout();
+                    element.Measure();
                     子段落.元素列表.Add(element);
+                }
+                // 插入内嵌元素
+                foreach (var 内嵌元素 in 内嵌元素列表)
+                {
+                    if (内嵌元素.LineIndex != lineIndex) continue;
+                    子段落.元素列表.InsertRange(内嵌元素.CharIndex, 内嵌元素.ElementList);
                 }
                 // 添加中英文间距
                 布局元素? 当前;
@@ -93,21 +127,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 }
                 // 添加子段落
                 子段落列表.Add(子段落);
+                lineIndex++;
             }
         }
 
-        private void 更新元素布局()
+        private void 分割行()
         {
-            更新行列表();
-            更新行内布局();
-            更新高度();
-        }
+            // 注意：此方法仅用于分割行之后计算元素高度，不会根据对齐方式调整元素坐标
 
-        private void 更新行列表()
-        {
-            // 行起始纵坐标
-            double y = Top;
-            // 遍历子段落
             总元素行列表.Clear();
             foreach (var 子段落 in 子段落列表)
             {
@@ -124,12 +151,6 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                         行.更新行高(FontSize);
                         子段落.元素行列表.Add(行);
                         总元素行列表.Add(行);
-                        // 设置行坐标
-                        行.Left = Left;
-                        if (子段落.元素行列表.Count == 1 && 首行缩进 > 0) 行.Left += 首行缩进;
-                        行.Top = y;
-                        // 更新下一行纵坐标
-                        y += 行.行高 + LineSpace;
                     }
                     else break;
                 }
@@ -139,9 +160,23 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     空行.更新行高(FontSize);
                     子段落.元素行列表.Add(空行);
                     总元素行列表.Add(空行);
-                    空行.Left = Left + 首行缩进;
-                    空行.Top = y;
-                    y += 空行.行高 + LineSpace;
+                }
+            }
+        }
+
+        private void 排列行()
+        {
+            double y = Top;
+            foreach (var 子段落 in 子段落列表)
+            {
+                int index = 0;
+                foreach (var 行 in 子段落.元素行列表)
+                {
+                    行.Left = Left;
+                    if (index == 0 && 首行缩进 > 0) 行.Left += 首行缩进;
+                    行.Top = y;
+                    y += 行.行高 + LineSpace;
+                    index++;
                 }
             }
         }

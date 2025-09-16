@@ -24,9 +24,9 @@ public class 浮动元素
         if (根元素 == null) throw new Exception("更新布局失败，根元素为空");
         // 最大宽度 = 宽度 - 左边距 - 右边距
         double maxWidth = Width - Margin.Left - Margin.Right;
-        // 更新根元素布局
+        // 更新根元素大小
         根元素.MaxWidth = maxWidth;
-        根元素.UpdateLayout();
+        根元素.Measure();
         // 高度 = 根元素高度 + 上边距 + 下边距
         Height = 根元素.ActualHeight + Margin.Top + Margin.Bottom;
     }

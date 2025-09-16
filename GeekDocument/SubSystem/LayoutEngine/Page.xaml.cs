@@ -49,7 +49,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public void 更新页面()
         {
             // 先更新浮动元素布局，以计算浮动元素占用区域
-            foreach (var item in FloatList) item.UpdateLayout();
+            // foreach (var item in FloatList) item.UpdateLayout();
             // 确定起始坐标与块宽度
             double x = PagePadding.Left;
             double y = PagePadding.Top;
@@ -62,7 +62,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 item.BlockTop = y;
                 item.BlockWidth = blockWidth;
                 // 设置空白区域
-                item.SpaceRectList = 获取重叠区域(item.BlockLeft, item.BlockTop, item.BlockLeft + item.BlockWidth);
+                // item.SpaceRectList = 获取重叠区域(item.BlockLeft, item.BlockTop, item.BlockLeft + item.BlockWidth);
                 // 更新布局
                 item.UpdateElementLayout();
                 // 更新纵坐标

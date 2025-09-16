@@ -33,10 +33,10 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Define
         public PageThickness Padding { get; set; } = new PageThickness();
 
         /// <summary>块间距</summary>
-        public int BlockInterval { get; set; } = 0;
+        public int BlockInterval { get; set; } = 16;
 
         /// <summary>首行缩进</summary>
-        public int FirstLineIndent { get; set; } = 0;
+        public int FirstLineIndent { get; set; } = 32;
 
         /// <summary>默认正文字体</summary>
         public string TextFont { get; set; } = "霞鹜文楷";

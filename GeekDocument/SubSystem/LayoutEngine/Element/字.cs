@@ -46,18 +46,18 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void Init()
         {
-            if (文本 == " ") 字类型 = 字类型.Space;
-            if (字类型 == 字类型.Space) IsSpace = true;
+            if (文本 == " ")
+            {
+                字类型 = 字类型.Space;
+                IsSpace = true;
+            }
             if (字类型 == 字类型.English) CanBreak = true;
         }
 
-        public override void UpdateLayout()
+        public override void Measure()
         {
             // 注意：字元素忽略宽高限制
 
-            // Todo：字符宽度应该根据字体与字号计算，这里简化为字号即字符宽度
-
-            // 遍历字符
             int index = 0;
             ActualWidth = 0;
             ActualHeight = 字号列表[0];
@@ -68,7 +68,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 double size = 字号列表[0];
                 // 生成字形图片
                 GlyphImage? glyphImage = GlyphCache.Instance.GetGlyphImage(item, font, size, false, false);
-                if (glyphImage == null) throw new Exception("生成字形图片失败");
+                if (glyphImage == null)
+                    throw new Exception("生成字形图片失败");
                 GlyphImageList.Add(glyphImage);
                 字宽列表.Add(glyphImage.GlyphWidth);
                 // 累加宽度
@@ -121,14 +122,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     文本 = 文本.Substring(1);
                     断开.字号列表.Add(字号列表[0]);
                     字号列表.RemoveAt(0);
-                    // 更新布局
-                    断开.UpdateLayout();
+                    // 更新大小
+                    断开.Measure();
                 }
                 // 超过最大宽度时，断开完成
                 else break;
             }
-            // 断开元素后，自身布局需要重新计算
-            UpdateLayout();
+            // 断开元素后，自身大小需要重新计算
+            Measure();
             // 返回断开部分
             return 断开;
         }
@@ -151,11 +152,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 公开方法
 
-        public double 最后一个字宽()
-        {
-            // 暂时使用字号代替字符宽度
-            return 字号列表.Last();
-        }
+        public double 最后一个字宽() => 字宽列表.Last();
 
         #endregion
     }

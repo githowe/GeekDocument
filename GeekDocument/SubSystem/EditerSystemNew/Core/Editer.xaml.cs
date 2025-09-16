@@ -124,6 +124,18 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
                 根元素 = 段落元素,
             };
             document.块列表.Add(段落块);
+
+            图片 图片元素 = new 图片
+            {
+                水平对齐 = 水平对齐方式.Center,
+            };
+            图片元素.Init();
+            块 图片块 = new 块
+            {
+                类型 = 块类型.图片,
+                根元素 = 图片元素,
+            };
+            document.块列表.Add(图片块);
         }
 
         #endregion

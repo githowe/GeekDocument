@@ -41,9 +41,14 @@ public class 布局元素
     public virtual void Init() { }
 
     /// <summary>
-    /// 更新布局。最大宽度为负数时表示不限制宽度
+    /// 计算元素大小
     /// </summary>
-    public virtual void UpdateLayout() { }
+    public virtual void Measure() { }
+
+    /// <summary>
+    /// 排列元素
+    /// </summary>
+    public virtual void Arrange() { }
 
     /// <summary>
     /// 压缩左边距，然后返回与实际高度之和。用于添加至元素行时判断能否容纳
