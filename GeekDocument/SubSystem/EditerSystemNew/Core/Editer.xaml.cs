@@ -126,6 +126,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             document.块列表.Add(段落块);
 
             图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
+            图片元素.Caption = null;
             段落元素.内嵌元素列表.Add(new 段落内嵌元素
             {
                 LineIndex = 2,
@@ -134,7 +135,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             });
 
             图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif", pixelArt: true);
-            图片元素.Caption = "臭臭泥";
+            // 图片元素.Caption = "臭臭泥";
+            图片元素.Caption = null;
             段落元素.内嵌元素列表.Add(new 段落内嵌元素
             {
                 LineIndex = 5,
@@ -150,7 +152,75 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
                 类型 = 块类型.图片,
                 根元素 = 图片元素,
             };
-            document.块列表.Add(图片块);
+            // document.块列表.Add(图片块);
+
+            表格 表格元素 = new 表格
+            {
+                行数 = 5,
+                列数 = 5,
+                水平对齐 = 水平对齐方式.Center
+            };
+            表格元素.Init();
+            块 表格块 = new 块
+            {
+                类型 = 块类型.表格,
+                根元素 = 表格元素,
+            };
+            document.块列表.Add(表格块);
+            表格元素.设置单元格内容(1, 2, new 段落 { Text = File.ReadAllText("D:/示例文档4.txt") });
+            表格元素.设置单元格内容(0, 1, new 段落 { Text = "一行，二列", 首行缩进 = 0 });
+            表格元素.设置单元格内容(2, 1, new 段落 { Text = "三行，二列", 首行缩进 = 0 });
+            表格元素.设置单元格内容(3, 4, new 段落 { Text = "四行，五列", 首行缩进 = 0 });
+            图片 图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\企业.png");
+            图标.Caption = null;
+            表格元素.设置单元格内容(2, 3, 图标);
+            图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\三维坐标彩色.png");
+            图标.Caption = null;
+            表格元素.设置单元格内容(4, 3, 图标);
+            图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\工厂.png");
+            图标.Caption = null;
+            表格元素.设置单元格内容(3, 2, 图标);
+            图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855447_org.v1461646143.gif");
+            图标.Caption = null;
+            图标.MaxWidth = 128;
+            图标.MaxHeight = 36;
+            表格元素.设置单元格内容(4, 1, 图标);
+            图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855010_org.v1461644900.gif");
+            图标.Caption = null;
+            图标.MaxWidth = 128;
+            图标.MaxHeight = 36;
+            段落? 单元格段落 = 表格元素.获取单元格内容<段落>(2, 1);
+            if (单元格段落 != null)
+            {
+                单元格段落.垂直对齐 = 垂直对齐方式.Top;
+                单元格段落.内嵌元素列表.Add(new 段落内嵌元素
+                {
+                    CharIndex = 5,
+                    ElementList = new List<布局元素> { 图标 }
+                });
+            }
+
+            图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235854958_org.v1461644802.gif");
+            图标.Caption = null;
+            表格元素.设置单元格内容(0, 0, 图标);
+
+            图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855000_org.v1461644878.gif");
+            图标.Caption = null;
+            表格元素.设置单元格内容(1, 1, 图标);
+
+            图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235854674_org.v1461644021.gif");
+            图标.Caption = null;
+            表格元素.设置单元格内容(1, 4, 图标);
+
+            /*段落元素.内嵌元素列表.Add(new 段落内嵌元素
+            {
+                LineIndex = 4,
+                CharIndex = 2,
+                ElementList = new List<布局元素> { 表格元素 }
+            });*/
+            表格元素.设置行高(3, 24);
+            表格元素.设置列宽(0, 72);
+            表格元素.设置列宽(3, 72);
         }
 
         private 图片 创建图片元素(string path, double maxWidth = double.NaN, bool pixelArt = false)

@@ -59,6 +59,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 foreach (var item in 总元素行列表)
                 {
                     double lineWidth = item.获取实际宽度();
+                    if (item.首行) lineWidth += 首行缩进;
                     if (lineWidth > ActualWidth) ActualWidth = lineWidth;
                 }
             }
@@ -98,7 +99,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             foreach (var 行 in 总元素行列表)
             {
                 行.行宽 = 行.获取实际宽度();
-                if (行.行宽 > ActualWidth) ActualWidth = 行.行宽;
+                double 总宽 = 行.行宽;
+                if (行.首行) 总宽 += 首行缩进;
+                if (总宽 > ActualWidth) ActualWidth = 总宽;
             }
         }
 
@@ -183,7 +186,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     double 行宽 = MaxWidth;
                     if (子段落.元素行列表.Count == 0 && 首行缩进 > 0) 行宽 -= 首行缩进;
                     // 生成行
-                    元素行? 行 = 队列.生成元素行(行宽, 水平对齐 == 水平对齐方式.Justify);
+                    元素行? 行 = 队列.生成元素行(行宽, 子段落.元素行列表.Count == 0, 水平对齐 == 水平对齐方式.Justify);
                     if (行 != null)
                     {
                         行.更新行高(FontSize);

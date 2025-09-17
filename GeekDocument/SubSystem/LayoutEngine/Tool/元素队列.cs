@@ -4,13 +4,13 @@
     {
         public List<布局元素> 元素列表 { get; set; } = new List<布局元素>();
 
-        public 元素行? 生成元素行(double 行宽, bool 两端对齐)
+        public 元素行? 生成元素行(double 行宽, bool 首行, bool 两端对齐)
         {
             // 已取完
             if (当前索引 >= 元素列表.Count) return null;
 
             // 创建行
-            元素行 行 = new 元素行 { 行宽 = 行宽 };
+            元素行 行 = new 元素行 { 行宽 = 行宽, 首行 = 首行 };
             // 循环添加元素至行
             while (当前索引 < 元素列表.Count)
             {

@@ -30,6 +30,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public List<double> 字宽列表 { get; set; } = new List<double>();
 
+        public bool DrawRect { get; set; } = false;
+
         #endregion
 
         #region object 方法
@@ -137,8 +139,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 不绘制空格
             if (IsSpace) return;
 
-            // dc.DrawRectangle(Brushes.DimGray, null, new Rect(Left, Top, ActualWidth, ActualHeight));
-            // return;
+            if (DrawRect)
+            {
+                dc.DrawRectangle(Brushes.DimGray, null, new Rect(Left, Top, ActualWidth, ActualHeight));
+                return;
+            }
 
             double word_x = Math.Round(Left);
             double word_y = Math.Round(Top);

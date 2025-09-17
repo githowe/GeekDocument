@@ -12,6 +12,8 @@ public class 元素行
 
     public double 行高 { get; private set; } = 0;
 
+    public bool 首行 { get; set; } = false;
+
     public List<布局元素> 元素列表 { get; set; } = new List<布局元素>();
 
     public bool 无可见元素
