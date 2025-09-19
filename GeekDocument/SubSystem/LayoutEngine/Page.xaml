@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GeekDocument.SubSystem.LayoutEngine"
-             mc:Ignorable="d" Margin="0,16" VerticalAlignment="Top"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <!-- 页面装饰 -->
-        <Grid>
+             mc:Ignorable="d" VerticalAlignment="Top" UseLayoutRounding="True"
+             d:DesignWidth="800">
+    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+        <!-- 纸张 -->
+        <Grid x:Name="Paper" Height="200" Margin="0,16,0,16">
             <!-- 背景框 -->
             <Border Background="#262626" BorderBrush="#808080" BorderThickness="1"/>
             <!-- 边距标记 -->
@@ -16,8 +16,10 @@
             <Border x:Name="Mark_02" BorderBrush="#808080" BorderThickness="1,0,0,1" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="40"/>
             <Border x:Name="Mark_03" BorderBrush="#808080" BorderThickness="0,1,1,0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40"/>
             <Border x:Name="Mark_04" BorderBrush="#808080" BorderThickness="1,1,0,0" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="40"/>
+            <!-- 页面内容 -->
+            <Canvas x:Name="BlockBox"/>
+            <!-- 页面标记：选中框、光标等 -->
+            <Canvas x:Name="MarkBox"/>
         </Grid>
-        <!-- 页面内容 -->
-        <Canvas x:Name="BlockBox"/>
-    </Grid>
+    </StackPanel>
 </UserControl>

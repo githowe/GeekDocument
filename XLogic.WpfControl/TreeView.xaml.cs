@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace XLogic.WpfControl
 {
@@ -18,6 +19,16 @@ namespace XLogic.WpfControl
 
         #endregion
 
+        #region 事件
+
+        /// <summary>悬停项已改变</summary>
+        public Action<TreeItem?>? HoverItemChanged { get; set; } = null;
+
+        /// <summary>选中项已改变</summary>
+        public Action? SelectedChanged { get; set; } = null;
+
+        #endregion
+
         #region 公开方法
 
         /// <summary>
@@ -27,8 +38,9 @@ namespace XLogic.WpfControl
         {
             MatchControlList();
             SizeChanged += TreeView_SizeChanged;
-            MainScrollBar.ValueChanged += MainScrollBar_ValueChanged;
+            MainGrid.MouseLeftButtonDown += MainGrid_MouseLeftButtonDown;
             MainGrid.MouseWheel += MainGrid_MouseWheel;
+            MainScrollBar.ValueChanged += MainScrollBar_ValueChanged;
         }
 
         /// <summary>
@@ -79,6 +91,51 @@ namespace XLogic.WpfControl
 
         #endregion
 
+        #region 选择
+
+        /// <summary>
+        /// 添加选中项
+        /// </summary>
+        public void AddSelectedItem(TreeItem treeItem)
+        {
+            if (!_selectedItemList.Contains(treeItem))
+            {
+                treeItem.IsSelected = true;
+                _selectedItemList.Add(treeItem);
+                if (_firstSelectedItem == null) _firstSelectedItem = treeItem;
+                SelectedChanged?.Invoke();
+                UpdateItemView();
+            }
+        }
+
+        /// <summary>
+        /// 移除选中项
+        /// </summary>
+        public void RemoveSelectedItem(TreeItem treeItem)
+        {
+            if (_selectedItemList.Remove(treeItem))
+            {
+                treeItem.IsSelected = false;
+                if (_selectedItemList.Count == 0) _firstSelectedItem = null;
+                SelectedChanged?.Invoke();
+                UpdateItemView();
+            }
+        }
+
+        /// <summary>
+        /// 清空选中项
+        /// </summary>
+        public void ClearSelectedItem()
+        {
+            foreach (var item in _selectedItemList) item.IsSelected = false;
+            _selectedItemList.Clear();
+            _firstSelectedItem = null;
+            SelectedChanged?.Invoke();
+            UpdateItemView();
+        }
+
+        #endregion
+
         #region 控件事件
 
         private void TreeView_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
@@ -104,9 +161,25 @@ namespace XLogic.WpfControl
             UpdateItemView();
         }
 
-        private void MainGrid_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void MainGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ClearSelectedItem();
+            UpdateItemView();
+        }
+
+        private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             MainScrollBar.Value -= e.Delta / 120;
+        }
+
+        private void TreeItemView_OnItemEnter(TreeItem treeItem)
+        {
+            HoverItemChanged?.Invoke(treeItem);
+        }
+
+        private void TreeItemView_OnItemLeave(TreeItem treeItem)
+        {
+            HoverItemChanged?.Invoke(null);
         }
 
         private void TreeItemView_OnItemExpand()
@@ -121,6 +194,17 @@ namespace XLogic.WpfControl
             UpdateItemList();
             UpdateItemView();
             UpdateScrollBar();
+        }
+
+        private void OnItemHited(TreeItem treeItem)
+        {
+            ClearSelectedItem();
+            AddSelectedItem(treeItem);
+        }
+
+        private void OnDoubleClick(TreeItem treeItem)
+        {
+
         }
 
         #endregion
@@ -157,8 +241,12 @@ namespace XLogic.WpfControl
                 TreeItemView control = new TreeItemView();
                 _controlList.Add(control);
                 ItemBox.Children.Add(control);
+                control.OnItemEnter = TreeItemView_OnItemEnter;
+                control.OnItemLeave = TreeItemView_OnItemLeave;
                 control.OnItemExpand = TreeItemView_OnItemExpand;
                 control.OnItemFurl = TreeItemView_OnItemFurl;
+                control.OnItemHited = OnItemHited;
+                control.OnDoubleClick = OnDoubleClick;
             }
         }
 
@@ -176,6 +264,11 @@ namespace XLogic.WpfControl
 
         /// <summary>第一个可视项索引</summary>
         private int _firstIndex = 0;
+
+        /// <summary>选中项列表</summary>
+        private readonly List<TreeItem> _selectedItemList = new List<TreeItem>();
+        /// <summary>第一个选中项</summary>
+        private TreeItem? _firstSelectedItem = null;
 
         #endregion
     }

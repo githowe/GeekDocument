@@ -1,19 +1,29 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace XLogic.WpfControl
 {
     public partial class TreeItemView : UserControl
     {
-        public TreeItemView()
-        {
-            InitializeComponent();
-        }
+        #region 构造方法
+
+        public TreeItemView() => InitializeComponent();
+
+        #endregion
+
+        #region 属性
 
         public TreeItem? Instance { get; set; } = null;
 
+        #endregion
+
         #region 事件
+
+        public Action<TreeItem>? OnItemEnter { get; set; }
+
+        public Action<TreeItem>? OnItemLeave { get; set; }
 
         /// <summary>当项展开时</summary>
         public Action? OnItemExpand { get; set; }
@@ -21,7 +31,15 @@ namespace XLogic.WpfControl
         /// <summary>当项折叠时</summary>
         public Action? OnItemFurl { get; set; }
 
+        /// <summary>当命中项时</summary>
+        public Action<TreeItem>? OnItemHited { get; set; }
+
+        /// <summary>当双击项时</summary>
+        public Action<TreeItem>? OnDoubleClick { get; set; }
+
         #endregion
+
+        #region 公开方法
 
         public void Update()
         {
@@ -32,6 +50,8 @@ namespace XLogic.WpfControl
                 return;
             }
             Visibility = Visibility.Visible;
+            // 背景
+            UpdateBackground();
             // 左边距
             MainGrid.Margin = new Thickness(Instance.Deep * 23, 0, 0, 0);
             // 箭头
@@ -44,12 +64,29 @@ namespace XLogic.WpfControl
             TB_Text.Text = Instance.Text;
         }
 
+        #endregion
+
         #region 控件事件
+
+        private void Back_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _isMouseHover = true;
+            UpdateBackground();
+            OnItemEnter?.Invoke(Instance);
+        }
+
+        private void Back_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _isMouseHover = false;
+            UpdateBackground();
+            OnItemLeave?.Invoke(Instance);
+        }
 
         private void Back_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (Instance == null) return;
 
+            OnItemHited?.Invoke(Instance);
             // 如果是可展开项，并进行了双击
             if (Instance.CanExpand && e.ClickCount == 2)
             {
@@ -64,6 +101,8 @@ namespace XLogic.WpfControl
                     OnItemExpand?.Invoke();
                 }
             }
+
+            e.Handled = true;
         }
 
         private void Arrow_Click(object sender, RoutedEventArgs e)
@@ -80,6 +119,34 @@ namespace XLogic.WpfControl
                 OnItemFurl?.Invoke();
             }
         }
+
+        #endregion
+
+        #region 私有方法
+
+        /// <summary>
+        /// 更新背景
+        /// </summary>
+        private void UpdateBackground()
+        {
+            Back.Background = _default;
+            if (_isMouseHover) Back.Background = _hover;
+            if (Instance != null && Instance.IsSelected) Back.Background = _selected;
+        }
+
+        #endregion
+
+        #region 字段
+
+        /// <summary>鼠标悬停</summary>
+        private bool _isMouseHover = false;
+
+        /// <summary>默认背景</summary>
+        private readonly Brush _default = Brushes.Transparent;
+        /// <summary>悬停时背景</summary>
+        private readonly Brush _hover = new SolidColorBrush(Color.FromArgb(25, 255, 255, 255));
+        /// <summary>选中时背景</summary>
+        private readonly Brush _selected = new SolidColorBrush(Color.FromArgb(51, 255, 255, 255));
 
         #endregion
     }

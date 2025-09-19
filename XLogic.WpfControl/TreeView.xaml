@@ -35,7 +35,7 @@
         <!-- 项列表 -->
         <StackPanel x:Name="ItemBox" Orientation="Vertical" Margin="10" ClipToBounds="True"/>
         <!-- 滚动条 -->
-        <ScrollBar x:Name="MainScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="5" Opacity="0"
+        <ScrollBar x:Name="MainScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0"
                    ViewportSize="0" Maximum="0"/>
     </Grid>
 </UserControl>

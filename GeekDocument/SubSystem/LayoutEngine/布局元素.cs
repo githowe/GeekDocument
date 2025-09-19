@@ -1,9 +1,43 @@
-﻿using System.Windows.Media;
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+using GeekDocument.SubSystem.LayoutEngine.Ex;
+using System.Windows;
+using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
-public class 布局元素
+/// <summary>
+/// 文档元素
+/// </summary>
+public interface IDocumentElement
 {
+    string Icon { get; set; }
+
+    string Name { get; set; }
+
+    List<IDocumentElement> GetSubElementList();
+
+    Rect GetElementRect();
+}
+
+public class 布局元素 : IDocumentElement
+{
+    #region IDocumentElement 成员
+
+    public virtual string Icon { get; set; } = "Element";
+
+    public virtual string Name { get; set; } = "未命名布局元素";
+
+    public virtual List<IDocumentElement> GetSubElementList() => new List<IDocumentElement>();
+
+    public virtual Rect GetElementRect()
+    {
+        段落 root = this.GetRootParagraph();
+        double top = root.段落偏移 + Top;
+        return new Rect(Left, top, ActualWidth, ActualHeight);
+    }
+
+    #endregion
+
     public 元素类型 类型 { get; set; } = 元素类型.Unknown;
 
     public 布局元素? Parent { get; set; } = null;
@@ -39,6 +73,11 @@ public class 布局元素
     public bool CanBreak { get; protected set; } = false;
 
     public virtual void Init() { }
+
+    /// <summary>
+    /// 获取元素图层列表
+    /// </summary>
+    public virtual List<ElementLayer> GetLayerList() { return new List<ElementLayer>(); }
 
     /// <summary>
     /// 计算元素大小

@@ -11,6 +11,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
     {
         public 字() => 类型 = 元素类型.字;
 
+        #region IDocumentElement 成员
+
+        public override string Icon { get; set; } = "Text";
+
+        public override string Name { get => 文本; set { } }
+
+        #endregion
+
         #region 属性
 
         public 字类型 字类型 { get; set; } = 字类型.Chinese;

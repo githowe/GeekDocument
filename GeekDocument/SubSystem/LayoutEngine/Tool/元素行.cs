@@ -1,8 +1,22 @@
-﻿namespace GeekDocument.SubSystem.LayoutEngine.Tool;
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+using GeekDocument.SubSystem.LayoutEngine.Ex;
+using System.Windows;
 
-public class 元素行
+namespace GeekDocument.SubSystem.LayoutEngine.Tool;
+
+public class 元素行 : IDocumentElement
 {
+    #region IDocumentElement 属性
+
+    public string Icon { get; set; } = "Line";
+
+    public string Name { get; set; } = "元素行";
+
+    #endregion
+
     #region 属性
+
+    public 段落? Owner { get; set; } = null;
 
     public double Left { get; set; } = double.NaN;
 
@@ -35,6 +49,18 @@ public class 元素行
     {
         if (元素列表.Count == 0) return "空";
         return "非空行";
+    }
+
+    public List<IDocumentElement> GetSubElementList()
+    {
+        return 元素列表.Cast<IDocumentElement>().ToList();
+    }
+
+    public Rect GetElementRect()
+    {
+        if (Owner == null) throw new Exception("当前元素行没有所属段落");
+        double top = Owner.GetRootParagraph().段落偏移 + Top;
+        return new Rect(Left, top, 行宽, 行高);
     }
 
     #region 公开方法
@@ -83,7 +109,7 @@ public class 元素行
         更新元素横坐标(水平);
         更新元素纵坐标(垂直);
         foreach (var item in 元素列表)
-           if (item.类型 != 元素类型.字) item.Arrange();
+            if (item.类型 != 元素类型.字) item.Arrange();
     }
 
     public double 获取实际宽度()

@@ -19,7 +19,7 @@ namespace XLogic.Wpf
 
         private AppTimer()
         {
-            _timer.Interval = TimeSpan.FromMilliseconds(1000.0 / 50.0);
+            _timer.Interval = TimeSpan.FromMilliseconds(1000.0 / 40.0);
             _timer.Tick += Timer_Tick;
         }
         public static AppTimer Instance { get; } = new AppTimer();

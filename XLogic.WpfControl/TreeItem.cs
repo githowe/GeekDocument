@@ -5,7 +5,9 @@ namespace XLogic.WpfControl
 {
     public class TreeItem : IComparable<TreeItem>
     {
-        private bool _isExpanded = false;
+        #region 属性
+
+        public object? Content { get; set; } = null;
 
         public TreeItem? Parent { get; set; } = null;
 
@@ -34,6 +36,8 @@ namespace XLogic.WpfControl
 
         public bool IsSelected { get; set; } = false;
 
+        #endregion
+
         #region 事件
 
         /// <summary>项展开</summary>
@@ -41,6 +45,12 @@ namespace XLogic.WpfControl
 
         /// <summary>项折叠</summary>
         public Action<TreeItem>? ItemCollapsed { get; set; } = null;
+
+        /// <summary>当命中项时</summary>
+        public Action<TreeItem>? OnItemHited { get; set; }
+
+        /// <summary>双击项时</summary>
+        public Action<TreeItem>? OnDoubleClick { get; set; }
 
         #endregion
 
@@ -61,6 +71,12 @@ namespace XLogic.WpfControl
             if (Parent == null) return Text;
             return $"{Parent.GetFullPath()}\\{Text}";
         }
+
+        #endregion
+
+        #region 属性字段
+
+        private bool _isExpanded = false;
 
         #endregion
     }

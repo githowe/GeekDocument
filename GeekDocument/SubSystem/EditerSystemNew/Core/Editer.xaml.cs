@@ -46,7 +46,10 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         public void Init()
         {
+            Panel_LayoutTree.Init();
 
+            Tool_OpenLeft.Click += Tool_OpenLeft_Click;
+            Tool_CloseLeft.Click += Tool_CloseLeft_Click;
         }
 
         /// <summary>
@@ -82,7 +85,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             AddTestData(document);
             // 创建页面控件并加载文档中的页面属性
             _page = new Page();
-            MainGrid.Children.Add(_page);
+            PageBox.Children.Add(_page);
             _page.Width = document.PageWidth;
             OptionSystem.PageThickness padding = document.Padding;
             _page.PagePadding = new Thickness(padding.Left, padding.Top, padding.Right, padding.Bottom);
@@ -90,70 +93,83 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             _page.FirstLineIndent = document.FirstLineIndent;
             _page.TextFont = document.TextFont;
             _page.TextSize = document.TextSize;
-            // 加载块
-            foreach (var item in document.块列表)
+            // 加载段落
+            foreach (var item in document.段落列表)
             {
-                if (item.根元素 is null) continue;
-                块元素 element = new 块元素
-                {
-                    BlockMargin = new Thickness(item.Margin[0], item.Margin[1], item.Margin[2], item.Margin[3]),
-                    根元素 = item.根元素
-                };
-                _page.BlockList.Add(element);
+                段落块 block = new 段落块(item);
+                _page.BlockList.Add(block);
             }
             // 初始化页面
             _page.Init();
             // 更新页面
             _page.更新页面();
+
+            InitEditSystem();
+        }
+
+        #endregion
+
+        #region 控件事件
+
+        private void Tool_OpenLeft_Click(object sender, RoutedEventArgs e)
+        {
+            LeftArea.Width = new GridLength(320);
+            Tool_OpenLeft.Visibility = Visibility.Collapsed;
+            Tool_CloseLeft.Visibility = Visibility.Visible;
+        }
+
+        private void Tool_CloseLeft_Click(object sender, RoutedEventArgs e)
+        {
+            LeftArea.Width = new GridLength(0);
+            Tool_OpenLeft.Visibility = Visibility.Visible;
+            Tool_CloseLeft.Visibility = Visibility.Collapsed;
         }
 
         #endregion
 
         #region 私有方法
 
+        /// <summary>
+        /// 初始化编辑系统
+        /// </summary>
+        private void InitEditSystem()
+        {
+            // 加载布局树
+            Panel_LayoutTree.LoadLayoutTree(_page);
+            // 监听事件
+            Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
+        }
+
+        private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElement(element);
+
         private void AddTestData(Document document)
         {
-            段落 段落元素 = new 段落
-            {
-                Text = File.ReadAllText("D:/示例文档3.txt"),
-            };
-
-            块 段落块 = new 块
-            {
-                类型 = 块类型.段落,
-                根元素 = 段落元素,
-            };
-            document.块列表.Add(段落块);
-
+            // 创建第一个段落：文本混合图片
+            段落 段落元素 = new 段落 { Text = File.ReadAllText("D:/示例文档3.txt") };
+            // 嵌入图片至段落
             图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
             图片元素.Caption = null;
-            段落元素.内嵌元素列表.Add(new 段落内嵌元素
-            {
-                LineIndex = 2,
-                CharIndex = 20,
-                ElementList = new List<布局元素> { 图片元素 }
-            });
-
-            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif", pixelArt: true);
-            // 图片元素.Caption = "臭臭泥";
+            段落元素.InsertLayoutElement(图片元素, 2, 20);
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif");
             图片元素.Caption = null;
-            段落元素.内嵌元素列表.Add(new 段落内嵌元素
-            {
-                LineIndex = 5,
-                CharIndex = 16,
-                ElementList = new List<布局元素> { 图片元素 }
-            });
+            段落元素.InsertLayoutElement(图片元素, 5, 16);
+            // 添加段落
+            document.段落列表.Add(段落元素);
 
-            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\0114005b7847b1a80120d8c0319ff7.gif", 180, true);
-            图片元素.CaptionMaxWidthType = 图注最大宽度.指定宽度;
-            图片元素.CaptionMaxWidth = 0;
-            块 图片块 = new 块
-            {
-                类型 = 块类型.图片,
-                根元素 = 图片元素,
-            };
-            // document.块列表.Add(图片块);
+            // 创建第二个段落：仅图片
+            段落元素 = new 段落() { 首行缩进 = 0, 水平对齐 = 水平对齐方式.Center };
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\1_FuyupvvnXjN4ilD-e0BDCQ.gif", 278, pixelArt: true);
+            图片元素.FontSize = 12;
+            段落元素.AddLayoutElement(图片元素);
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\tumblr_nw6jd8UKCY1rznluto2_250.gif", pixelArt: true);
+            图片元素.FontSize = 12;
+            图片元素.RightMargin = 10;
+            段落元素.AddLayoutElement(图片元素);
+            // document.段落列表.Add(段落元素);
 
+            // 创建第三个段落：仅表格
+            段落元素 = new 段落() { 首行缩进 = 0, 水平对齐 = 水平对齐方式.Center };
+            document.段落列表.Add(段落元素);
             表格 表格元素 = new 表格
             {
                 行数 = 5,
@@ -161,30 +177,34 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
                 水平对齐 = 水平对齐方式.Center
             };
             表格元素.Init();
-            块 表格块 = new 块
-            {
-                类型 = 块类型.表格,
-                根元素 = 表格元素,
-            };
-            document.块列表.Add(表格块);
+            表格元素.设置行高(3, 24);
+            表格元素.设置列宽(0, 72);
+            表格元素.设置列宽(3, 72);
+            段落元素.AddLayoutElement(表格元素);
+
             表格元素.设置单元格内容(1, 2, new 段落 { Text = File.ReadAllText("D:/示例文档4.txt") });
             表格元素.设置单元格内容(0, 1, new 段落 { Text = "一行，二列", 首行缩进 = 0 });
             表格元素.设置单元格内容(2, 1, new 段落 { Text = "三行，二列", 首行缩进 = 0 });
             表格元素.设置单元格内容(3, 4, new 段落 { Text = "四行，五列", 首行缩进 = 0 });
+
             图片 图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\企业.png");
             图标.Caption = null;
             表格元素.设置单元格内容(2, 3, 图标);
+
             图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\三维坐标彩色.png");
             图标.Caption = null;
             表格元素.设置单元格内容(4, 3, 图标);
+
             图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\工厂.png");
             图标.Caption = null;
             表格元素.设置单元格内容(3, 2, 图标);
+
             图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855447_org.v1461646143.gif");
             图标.Caption = null;
             图标.MaxWidth = 128;
             图标.MaxHeight = 36;
             表格元素.设置单元格内容(4, 1, 图标);
+
             图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855010_org.v1461644900.gif");
             图标.Caption = null;
             图标.MaxWidth = 128;
@@ -211,16 +231,6 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235854674_org.v1461644021.gif");
             图标.Caption = null;
             表格元素.设置单元格内容(1, 4, 图标);
-
-            /*段落元素.内嵌元素列表.Add(new 段落内嵌元素
-            {
-                LineIndex = 4,
-                CharIndex = 2,
-                ElementList = new List<布局元素> { 表格元素 }
-            });*/
-            表格元素.设置行高(3, 24);
-            表格元素.设置列宽(0, 72);
-            表格元素.设置列宽(3, 72);
         }
 
         private 图片 创建图片元素(string path, double maxWidth = double.NaN, bool pixelArt = false)

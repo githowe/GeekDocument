@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem.Define;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.OptionSystem;
 
 namespace GeekDocument.SubSystem.EditerSystemNew.Define
@@ -46,7 +47,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Define
 
         #endregion
 
-        public List<块> 块列表 { get; set; } = new List<块>();
+        public List<段落> 段落列表 { get; set; } = new List<段落>();
 
         public void LoadArchive(ArchiveFile archiveFile)
         {

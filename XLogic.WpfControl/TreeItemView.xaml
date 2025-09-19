@@ -13,7 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid x:Name="Back" Background="Transparent" MouseLeftButtonDown="Back_MouseLeftButtonDown">
+    <Grid x:Name="Back" Background="Transparent" MouseEnter="Back_MouseEnter" MouseLeave="Back_MouseLeave" MouseLeftButtonDown="Back_MouseLeftButtonDown">
         <!-- 内容 -->
         <Grid x:Name="MainGrid">
             <Grid.ColumnDefinitions>

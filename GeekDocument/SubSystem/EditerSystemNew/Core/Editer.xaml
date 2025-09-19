@@ -4,8 +4,169 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystemNew.Core"
+             xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+             xmlns:ec="clr-namespace:GeekDocument.SubSystem.EditerSystemNew.Control"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="MainGrid" Background="#141414">
+        <!-- 分成三行：工具栏、文档区、状态栏 -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+            <RowDefinition Height="0"/>
+        </Grid.RowDefinitions>
+        <!-- 工具栏背景 -->
+        <Grid Background="#1E1E1E"/>
+        <!-- 工具栏 -->
+        <StackPanel x:Name="CenterToolBar" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button x:Name="Tool_OpenLeft" Style="{StaticResource ToolBarButton}" ToolTip="打开元素结构" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Left_Closed.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_CloseLeft" Style="{StaticResource ToolBarButton}" ToolTip="关闭元素结构" Width="30" Height="30" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="Image/Left_Opened.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Save" Style="{StaticResource ToolBarButton}" ToolTip="保存" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Save.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_SaveAs" Style="{StaticResource ToolBarButton}" ToolTip="另存为" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/SaveAs.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Export" Style="{StaticResource ToolBarButton}" ToolTip="导出" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Export.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Undo" Style="{StaticResource ToolBarButton}" ToolTip="撤销" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Undo.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Redo" Style="{StaticResource ToolBarButton}" ToolTip="重做" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Redo.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Option" Style="{StaticResource ToolBarButton}" ToolTip="文档选项" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/DocumentOption.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_Section" Style="{StaticResource ToolBarButton}" ToolTip="插入节" Width="30" Height="30" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="Image/Section.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Paragraph" Style="{StaticResource ToolBarButton}" ToolTip="插入段落" Width="30" Height="30" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="Image/Paragraph.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_List" Style="{StaticResource ToolBarButton}" ToolTip="插入列表" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/List.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Image" Style="{StaticResource ToolBarButton}" ToolTip="插入图片" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Image.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Code" Style="{StaticResource ToolBarButton}" ToolTip="插入代码" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Code.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Table" Style="{StaticResource ToolBarButton}" ToolTip="插入表格" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Table.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Latex" Style="{StaticResource ToolBarButton}" ToolTip="插入公式" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Sqrt.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Link" Style="{StaticResource ToolBarButton}" ToolTip="插入链接" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Link.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Emoji" Style="{StaticResource ToolBarButton}" ToolTip="插入表情" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Emoji.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_Split" Style="{StaticResource ToolBarButton}" ToolTip="插入分割线" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/SplitLine.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <wc:ToolSplitBar/>
+            <Button x:Name="Tool_OpenRight" Style="{StaticResource ToolBarButton}" ToolTip="打开属性面板" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Right_Closed.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_CloseRight" Style="{StaticResource ToolBarButton}" ToolTip="关闭属性面板" Width="30" Height="30" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="Image/Right_Opened.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        <!-- 文档区分成三列：元素结构、编辑区、属性面板 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftArea" Width="0"/>
+                <ColumnDefinition />
+                <ColumnDefinition x:Name="RightArea" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <!-- 元素结构 -->
+            <Grid Background="#262626" Grid.Column="0">
+                <ec:LayoutTreePanel x:Name="Panel_LayoutTree"/>
+            </Grid>
+            <!-- 编辑区 -->
+            <Grid Grid.Column="1">
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.5" To="1" Storyboard.TargetName="PageScrollBar" Storyboard.TargetProperty="Opacity"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetName="PageScrollBar" Storyboard.TargetProperty="Opacity" BeginTime="0:0:2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+                <Grid x:Name="DocBox">
+                    <Grid x:Name="PageBox"/>
+                    <Grid x:Name="LayerBox"/>
+                </Grid>
+                <!-- 工具栏阴影 -->
+                <Image Source="Image/Shadow.png" Height="10" VerticalAlignment="Top" Stretch="Fill" Grid.Row="1" IsHitTestVisible="False"/>
+                <!-- 文档滚动条 -->
+                <ScrollBar x:Name="PageScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0" Grid.Row="1"
+                           SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>
+                <!-- 提示框 -->
+                <Canvas x:Name="TipBox"/>
+            </Grid>
+            <!-- 属性面板 -->
+        </Grid>
     </Grid>
 </UserControl>

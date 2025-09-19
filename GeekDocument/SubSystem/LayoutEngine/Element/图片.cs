@@ -4,7 +4,7 @@ using GeekDocument.SubSystem.WindowSystem;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using XLogic.Wpf;
 
 public enum 图注最大宽度
 {
@@ -14,9 +14,28 @@ public enum 图注最大宽度
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 图片 : 布局元素
+    public class 图片 : 布局元素, ITimerHandler
     {
+        #region 构造方法
+
         public 图片() => 类型 = 元素类型.图片;
+
+        #endregion
+
+        #region IDocumentElement 成员
+
+        public override string Icon { get; set; } = "Image";
+
+        public override string Name
+        {
+            get
+            {
+                return $"图片_{ActualWidth}x{ActualHeight}";
+            }
+            set { }
+        }
+
+        #endregion
 
         #region 属性
 
@@ -74,6 +93,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (SourceHash != "") LoadImage();
         }
 
+        public override List<ElementLayer> GetLayerList() => new List<ElementLayer> { _layer };
+
         public override void Measure()
         {
             适配图片大小();
@@ -90,13 +111,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     PlainText = true,
                 };
 
-                // 跟随图片时，设置图注最大宽度为图片最大宽度
+                // 跟随图片时，设置图注最大宽度为图片宽度
                 if (CaptionMaxWidthType == 图注最大宽度.跟随图片)
-                {
-                    if (double.IsNaN(MaxWidth)) throw new Exception("图片未设置最大宽度");
-                    if (MaxWidth <= 0) 图注.MaxWidth = double.PositiveInfinity;
-                    else 图注.MaxWidth = MaxWidth;
-                }
+                    图注.MaxWidth = _imageActualWidth;
                 else
                 {
                     if (double.IsNaN(CaptionMaxWidth)) throw new Exception("图注未设置最大宽度");
@@ -134,47 +151,37 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
-        public override double 压缩左边距()
-        {
-            if (LeftMargin > 0) return ActualWidth + LeftMargin / 2;
-            return ActualWidth;
-        }
-
-        public override double 压缩右边距()
-        {
-            if (RightMargin > 0) return ActualWidth + RightMargin / 2;
-            return ActualWidth;
-        }
-
-        public override double 压缩元素()
-        {
-            double left = 0;
-            if (LeftMargin > 0) left = LeftMargin / 2;
-            double right = 0;
-            if (RightMargin > 0) right = RightMargin / 2;
-            return left + ActualWidth + right;
-        }
-
-        public override void 压缩至(double 比例)
-        {
-            double leftMax = LeftMargin / 2;
-            LeftMargin -= leftMax * 比例;
-            double rightMax = RightMargin / 2;
-            RightMargin -= rightMax * 比例;
-        }
-
         public override void 绘图(DrawingContext dc)
         {
             double x = Math.Round(Left + _imageOffset);
             double y = Math.Round(Top);
 
-            // 设置图片缩放模式（先注释掉，因为该设置对 WriteableBitmap 无效）
-            /*if (PixelArt) RenderOptions.SetBitmapScalingMode(_display, BitmapScalingMode.NearestNeighbor);
-            else RenderOptions.SetBitmapScalingMode(_display, BitmapScalingMode.HighQuality);*/
+            // 设置图片缩放模式
+            if (PixelArt) RenderOptions.SetBitmapScalingMode(_layer, BitmapScalingMode.NearestNeighbor);
+            else RenderOptions.SetBitmapScalingMode(_layer, BitmapScalingMode.HighQuality);
             // 绘制图片
-            dc.DrawImage(_display, new Rect(x, y, _imageActualWidth, _imageActualHeight));
+            DrawingContext self_dc = _layer.Open();
+            self_dc.DrawImage(_display, new Rect(x, y, _imageActualWidth, _imageActualHeight));
+            self_dc.Close();
             // 绘制图注
             图注?.绘图(dc);
+        }
+
+        #endregion
+
+        #region ITimerHandler 方法
+
+        public void Tick()
+        {
+            int milliseconds = (int)((AppWatch.Instance.Milliseconds - _startMs) % Duration);
+            ImageFrame? render = null;
+            foreach (var frame in FrameList)
+            {
+                if (milliseconds >= frame.Timestamp) render = frame;
+                else break;
+            }
+            if (render == null) return;
+            _display?.WritePixels(_sourceIntRect, render.PixelData, SourceWidth * 4, 0);
         }
 
         #endregion
@@ -207,28 +214,13 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             _sourceIntRect = new Int32Rect(0, 0, SourceWidth, SourceHeight);
             _display.WritePixels(_sourceIntRect, frameData.PixelData, SourceWidth * 4, 0);
             // 只有一帧时，冻结以提升性能（先注释掉，因为冻结后无法修改缩放渲染质量）
-            // if (FrameList.Count == 1) _display.Freeze();
+            if (FrameList.Count == 1) _display.Freeze();
             // 动态图片，则启动定时器
             if (FrameList.Count > 1)
             {
-                _timer.Interval = TimeSpan.FromMilliseconds(1000 / 40.0);
-                _timer.Tick += Timer_Tick;
-                _timer.Start();
+                AppTimer.Instance.AddTimerHandler(this);
                 _startMs = AppWatch.Instance.Milliseconds;
             }
-        }
-
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-            int milliseconds = (int)((AppWatch.Instance.Milliseconds - _startMs) % Duration);
-            ImageFrame? render = null;
-            foreach (var frame in FrameList)
-            {
-                if (milliseconds >= frame.Timestamp) render = frame;
-                else break;
-            }
-            if (render == null) return;
-            _display?.WritePixels(_sourceIntRect, render.PixelData, SourceWidth * 4, 0);
         }
 
         private void 适配图片大小()
@@ -347,11 +339,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private double _imageActualWidth = 0;
         private double _imageActualHeight = 0;
 
+        private readonly ElementLayer _layer = new ElementLayer();
+
         /// <summary>可写位图。当作图片显示器</summary>
         private WriteableBitmap? _display = null;
         private Int32Rect _sourceIntRect = new Int32Rect();
 
-        private readonly DispatcherTimer _timer = new DispatcherTimer(DispatcherPriority.Normal);
         private long _startMs = 0;
 
         private 段落? 图注 = null;

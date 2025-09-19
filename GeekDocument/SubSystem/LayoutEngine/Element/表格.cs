@@ -1,11 +1,50 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.LayoutEngine.Ex;
+using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 单元格
+    public class 单元格 : IDocumentElement, IComparable<单元格>
     {
-        public 单元格(布局元素 元素) => 内容 = 元素;
+        public 单元格(段落 内容) => this.内容 = 内容;
+
+        #region IDocumentElement 成员
+
+        public string Icon { get; set; } = "Cell";
+
+        public string Name
+        {
+            get => $"单元格_{行},{列}";
+            set { }
+        }
+
+        public List<IDocumentElement> GetSubElementList()
+        {
+            return new List<IDocumentElement> { 内容 };
+        }
+
+        public Rect GetElementRect()
+        {
+            if (Owner != null)
+            {
+                (double x, double y) = Owner.计算单元格位置(行, 列);
+                段落 root = Owner.GetRootParagraph();
+                y += root.段落偏移;
+                return new Rect(x - Padding.Left, y - Padding.Top, 宽度, 高度);
+            }
+            return new Rect(0 - Padding.Left, 0 - Padding.Top, 宽度, 高度);
+        }
+
+        #endregion
+
+        public int CompareTo(单元格? other)
+        {
+            if (other == null) return 1;
+            if (行 != other.行) return 行.CompareTo(other.行);
+            return 列.CompareTo(other.列);
+        }
+
+        public 表格? Owner { get; set; } = null;
 
         public int 行 { get; set; } = 0;
 
@@ -21,7 +60,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public 垂直对齐方式 Vertical { get; set; } = 垂直对齐方式.Top;
 
-        public 布局元素 内容 { get; set; }
+        public 段落 内容 { get; set; }
 
         #region 运行时属性
 
@@ -64,6 +103,22 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
     {
         public 表格() => 类型 = 元素类型.表格;
 
+        #region IDocumentElement 成员
+
+        public override string Icon { get; set; } = "Table";
+
+        public override string Name { get; set; } = "表格";
+
+        public override List<IDocumentElement> GetSubElementList()
+        {
+            List<IDocumentElement> result = new List<IDocumentElement>();
+            foreach (var item in 单元格列表)
+                result.Add(item);
+            return result;
+        }
+
+        #endregion
+
         #region 属性
 
         public int 行数 { get; set; } = 4;
@@ -79,6 +134,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         #endregion
 
         #region 布局元素方法
+
+        public override List<ElementLayer> GetLayerList()
+        {
+            List<ElementLayer> result = new List<ElementLayer>();
+            foreach (var item in 单元格列表)
+                result.AddRange(item.内容.GetLayerList());
+            return result;
+        }
 
         public override void Init()
         {
@@ -170,9 +233,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             if (行 < 0 || 行 >= 行数) return;
             if (列 < 0 || 列 >= 列数) return;
-            // 创建单元格
-            单元格 cell = new 单元格(内容)
+
+            // 包装为段落
+            段落 段落;
+            if (内容.类型 == 元素类型.段落) 段落 = (段落)内容;
+            else
             {
+                段落 = new 段落 { 首行缩进 = 0 };
+                段落.AddLayoutElement(内容);
+            }
+            段落.Parent = this;
+            // 创建单元格
+            单元格 cell = new 单元格(段落)
+            {
+                Owner = this,
                 行 = 行,
                 列 = 列,
                 宽度 = 全部列宽[列],
@@ -186,6 +260,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             列列表[列].单元格列表[行] = cell;
             // 添加到单元格列表
             单元格列表.Add(cell);
+            // 排序。按左上至右下顺序
+            单元格列表.Sort();
         }
 
         public T? 获取单元格内容<T>(int 行, int 列) where T : 布局元素
@@ -225,11 +301,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             全部列宽[col] = width;
         }
 
-        #endregion
-
-        #region 私有方法
-
-        private (double x, double y) 计算单元格位置(int 行, int 列)
+        public (double x, double y) 计算单元格位置(int 行, int 列)
         {
             double x = Left + 边框粗细;
             double y = Top + 边框粗细;
@@ -237,6 +309,10 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             for (int row = 0; row < 行; row++) y += 全部行高[row] + 边框粗细;
             return (x + 4, y + 4);
         }
+
+        #endregion
+
+        #region 私有方法
 
         private void 绘制表格线(DrawingContext dc)
         {
