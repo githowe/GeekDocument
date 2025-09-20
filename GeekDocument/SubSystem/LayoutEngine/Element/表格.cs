@@ -4,101 +4,6 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 单元格 : IDocumentElement, IComparable<单元格>
-    {
-        public 单元格(段落 内容) => this.内容 = 内容;
-
-        #region IDocumentElement 成员
-
-        public string Icon { get; set; } = "Cell";
-
-        public string Name
-        {
-            get => $"单元格_{行},{列}";
-            set { }
-        }
-
-        public List<IDocumentElement> GetSubElementList()
-        {
-            return new List<IDocumentElement> { 内容 };
-        }
-
-        public Rect GetElementRect()
-        {
-            if (Owner != null)
-            {
-                (double x, double y) = Owner.计算单元格位置(行, 列);
-                段落 root = Owner.GetRootParagraph();
-                y += root.段落偏移;
-                return new Rect(x - Padding.Left, y - Padding.Top, 宽度, 高度);
-            }
-            return new Rect(0 - Padding.Left, 0 - Padding.Top, 宽度, 高度);
-        }
-
-        #endregion
-
-        public int CompareTo(单元格? other)
-        {
-            if (other == null) return 1;
-            if (行 != other.行) return 行.CompareTo(other.行);
-            return 列.CompareTo(other.列);
-        }
-
-        public 表格? Owner { get; set; } = null;
-
-        public int 行 { get; set; } = 0;
-
-        public int 列 { get; set; } = 0;
-
-        public double 宽度 { get; set; } = 136;
-
-        public double 高度 { get; set; } = 44;
-
-        public Thickness Padding { get; set; } = new Thickness(4);
-
-        public 水平对齐方式 Horizontal { get; set; } = 水平对齐方式.Left;
-
-        public 垂直对齐方式 Vertical { get; set; } = 垂直对齐方式.Top;
-
-        public 段落 内容 { get; set; }
-
-        #region 运行时属性
-
-        public double HorizontalPadding => Padding.Left + Padding.Right;
-
-        public double VerticalPadding => Padding.Top + Padding.Bottom;
-
-        #endregion
-
-        public override string ToString() => $"单元格({行},{列}) 宽度={宽度} 高度={高度} 内容={内容}";
-    }
-
-    public class 表格行
-    {
-        public int 行号 { get; set; }
-
-        public List<单元格?> 单元格列表 { get; set; } = new List<单元格?>();
-
-        public void SetHeight(double height)
-        {
-            foreach (var cell in 单元格列表)
-                if (cell != null) cell.高度 = height;
-        }
-    }
-
-    public class 表格列
-    {
-        public int 列号 { get; set; }
-
-        public List<单元格?> 单元格列表 { get; set; } = new List<单元格?>();
-
-        public void SetWidth(double width)
-        {
-            foreach (var cell in 单元格列表)
-                if (cell != null) cell.宽度 = width;
-        }
-    }
-
     public class 表格 : 布局元素
     {
         public 表格() => 类型 = 元素类型.表格;
@@ -109,12 +14,89 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override string Name { get; set; } = "表格";
 
+        public override bool CanInput => true;
+
         public override List<IDocumentElement> GetSubElementList()
         {
-            List<IDocumentElement> result = new List<IDocumentElement>();
-            foreach (var item in 单元格列表)
-                result.Add(item);
+            List<IDocumentElement> result = new List<IDocumentElement>(单元格列表);
             return result;
+        }
+
+        public override Rect GetHitTestRect()
+        {
+            Rect viewRect = GetViewRect();
+            Rect hitRect = new Rect(viewRect.Left - 16, viewRect.Top - 16, viewRect.Width + 16, viewRect.Height + 16);
+            return hitRect;
+        }
+
+        public override CaretInfo MoveCaret(Point point)
+        {
+            段落 root = this.GetRootParagraph();
+            double top = root.段落偏移 + Top;
+
+            int rowIndex = -1;
+            // 先获取命中行
+            for (int index = 0; index < 行列表.Count; index++)
+            {
+                (double y1, double y2) = 计算行区域(index);
+                y1 += top;
+                y2 += top;
+                double y = point.Y;
+                if (y1 <= y && y < y2)
+                {
+                    rowIndex = index;
+                    break;
+                }
+            }
+            // 无命中行，可能点在了边线上
+            if (rowIndex == -1)
+            {
+                rowIndex = 0;
+                double 最小距离 = double.MaxValue;
+                for (int index = 0; index < 行列表.Count; index++)
+                {
+                    (double y1, double y2) = 计算行区域(index);
+                    y1 += top;
+                    y2 += top;
+                    double distance = Math.Min(Math.Abs(point.Y - y1), Math.Abs(point.Y - y2));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        rowIndex = index;
+                    }
+                }
+            }
+
+            // 再获取命中列
+            int colIndex = -1;
+            for (int index = 0; index < 列列表.Count; index++)
+            {
+                (double x1, double x2) = 计算列区域(index);
+                double x = point.X;
+                if (x1 <= x && x < x2)
+                {
+                    colIndex = index;
+                    break;
+                }
+            }
+            // 无命中列，可能点在了边线上
+            if (colIndex == -1)
+            {
+                colIndex = 0;
+                double 最小距离 = double.MaxValue;
+                for (int index = 0; index < 列列表.Count; index++)
+                {
+                    (double x1, double x2) = 计算列区域(index);
+                    double distance = Math.Min(Math.Abs(point.X - x1), Math.Abs(point.X - x2));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        colIndex = index;
+                    }
+                }
+            }
+
+            return 行列表[rowIndex].单元格列表[colIndex].内容.MoveCaret(point);
         }
 
         #endregion
@@ -159,11 +141,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 for (int line = 0; line < 行数; line++) 列.单元格列表.Add(null);
                 列列表.Add(列);
             }
-
+            // 生成行高与列宽
             for (int counter = 0; counter < 行数; counter++)
                 全部行高.Add(_cellHeight);
             for (int counter = 0; counter < 列数; counter++)
                 全部列宽.Add(_cellWidth);
+            // 生成单元格
+            for (int line = 0; line < 行数; line++)
+            {
+                for (int list = 0; list < 列数; list++)
+                {
+                    段落 段落 = new 段落 { 首行缩进 = 0 };
+                    设置单元格内容(line, list, 段落);
+                }
+            }
 
             _borderBrush.Freeze();
             if (边框粗细 != 1) _borderPen = new Pen(_borderBrush, 边框粗细);
@@ -234,6 +225,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (行 < 0 || 行 >= 行数) return;
             if (列 < 0 || 列 >= 列数) return;
 
+            // 先移除已有内容
+            移除单元格内容(行, 列);
             // 包装为段落
             段落 段落;
             if (内容.类型 == 元素类型.段落) 段落 = (段落)内容;
@@ -282,6 +275,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 获取单元格
             单元格? cell = 行列表[行].单元格列表[列];
             if (cell is null) return;
+            // 解除引用
+            cell.内容.Parent = null;
             // 从单元格列表中移除
             单元格列表.Remove(cell);
             // 清空引用
@@ -308,6 +303,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             for (int col = 0; col < 列; col++) x += 全部列宽[col] + 边框粗细;
             for (int row = 0; row < 行; row++) y += 全部行高[row] + 边框粗细;
             return (x + 4, y + 4);
+        }
+
+        public (double y1, double y2) 计算行区域(int 行)
+        {
+            double y = Top + 边框粗细;
+            for (int row = 0; row < 行; row++) y += 全部行高[row] + 边框粗细;
+            return (y, y + 全部行高[行]);
+        }
+
+        public (double x1, double x2) 计算列区域(int 列)
+        {
+            double x = Left + 边框粗细;
+            for (int col = 0; col < 列; col++) x += 全部列宽[col] + 边框粗细;
+            return (x, x + 全部列宽[列]);
         }
 
         #endregion
@@ -345,9 +354,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         /// <summary>单元格内边距：左、上、右、下</summary>
         private Thickness _cellPadding = new Thickness(4);
         /// <summary>单元格内容水平对齐</summary>
-        private 水平对齐方式 _cellHorizontal = 水平对齐方式.Center;
+        private 水平对齐方式 _cellHorizontal = 水平对齐方式.Left;
         /// <summary>单元格内容垂直对齐</summary>
-        private 垂直对齐方式 _cellVertical = 垂直对齐方式.Center;
+        private 垂直对齐方式 _cellVertical = 垂直对齐方式.Top;
 
         #endregion
 

@@ -2,3 +2,9 @@
 
 # IDE0057: 使用范围运算符
 dotnet_diagnostic.IDE0057.severity = none
+# IDE0306: 简化集合初始化
+dotnet_diagnostic.IDE0306.severity = none
+# IDE0028: 简化集合初始化
+dotnet_diagnostic.IDE0028.severity = none
+# IDE0090: 可简化 "new" 表达式
+dotnet_diagnostic.IDE0090.severity = none

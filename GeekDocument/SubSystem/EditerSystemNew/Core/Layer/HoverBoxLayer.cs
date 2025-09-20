@@ -4,7 +4,10 @@ using XLogic.Wpf.Drawing;
 
 namespace GeekDocument.SubSystem.EditerSystemNew.Core.Layer
 {
-    public class ElementBoxLayer : SingleBoard
+    /// <summary>
+    /// 悬停框图层
+    /// </summary>
+    public class HoverBoxLayer : SingleBoard
     {
         public List<Rect> RectList { get; set; } = new List<Rect>();
 
@@ -24,6 +27,6 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core.Layer
             foreach (var rect in RectList) _dc.DrawRectangle(_brush, null, rect);
         }
 
-        private Brush _brush = new SolidColorBrush(Color.FromArgb(128, 249, 202, 124));
+        private Brush _brush = new SolidColorBrush(Color.FromArgb(128, 85, 111, 181));
     }
 }

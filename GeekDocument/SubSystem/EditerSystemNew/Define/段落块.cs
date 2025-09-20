@@ -1,7 +1,8 @@
-﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+﻿using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.Windows.Media;
 
-namespace GeekDocument.SubSystem.LayoutEngine;
+namespace GeekDocument.SubSystem.EditerSystemNew.Define;
 
 public class 段落块
 {
@@ -23,6 +24,10 @@ public class 段落块
 
     /// <summary>块高度。根据内部元素布局设置</summary>
     public double BlockHeight { get; private set; } = 0;
+
+    public double 段前距 { get; set; } = 0;
+
+    public double 段后距 { get; set; } = 0;
 
     public List<ElementLayer> LayerList => _layerList;
 

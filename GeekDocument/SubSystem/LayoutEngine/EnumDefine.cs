@@ -4,7 +4,6 @@ public enum 元素类型
 {
     Unknown,
 
-    节,
     段落,
     字,
     图片,

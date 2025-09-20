@@ -1,14 +1,14 @@
-﻿<UserControl x:Class="GeekDocument.SubSystem.LayoutEngine.Page"
+﻿<UserControl x:Class="GeekDocument.SubSystem.EditerSystemNew.Control.Page"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:GeekDocument.SubSystem.LayoutEngine"
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystemNew.Control"
              mc:Ignorable="d" VerticalAlignment="Top" UseLayoutRounding="True"
              d:DesignWidth="800">
     <StackPanel Orientation="Vertical" VerticalAlignment="Top">
         <!-- 纸张 -->
-        <Grid x:Name="Paper" Height="200" Margin="0,16,0,16">
+        <Grid x:Name="Paper" Height="200" Margin="0,16,0,16" Cursor="IBeam">
             <!-- 背景框 -->
             <Border Background="#262626" BorderBrush="#808080" BorderThickness="1"/>
             <!-- 边距标记 -->
@@ -20,6 +20,8 @@
             <Canvas x:Name="BlockBox"/>
             <!-- 页面标记：选中框、光标等 -->
             <Canvas x:Name="MarkBox"/>
+            <!-- 交互层 -->
+            <Grid x:Name="InteractionLayer" Background="Transparent" MouseMove="InteractionLayer_MouseMove" MouseDown="InteractionLayer_MouseDown" MouseUp="InteractionLayer_MouseUp"/>
         </Grid>
     </StackPanel>
 </UserControl>

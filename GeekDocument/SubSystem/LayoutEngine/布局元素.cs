@@ -5,20 +5,6 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
-/// <summary>
-/// 文档元素
-/// </summary>
-public interface IDocumentElement
-{
-    string Icon { get; set; }
-
-    string Name { get; set; }
-
-    List<IDocumentElement> GetSubElementList();
-
-    Rect GetElementRect();
-}
-
 public class 布局元素 : IDocumentElement
 {
     #region IDocumentElement 成员
@@ -27,13 +13,46 @@ public class 布局元素 : IDocumentElement
 
     public virtual string Name { get; set; } = "未命名布局元素";
 
+    public virtual bool CanInput => false;
+
     public virtual List<IDocumentElement> GetSubElementList() => new List<IDocumentElement>();
 
-    public virtual Rect GetElementRect()
+    public virtual Rect GetViewRect()
     {
         段落 root = this.GetRootParagraph();
         double top = root.段落偏移 + Top;
         return new Rect(Left, top, ActualWidth, ActualHeight);
+    }
+
+    public virtual Rect GetHitTestRect() => GetViewRect();
+
+    public virtual IDocumentElement? GetHitedElement(Point point)
+    {
+        // 获取子元素列表
+        List<IDocumentElement> subList = GetSubElementList();
+        // 反向遍历子元素
+        for (int index = subList.Count - 1; index >= 0; index--)
+        {
+            IDocumentElement item = subList[index];
+            IDocumentElement? hited = item.GetHitedElement(point);
+            if (hited != null) return hited;
+            if (item.GetHitTestRect().Contains(point)) return item;
+        }
+        // 没有任何子元素命中时，检测自己是否命中
+        if (GetHitTestRect().Contains(point)) return this;
+        return null;
+    }
+
+    public virtual IDocumentElement GetNearestElement(Point point)
+    {
+        return this;
+    }
+
+    public virtual void HandleMouseDown(Point point) { }
+
+    public virtual CaretInfo MoveCaret(Point point)
+    {
+        return new CaretInfo();
     }
 
     #endregion

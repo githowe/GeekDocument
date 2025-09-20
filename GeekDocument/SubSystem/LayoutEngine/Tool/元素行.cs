@@ -6,11 +6,139 @@ namespace GeekDocument.SubSystem.LayoutEngine.Tool;
 
 public class 元素行 : IDocumentElement
 {
-    #region IDocumentElement 属性
+    #region 构造方法
+
+    public 元素行() { }
+
+    #endregion
+
+    #region IDocumentElement 成员
 
     public string Icon { get; set; } = "Line";
 
     public string Name { get; set; } = "元素行";
+
+    public bool CanInput => true;
+
+    public List<IDocumentElement> GetSubElementList()
+    {
+        return 元素列表.Cast<IDocumentElement>().ToList();
+    }
+
+    public Rect GetViewRect()
+    {
+        if (Owner == null) throw new Exception("当前元素行没有所属段落");
+        double top = Owner.GetRootParagraph().段落偏移 + Top;
+        return new Rect(Left, top, 行宽, 行高);
+    }
+
+    public Rect GetHitTestRect() => GetViewRect();
+
+    public IDocumentElement? GetHitedElement(Point point)
+    {
+        for (int index = 元素列表.Count - 1; index >= 0; index--)
+        {
+            布局元素? item = 元素列表[index];
+            IDocumentElement? hited = item.GetHitedElement(point);
+            if (hited != null) return hited;
+            if (item.GetViewRect().Contains(point)) return item;
+        }
+        if (GetHitTestRect().Contains(point)) return this;
+        return null;
+    }
+
+    public IDocumentElement GetNearestElement(Point point)
+    {
+        // 元素行可能没有元素，此时直接返回自己
+        if (元素列表.Count == 0) return this;
+
+        IDocumentElement? 间接命中 = null;
+        // 先通过横坐标获取命中元素
+        for (int index = 元素列表.Count - 1; index >= 0; index--)
+        {
+            布局元素 元素 = 元素列表[index];
+            Rect viewRect = 元素.GetViewRect();
+            double x = point.X;
+            if (viewRect.Left <= x && x < viewRect.Right)
+            {
+                间接命中 = 元素;
+                break;
+            }
+        }
+        // 无命中，可能点到了元素间的空白区域
+        if (间接命中 == null)
+        {
+            间接命中 = 元素列表[0];
+            double 最小距离 = double.MaxValue;
+            foreach (var item in 元素列表)
+            {
+                Rect viewRect = item.GetViewRect();
+                double distance = Math.Min(Math.Abs(point.X - viewRect.Left), Math.Abs(point.X - viewRect.Right));
+                if (distance < 最小距离)
+                {
+                    最小距离 = distance;
+                    间接命中 = item;
+                }
+            }
+        }
+        return 间接命中.GetNearestElement(point);
+    }
+
+    public CaretInfo MoveCaret(Point point)
+    {
+        if (元素列表.Count == 0) return 获取空行光标信息();
+
+        // 获取第一个元素与最后一个元素
+        布局元素 first = 元素列表[0];
+        布局元素 last = 元素列表.Last();
+        // 横坐标位于第一个元素左侧
+        if (point.X < first.Left) return 移动光标至元素左侧(first);
+        // 横坐标位于最后一个元素右侧
+        if (point.X >= last.Left + last.ActualWidth) return 移动光标至元素右侧(last);
+
+        布局元素? 命中元素 = null;
+        // 先通过横坐标获取命中元素
+        for (int index = 元素列表.Count - 1; index >= 0; index--)
+        {
+            布局元素 元素 = 元素列表[index];
+            Rect viewRect = 元素.GetViewRect();
+            double x = point.X;
+            if (viewRect.Left <= x && x < viewRect.Right)
+            {
+                命中元素 = 元素;
+                break;
+            }
+        }
+        // 无命中，可能点到了元素间的空白区域
+        if (命中元素 == null)
+        {
+            命中元素 = 元素列表[0];
+            double 最小距离 = double.MaxValue;
+            foreach (var item in 元素列表)
+            {
+                Rect viewRect = item.GetViewRect();
+                double distance = Math.Min(Math.Abs(point.X - viewRect.Left), Math.Abs(point.X - viewRect.Right));
+                if (distance < 最小距离)
+                {
+                    最小距离 = distance;
+                    命中元素 = item;
+                }
+            }
+        }
+        // 命中元素可以输入，则进一步获取元素内部的光标位置
+        if (命中元素.CanInput) return 命中元素.MoveCaret(point);
+
+        Rect elementRect = 命中元素.GetViewRect();
+        // 命中元素左半部分
+        if (point.X < elementRect.Left + elementRect.Width / 2) return 移动光标至元素左侧(命中元素);
+        // 命中元素右半部分
+        else return 移动光标至元素右侧(命中元素);
+    }
+
+    public void HandleMouseDown(Point point)
+    {
+
+    }
 
     #endregion
 
@@ -45,23 +173,15 @@ public class 元素行 : IDocumentElement
 
     #endregion
 
+    #region object 方法
+
     public override string ToString()
     {
         if (元素列表.Count == 0) return "空";
         return "非空行";
     }
 
-    public List<IDocumentElement> GetSubElementList()
-    {
-        return 元素列表.Cast<IDocumentElement>().ToList();
-    }
-
-    public Rect GetElementRect()
-    {
-        if (Owner == null) throw new Exception("当前元素行没有所属段落");
-        double top = Owner.GetRootParagraph().段落偏移 + Top;
-        return new Rect(Left, top, 行宽, 行高);
-    }
+    #endregion
 
     #region 公开方法
 
@@ -97,15 +217,18 @@ public class 元素行 : IDocumentElement
         return false;
     }
 
-    public void 更新行高(double 最小行高)
+    public void 更新行高(double minHeight)
     {
-        行高 = 最小行高;
+        _fontSize = minHeight;
+        行高 = minHeight;
         foreach (var item in 元素列表)
             if (item.ActualHeight > 行高) 行高 = item.ActualHeight;
     }
 
     public void 更新元素坐标(水平对齐方式 水平 = 水平对齐方式.Justify, 垂直对齐方式 垂直 = 垂直对齐方式.Bottom)
     {
+        _horizontal = 水平;
+        _vertical = 垂直;
         更新元素横坐标(水平);
         更新元素纵坐标(垂直);
         foreach (var item in 元素列表)
@@ -467,6 +590,120 @@ public class 元素行 : IDocumentElement
         return 结果;
     }
 
+    private CaretInfo 获取空行光标信息()
+    {
+        CaretInfo result = new CaretInfo();
+        Rect lineRect = GetViewRect();
+
+        // 横坐标根据水平对齐计算
+        switch (_horizontal)
+        {
+            case 水平对齐方式.Left:
+                result.X = lineRect.Left;
+                break;
+            case 水平对齐方式.Center:
+                result.X = lineRect.Left + 行宽 / 2;
+                break;
+            case 水平对齐方式.Right:
+                result.X = lineRect.Right;
+                break;
+            case 水平对齐方式.Justify:
+                result.X = lineRect.Left;
+                break;
+        }
+        // 纵坐标取顶部
+        result.Y = lineRect.Top;
+        // 高度取字号
+        result.Height = _fontSize;
+
+        return result;
+    }
+
+    private CaretInfo 移动光标至元素左侧(布局元素 元素)
+    {
+        CaretInfo result = new CaretInfo();
+
+        // 获取当前元素索引
+        int elementIndex = 元素列表.IndexOf(元素);
+
+        // 无前一个元素
+        if (elementIndex == 0)
+        {
+            // 横坐标取当前元素左
+            result.X = 元素.GetViewRect().Left;
+            // 纵坐标根据垂直对齐与字号计算
+            result.Y = 计算光标纵坐标();
+            // 高度取字号
+            result.Height = _fontSize;
+            // 返回结果
+            return result;
+        }
+
+        // 获取前一个元素以及前一个元素区域
+        布局元素 前一个元素 = 元素列表[elementIndex - 1];
+        Rect prevRect = 前一个元素.GetViewRect();
+        // 前一个元素为字元素
+        if (前一个元素.类型 == 元素类型.字)
+        {
+            // 坐标取前一个元素右上角
+            result.X = prevRect.Right;
+            result.Y = prevRect.Top;
+            // 高度取前一个元素高度
+            result.Height = 前一个元素.ActualHeight;
+        }
+        // 其他元素
+        else
+        {
+            // 横坐标取前一个元素右 + 右间距
+            result.X = prevRect.Right + 前一个元素.RightMargin;
+            // 纵坐标根据垂直对齐与字号计算
+            result.Y = 计算光标纵坐标();
+            // 高度取字号
+            result.Height = _fontSize;
+        }
+
+        return result;
+    }
+
+    private CaretInfo 移动光标至元素右侧(布局元素 元素)
+    {
+        CaretInfo result = new CaretInfo();
+        Rect elementRect = 元素.GetViewRect();
+
+        // 当前元素为字元素
+        if (元素.类型 == 元素类型.字)
+        {
+            // 坐标取当前字右上角
+            result.X = elementRect.Right;
+            result.Y = elementRect.Top;
+            // 高度取当前字高度
+            result.Height = 元素.ActualHeight;
+        }
+        // 其他元素
+        {
+            // 横坐标取当前元素右
+            result.X = elementRect.Right + 元素.RightMargin;
+            // 纵坐标根据垂直对齐与字号计算
+            result.Y = 计算光标纵坐标();
+            // 高度取字号
+            result.Height = _fontSize;
+        }
+
+        return result;
+    }
+
+    private double 计算光标纵坐标()
+    {
+        Rect lineRect = GetViewRect();
+        return _vertical switch
+        {
+            垂直对齐方式.Top => lineRect.Top,
+            垂直对齐方式.Center => lineRect.Top + (行高 - _fontSize) / 2,
+            垂直对齐方式.Bottom => lineRect.Bottom - _fontSize,
+            _ => 0,
+        };
+    }
+
     #endregion
 
     #region 字段
@@ -480,6 +717,9 @@ public class 元素行 : IDocumentElement
 
     private 行状态 状态 = 行状态.空;
     private double 当前行宽 = 0;
+    private double _fontSize = 0;
+    private 水平对齐方式 _horizontal = 水平对齐方式.Left;
+    private 垂直对齐方式 _vertical = 垂直对齐方式.Bottom;
 
     #endregion
 }

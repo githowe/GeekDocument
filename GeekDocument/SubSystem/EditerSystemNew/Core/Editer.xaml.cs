@@ -6,7 +6,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Page = GeekDocument.SubSystem.LayoutEngine.Page;
+
+using Page = GeekDocument.SubSystem.EditerSystemNew.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystemNew.Core
 {
@@ -138,9 +139,11 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             Panel_LayoutTree.LoadLayoutTree(_page);
             // 监听事件
             Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
+
+            _page.InitCaret();
         }
 
-        private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElement(element);
+        private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElementView(element);
 
         private void AddTestData(Document document)
         {
@@ -174,7 +177,6 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             {
                 行数 = 5,
                 列数 = 5,
-                水平对齐 = 水平对齐方式.Center
             };
             表格元素.Init();
             表格元素.设置行高(3, 24);

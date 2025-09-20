@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Tool;
+using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
@@ -14,29 +15,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
     public class 段落 : 布局元素
     {
+        #region 构造方法
+
         public 段落() => 类型 = 元素类型.段落;
-
-        #region IDocumentElement 成员
-
-        public override string Icon { get; set; } = "Paragraph";
-
-        public override string Name { get; set; } = "段落";
-
-        public override List<IDocumentElement> GetSubElementList()
-        {
-            List<IDocumentElement> result = new List<IDocumentElement>();
-            int index = 0;
-            foreach (var 行 in 行列表)
-            {
-                foreach (var 元素行 in 行.元素行列表)
-                {
-                    元素行.Name = $"行_{index + 1:00}";
-                    result.Add(元素行);
-                    index++;
-                }
-            }
-            return result;
-        }
 
         #endregion
 
@@ -116,6 +97,103 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             foreach (var 行 in 总元素行列表)
                 foreach (var 元素 in 行.元素列表)
                     元素.绘图(dc);
+        }
+
+        #endregion
+
+        #region IDocumentElement 成员
+
+        public override string Icon { get; set; } = "Paragraph";
+
+        public override string Name { get; set; } = "段落";
+
+        public override bool CanInput => true;
+
+        public override List<IDocumentElement> GetSubElementList()
+        {
+            List<IDocumentElement> result = new List<IDocumentElement>();
+            int index = 0;
+            foreach (var 行 in 行列表)
+            {
+                foreach (var 元素行 in 行.元素行列表)
+                {
+                    元素行.Name = $"行_{index + 1:00}";
+                    result.Add(元素行);
+                    index++;
+                }
+            }
+            return result;
+        }
+
+        public override IDocumentElement GetNearestElement(Point point)
+        {
+            IDocumentElement? 间接命中 = null;
+            List<元素行> 元素行列表 = GetElementLineList();
+            // 先通过纵纵坐标获取命中行
+            for (int index = 元素行列表.Count - 1; index >= 0; index--)
+            {
+                元素行 元素行 = 元素行列表[index];
+                Rect viewRect = 元素行.GetViewRect();
+                double y = point.Y;
+                if (y >= viewRect.Top && y < viewRect.Bottom)
+                {
+                    间接命中 = 元素行;
+                    break;
+                }
+            }
+            // 无命中，说明行之间有间隔，此时通过距离找到最近行
+            if (间接命中 == null)
+            {
+                间接命中 = 元素行列表[0];
+                double 最小距离 = double.MaxValue;
+                foreach (var 元素行 in 元素行列表)
+                {
+                    Rect viewRect = 元素行.GetViewRect();
+                    double distance = Math.Min(Math.Abs(point.Y - viewRect.Top), Math.Abs(point.Y - viewRect.Bottom));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        间接命中 = 元素行;
+                    }
+                }
+            }
+            // 此时，间接命中行一定不为空，继续查找行内最近元素
+            return 间接命中.GetNearestElement(point);
+        }
+
+        public override CaretInfo MoveCaret(Point point)
+        {
+            IDocumentElement? 间接命中 = null;
+            List<元素行> 元素行列表 = GetElementLineList();
+            // 先通过纵纵坐标获取命中行
+            for (int index = 元素行列表.Count - 1; index >= 0; index--)
+            {
+                元素行 元素行 = 元素行列表[index];
+                Rect viewRect = 元素行.GetViewRect();
+                double y = point.Y;
+                if (y >= viewRect.Top && y < viewRect.Bottom)
+                {
+                    间接命中 = 元素行;
+                    break;
+                }
+            }
+            // 无命中，说明行之间有间隔，此时通过距离找到最近行
+            if (间接命中 == null)
+            {
+                间接命中 = 元素行列表[0];
+                double 最小距离 = double.MaxValue;
+                foreach (var 元素行 in 元素行列表)
+                {
+                    Rect viewRect = 元素行.GetViewRect();
+                    double distance = Math.Min(Math.Abs(point.Y - viewRect.Top), Math.Abs(point.Y - viewRect.Bottom));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        间接命中 = 元素行;
+                    }
+                }
+            }
+            return 间接命中.MoveCaret(point);
         }
 
         #endregion
@@ -280,6 +358,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 if (行.元素行列表.Count == 0)
                 {
                     元素行 空行 = new 元素行();
+                    空行.Owner = this;
                     空行.更新行高(FontSize);
                     行.元素行列表.Add(空行);
                     总元素行列表.Add(空行);
@@ -334,6 +413,15 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             ActualHeight = 0;
             foreach (var item in 总元素行列表) ActualHeight += item.行高;
             ActualHeight += LineSpace * (总元素行列表.Count - 1);
+        }
+
+        private List<元素行> GetElementLineList()
+        {
+            List<元素行> result = new List<元素行>();
+            foreach (var 行 in 行列表)
+                foreach (var 元素行 in 行.元素行列表)
+                    result.Add(元素行);
+            return result;
         }
 
         #endregion

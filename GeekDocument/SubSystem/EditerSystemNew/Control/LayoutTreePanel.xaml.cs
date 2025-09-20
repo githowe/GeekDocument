@@ -3,8 +3,6 @@ using GeekDocument.SubSystem.ResourceSystem;
 using System.Windows.Controls;
 using XLogic.WpfControl;
 
-using Page = GeekDocument.SubSystem.LayoutEngine.Page;
-
 namespace GeekDocument.SubSystem.EditerSystemNew.Control
 {
     public partial class LayoutTreePanel : UserControl
