@@ -96,35 +96,8 @@ public class 元素行 : IDocumentElement
         // 横坐标位于最后一个元素右侧
         if (point.X >= last.Left + last.ActualWidth) return 移动光标至元素右侧(last);
 
-        布局元素? 命中元素 = null;
-        // 先通过横坐标获取命中元素
-        for (int index = 元素列表.Count - 1; index >= 0; index--)
-        {
-            布局元素 元素 = 元素列表[index];
-            Rect viewRect = 元素.GetViewRect();
-            double x = point.X;
-            if (viewRect.Left <= x && x < viewRect.Right)
-            {
-                命中元素 = 元素;
-                break;
-            }
-        }
-        // 无命中，可能点到了元素间的空白区域
-        if (命中元素 == null)
-        {
-            命中元素 = 元素列表[0];
-            double 最小距离 = double.MaxValue;
-            foreach (var item in 元素列表)
-            {
-                Rect viewRect = item.GetViewRect();
-                double distance = Math.Min(Math.Abs(point.X - viewRect.Left), Math.Abs(point.X - viewRect.Right));
-                if (distance < 最小距离)
-                {
-                    最小距离 = distance;
-                    命中元素 = item;
-                }
-            }
-        }
+        // 获取命中元素
+        布局元素 命中元素 = 获取命中元素(point);
         // 命中元素可以输入，则进一步获取元素内部的光标位置
         if (命中元素.CanInput) return 命中元素.MoveCaret(point);
 
@@ -138,6 +111,25 @@ public class 元素行 : IDocumentElement
     public void HandleMouseDown(Point point)
     {
 
+    }
+
+    public 元素行 GetHitedLine(Point point)
+    {
+        // 没有元素时，直接返回自己
+        if (元素列表.Count == 0) return this;
+
+        // 获取第一个元素与最后一个元素
+        布局元素 first = 元素列表[0];
+        布局元素 last = 元素列表.Last();
+        // 横坐标位于第一个元素左侧或最后一个元素右侧，返回自己
+        if (point.X < first.Left || point.X >= last.Left + last.ActualWidth) return this;
+
+        // 获取命中元素
+        布局元素 命中元素 = 获取命中元素(point);
+        // 命中元素可以输入，返回命中元素内的元素行
+        if (命中元素.CanInput) return 命中元素.GetHitedLine(point);
+
+        return this;
     }
 
     #endregion
@@ -702,6 +694,42 @@ public class 元素行 : IDocumentElement
             垂直对齐方式.Bottom => lineRect.Bottom - _fontSize,
             _ => 0,
         };
+    }
+
+    private 布局元素 获取命中元素(Point point)
+    {
+        布局元素? 命中元素 = null;
+
+        // 先通过横坐标获取命中元素
+        for (int index = 元素列表.Count - 1; index >= 0; index--)
+        {
+            布局元素 元素 = 元素列表[index];
+            Rect viewRect = 元素.GetViewRect();
+            double x = point.X;
+            if (viewRect.Left <= x && x < viewRect.Right)
+            {
+                命中元素 = 元素;
+                break;
+            }
+        }
+        // 无命中，可能点到了元素间的空白区域
+        if (命中元素 == null)
+        {
+            命中元素 = 元素列表[0];
+            double 最小距离 = double.MaxValue;
+            foreach (var item in 元素列表)
+            {
+                Rect viewRect = item.GetViewRect();
+                double distance = Math.Min(Math.Abs(point.X - viewRect.Left), Math.Abs(point.X - viewRect.Right));
+                if (distance < 最小距离)
+                {
+                    最小距离 = distance;
+                    命中元素 = item;
+                }
+            }
+        }
+
+        return 命中元素;
     }
 
     #endregion

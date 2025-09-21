@@ -1,11 +1,16 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Ex;
+using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 单元格 : IDocumentElement, IComparable<单元格>
     {
+        #region 构造方法
+
         public 单元格(段落 内容) => this.内容 = 内容;
+
+        #endregion
 
         #region IDocumentElement 成员
 
@@ -61,7 +66,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 内容.MoveCaret(point);
         }
 
+        public 元素行 GetHitedLine(Point point)
+        {
+            return 内容.GetHitedLine(point);
+        }
+
         #endregion
+
+        #region IComparable 成员
 
         public int CompareTo(单元格? other)
         {
@@ -69,6 +81,10 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (行 != other.行) return 行.CompareTo(other.行);
             return 列.CompareTo(other.列);
         }
+
+        #endregion
+
+        #region 属性
 
         public 表格? Owner { get; set; } = null;
 
@@ -88,6 +104,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public 段落 内容 { get; set; }
 
+        #endregion
+
         #region 运行时属性
 
         public double HorizontalPadding => Padding.Left + Padding.Right;
@@ -96,6 +114,10 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #endregion
 
+        #region object 方法
+
         public override string ToString() => $"单元格({行},{列}) 宽度={宽度} 高度={高度} 内容={内容}";
+
+        #endregion
     }
 }

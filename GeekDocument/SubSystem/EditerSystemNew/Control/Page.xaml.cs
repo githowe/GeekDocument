@@ -2,6 +2,7 @@
 using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
+using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -198,8 +199,11 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
 
         public void HandleMouseDown()
         {
+            Point point = GetMousePoint();
+            // 更新命中行
+            UpdateHitedLine(point);
             // 移动光标至鼠标位置
-            MoveCaretByPoint(GetMousePoint());
+            MoveCaretByPoint(point);
         }
 
         #endregion
@@ -239,6 +243,12 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             Canvas.SetLeft(_hitBoxLayer, PagePadding.Left);
             Canvas.SetTop(_hitBoxLayer, PagePadding.Top);
 
+            _inputBoxLayer = new InputBoxLayer();
+            _inputBoxLayer.Init();
+            MarkBox.Children.Add(_inputBoxLayer);
+            Canvas.SetLeft(_inputBoxLayer, PagePadding.Left);
+            Canvas.SetTop(_inputBoxLayer, PagePadding.Top);
+
             _caretLayer = new CaretLayer();
             _caretLayer.Init();
             MarkBox.Children.Add(_caretLayer);
@@ -255,12 +265,36 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         }
 
         /// <summary>
+        /// 更新命中行
+        /// </summary>
+        private void UpdateHitedLine(Point point)
+        {
+            段落 命中段落 = GetHitedParagraph(point);
+            _inputBoxLayer.Line = 命中段落.GetHitedLine(point);
+            _inputBoxLayer.Update();
+        }
+
+        /// <summary>
         /// 根据坐标移动光标
         /// </summary>
         private void MoveCaretByPoint(Point point)
         {
+            _hitedElement = GetHitedParagraph(point);
+            CaretInfo info = _hitedElement.MoveCaret(point);
+            _caretLayer.CaretX = info.X;
+            _caretLayer.CaretY = info.Y;
+            _caretLayer.CaretHeight = info.Height;
+            _caretLayer.Update();
+        }
+
+        /// <summary>
+        /// 获取命中段落
+        /// </summary>
+        private 段落 GetHitedParagraph(Point point)
+        {
+            段落? 命中段落 = null;
+
             // 首先通过垂直坐标找到命中元素，当块重叠时，优先命中最上层的块
-            _hitedElement = null;
             for (int index = BlockList.Count - 1; index >= 0; index--)
             {
                 段落块 block = BlockList[index];
@@ -268,15 +302,15 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
                 Rect viewRect = block.段落.GetViewRect();
                 if (point.Y >= viewRect.Top && point.Y < viewRect.Bottom)
                 {
-                    _hitedElement = block.段落;
+                    命中段落 = block.段落;
                     break;
                 }
             }
             // 块之间有间距时，会无法命中块，此时通过最近距离找到命中元素
-            if (_hitedElement == null)
+            if (命中段落 == null)
             {
                 double 当前距离 = double.MaxValue;
-                _hitedElement = BlockList[0].段落;
+                命中段落 = BlockList[0].段落;
                 foreach (var block in BlockList)
                 {
                     段落 段落 = block.段落;
@@ -285,16 +319,12 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
                     if (距离 < 当前距离)
                     {
                         当前距离 = 距离;
-                        _hitedElement = 段落;
+                        命中段落 = 段落;
                     }
                 }
             }
 
-            CaretInfo info = _hitedElement.MoveCaret(point);
-            _caretLayer.CaretX = info.X;
-            _caretLayer.CaretY = info.Y;
-            _caretLayer.CaretHeight = info.Height;
-            _caretLayer.Update();
+            return 命中段落;
         }
 
         private void BlinkTimer_Tick(object? sender, EventArgs e)
@@ -312,6 +342,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
 
         private HoverBoxLayer _hoverBoxLayer;
         private HitBoxLayer _hitBoxLayer;
+        private InputBoxLayer _inputBoxLayer;
         private CaretLayer _caretLayer;
 
         private EditTool _tool;
@@ -320,6 +351,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         private IDocumentElement? _hoveredElement = null;
         /// <summary>当前命中元素</summary>
         private IDocumentElement? _hitedElement = null;
+
+        private 元素行? _currentLine = null;
 
         /// <summary>光标可见性，用于闪烁光标</summary>
         private bool _ibeamVisible = true;

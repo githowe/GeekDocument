@@ -127,43 +127,23 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override IDocumentElement GetNearestElement(Point point)
         {
-            IDocumentElement? 间接命中 = null;
-            List<元素行> 元素行列表 = GetElementLineList();
-            // 先通过纵纵坐标获取命中行
-            for (int index = 元素行列表.Count - 1; index >= 0; index--)
-            {
-                元素行 元素行 = 元素行列表[index];
-                Rect viewRect = 元素行.GetViewRect();
-                double y = point.Y;
-                if (y >= viewRect.Top && y < viewRect.Bottom)
-                {
-                    间接命中 = 元素行;
-                    break;
-                }
-            }
-            // 无命中，说明行之间有间隔，此时通过距离找到最近行
-            if (间接命中 == null)
-            {
-                间接命中 = 元素行列表[0];
-                double 最小距离 = double.MaxValue;
-                foreach (var 元素行 in 元素行列表)
-                {
-                    Rect viewRect = 元素行.GetViewRect();
-                    double distance = Math.Min(Math.Abs(point.Y - viewRect.Top), Math.Abs(point.Y - viewRect.Bottom));
-                    if (distance < 最小距离)
-                    {
-                        最小距离 = distance;
-                        间接命中 = 元素行;
-                    }
-                }
-            }
-            // 此时，间接命中行一定不为空，继续查找行内最近元素
-            return 间接命中.GetNearestElement(point);
+            // 先获取命中的元素行
+            元素行 命中 = GetHitedLine(point);
+            // 再命中行内最近元素
+            return 命中.GetNearestElement(point);
         }
 
         public override CaretInfo MoveCaret(Point point)
         {
-            IDocumentElement? 间接命中 = null;
+            // 先获取命中的元素行
+            元素行 命中 = GetHitedLine(point);
+            // 再移动光标至命中行
+            return 命中.MoveCaret(point);
+        }
+
+        public override 元素行 GetHitedLine(Point point)
+        {
+            元素行? 命中行 = null;
             List<元素行> 元素行列表 = GetElementLineList();
             // 先通过纵纵坐标获取命中行
             for (int index = 元素行列表.Count - 1; index >= 0; index--)
@@ -173,14 +153,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 double y = point.Y;
                 if (y >= viewRect.Top && y < viewRect.Bottom)
                 {
-                    间接命中 = 元素行;
+                    命中行 = 元素行;
                     break;
                 }
             }
             // 无命中，说明行之间有间隔，此时通过距离找到最近行
-            if (间接命中 == null)
+            if (命中行 == null)
             {
-                间接命中 = 元素行列表[0];
+                命中行 = 元素行列表[0];
                 double 最小距离 = double.MaxValue;
                 foreach (var 元素行 in 元素行列表)
                 {
@@ -189,11 +169,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     if (distance < 最小距离)
                     {
                         最小距离 = distance;
-                        间接命中 = 元素行;
+                        命中行 = 元素行;
                     }
                 }
             }
-            return 间接命中.MoveCaret(point);
+            return 命中行.GetHitedLine(point);
         }
 
         #endregion

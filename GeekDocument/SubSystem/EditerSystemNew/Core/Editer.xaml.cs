@@ -3,10 +3,12 @@ using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.IO;
+using System.Runtime.InteropServices.JavaScript;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
-
+using System.Windows.Media;
 using Page = GeekDocument.SubSystem.EditerSystemNew.Control.Page;
 
 namespace GeekDocument.SubSystem.EditerSystemNew.Core
@@ -47,10 +49,21 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         public void Init()
         {
+            _split.Freeze();
+
             Panel_LayoutTree.Init();
 
             Tool_OpenLeft.Click += Tool_OpenLeft_Click;
             Tool_CloseLeft.Click += Tool_CloseLeft_Click;
+
+            Block_ElementPath.Inlines.Clear();
+            List<string> path = new List<string> { "段落", "段落", "段落", "段落", "段落", "段落", "段落", "段落", "段落", "段落" };
+            for (int index = 0; index < path.Count; index++)
+            {
+                Block_ElementPath.Inlines.Add(new Run(path[index]));
+                if (index < path.Count - 1)
+                    Block_ElementPath.Inlines.Add(new Run(" > ") { Foreground = _split });
+            }
         }
 
         /// <summary>
@@ -277,6 +290,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
         private Page? _page = null;
 
         private bool _saved = true;
+
+        private readonly Brush _split = new SolidColorBrush(Color.FromArgb(255, 249, 202, 124));
 
         #endregion
     }

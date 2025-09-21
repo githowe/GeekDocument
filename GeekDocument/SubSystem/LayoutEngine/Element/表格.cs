@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Ex;
+using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 using System.Windows.Media;
 
@@ -31,72 +32,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override CaretInfo MoveCaret(Point point)
         {
-            段落 root = this.GetRootParagraph();
-            double top = root.段落偏移 + Top;
+            单元格 命中单元格 = 获取命中单元格(point);
+            return 命中单元格.内容.MoveCaret(point);
+        }
 
-            int rowIndex = -1;
-            // 先获取命中行
-            for (int index = 0; index < 行列表.Count; index++)
-            {
-                (double y1, double y2) = 计算行区域(index);
-                y1 += top;
-                y2 += top;
-                double y = point.Y;
-                if (y1 <= y && y < y2)
-                {
-                    rowIndex = index;
-                    break;
-                }
-            }
-            // 无命中行，可能点在了边线上
-            if (rowIndex == -1)
-            {
-                rowIndex = 0;
-                double 最小距离 = double.MaxValue;
-                for (int index = 0; index < 行列表.Count; index++)
-                {
-                    (double y1, double y2) = 计算行区域(index);
-                    y1 += top;
-                    y2 += top;
-                    double distance = Math.Min(Math.Abs(point.Y - y1), Math.Abs(point.Y - y2));
-                    if (distance < 最小距离)
-                    {
-                        最小距离 = distance;
-                        rowIndex = index;
-                    }
-                }
-            }
-
-            // 再获取命中列
-            int colIndex = -1;
-            for (int index = 0; index < 列列表.Count; index++)
-            {
-                (double x1, double x2) = 计算列区域(index);
-                double x = point.X;
-                if (x1 <= x && x < x2)
-                {
-                    colIndex = index;
-                    break;
-                }
-            }
-            // 无命中列，可能点在了边线上
-            if (colIndex == -1)
-            {
-                colIndex = 0;
-                double 最小距离 = double.MaxValue;
-                for (int index = 0; index < 列列表.Count; index++)
-                {
-                    (double x1, double x2) = 计算列区域(index);
-                    double distance = Math.Min(Math.Abs(point.X - x1), Math.Abs(point.X - x2));
-                    if (distance < 最小距离)
-                    {
-                        最小距离 = distance;
-                        colIndex = index;
-                    }
-                }
-            }
-
-            return 行列表[rowIndex].单元格列表[colIndex].内容.MoveCaret(point);
+        public override 元素行 GetHitedLine(Point point)
+        {
+            单元格 命中单元格 = 获取命中单元格(point);
+            return 命中单元格.内容.GetHitedLine(point);
         }
 
         #endregion
@@ -341,6 +284,76 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 dc.DrawLine(_borderPen, new Point(x, y - tableOffset), new Point(x, y + ActualHeight - tableOffset));
                 if (col < 列数) x += 全部列宽[col] + 边框粗细;
             }
+        }
+
+        private 单元格 获取命中单元格(Point point)
+        {
+            段落 root = this.GetRootParagraph();
+            double top = root.段落偏移 + Top;
+
+            int rowIndex = -1;
+            // 先获取命中行
+            for (int index = 0; index < 行列表.Count; index++)
+            {
+                (double y1, double y2) = 计算行区域(index);
+                y1 += top;
+                y2 += top;
+                double y = point.Y;
+                if (y1 <= y && y < y2)
+                {
+                    rowIndex = index;
+                    break;
+                }
+            }
+            // 无命中行，可能点在了边线上
+            if (rowIndex == -1)
+            {
+                rowIndex = 0;
+                double 最小距离 = double.MaxValue;
+                for (int index = 0; index < 行列表.Count; index++)
+                {
+                    (double y1, double y2) = 计算行区域(index);
+                    y1 += top;
+                    y2 += top;
+                    double distance = Math.Min(Math.Abs(point.Y - y1), Math.Abs(point.Y - y2));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        rowIndex = index;
+                    }
+                }
+            }
+
+            // 再获取命中列
+            int colIndex = -1;
+            for (int index = 0; index < 列列表.Count; index++)
+            {
+                (double x1, double x2) = 计算列区域(index);
+                double x = point.X;
+                if (x1 <= x && x < x2)
+                {
+                    colIndex = index;
+                    break;
+                }
+            }
+            // 无命中列，可能点在了边线上
+            if (colIndex == -1)
+            {
+                colIndex = 0;
+                double 最小距离 = double.MaxValue;
+                for (int index = 0; index < 列列表.Count; index++)
+                {
+                    (double x1, double x2) = 计算列区域(index);
+                    double distance = Math.Min(Math.Abs(point.X - x1), Math.Abs(point.X - x2));
+                    if (distance < 最小距离)
+                    {
+                        最小距离 = distance;
+                        colIndex = index;
+                    }
+                }
+            }
+
+            return 行列表[rowIndex].单元格列表[colIndex];
         }
 
         #endregion

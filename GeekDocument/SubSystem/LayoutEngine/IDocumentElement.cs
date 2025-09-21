@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.LayoutEngine.Tool;
+using System.Windows;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
@@ -48,4 +49,9 @@ public interface IDocumentElement
     /// 尝试移动光标至指定坐标处，返回光标信息
     /// </summary>
     CaretInfo MoveCaret(Point point);
+
+    /// <summary>
+    /// 获取命中的元素行
+    /// </summary>
+    元素行 GetHitedLine(Point point);
 }

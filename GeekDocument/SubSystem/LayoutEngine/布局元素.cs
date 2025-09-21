@@ -1,11 +1,12 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.LayoutEngine.Ex;
+using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
-public class 布局元素 : IDocumentElement
+public abstract class 布局元素 : IDocumentElement
 {
     #region IDocumentElement 成员
 
@@ -53,6 +54,11 @@ public class 布局元素 : IDocumentElement
     public virtual CaretInfo MoveCaret(Point point)
     {
         return new CaretInfo();
+    }
+
+    public virtual 元素行 GetHitedLine(Point point)
+    {
+        throw new Exception("布局元素不支持获取命中行");
     }
 
     #endregion
