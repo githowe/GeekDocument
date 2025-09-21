@@ -42,6 +42,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 命中单元格.内容.GetHitedLine(point);
         }
 
+        public override void MoveInCaretToEnd()
+        {
+            // 移入光标至最后一个单元格的末尾
+            单元格列表.Last().MoveInCaretToEnd();
+        }
+
         #endregion
 
         #region 属性
@@ -49,6 +55,10 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public int 行数 { get; set; } = 4;
 
         public int 列数 { get; set; } = 4;
+
+        public double 单元格高度 { get; set; } = 44;
+
+        public double 单元格宽度 { get; set; } = 136;
 
         public List<double> 全部行高 { get; set; } = new List<double>();
 
@@ -86,9 +96,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
             // 生成行高与列宽
             for (int counter = 0; counter < 行数; counter++)
-                全部行高.Add(_cellHeight);
+                全部行高.Add(单元格高度);
             for (int counter = 0; counter < 列数; counter++)
-                全部列宽.Add(_cellWidth);
+                全部列宽.Add(单元格宽度);
             // 生成单元格
             for (int line = 0; line < 行数; line++)
             {
@@ -262,6 +272,21 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return (x, x + 全部列宽[列]);
         }
 
+        public void 移动光标至上一个单元格(单元格 cell)
+        {
+            // 获取当前单元格索引
+            int cellIndex = 单元格列表.IndexOf(cell);
+            // 有上一个单元格
+            if (cellIndex > 0)
+            {
+                单元格 prevCell = 单元格列表[cellIndex - 1];
+                prevCell.MoveInCaretToEnd();
+                return;
+            }
+            // 无上一个单元格，从头部移出光标
+            ParentElement?.MoveOutCaretFromHead(this);
+        }
+
         #endregion
 
         #region 私有方法
@@ -289,15 +314,13 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private 单元格 获取命中单元格(Point point)
         {
             段落 root = this.GetRootParagraph();
-            double top = root.段落偏移 + Top;
-
             int rowIndex = -1;
             // 先获取命中行
             for (int index = 0; index < 行列表.Count; index++)
             {
                 (double y1, double y2) = 计算行区域(index);
-                y1 += top;
-                y2 += top;
+                y1 += root.段落偏移;
+                y2 += root.段落偏移;
                 double y = point.Y;
                 if (y1 <= y && y < y2)
                 {
@@ -313,8 +336,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 for (int index = 0; index < 行列表.Count; index++)
                 {
                     (double y1, double y2) = 计算行区域(index);
-                    y1 += top;
-                    y2 += top;
+                    y1 += root.段落偏移;
+                    y2 += root.段落偏移;
                     double distance = Math.Min(Math.Abs(point.Y - y1), Math.Abs(point.Y - y2));
                     if (distance < 最小距离)
                     {
@@ -360,10 +383,6 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 默认单元格参数
 
-        /// <summary>单元格高度</summary>
-        private double _cellHeight = 44;
-        /// <summary>单元格高度</summary>
-        private double _cellWidth = 136;
         /// <summary>单元格内边距：左、上、右、下</summary>
         private Thickness _cellPadding = new Thickness(4);
         /// <summary>单元格内容水平对齐</summary>

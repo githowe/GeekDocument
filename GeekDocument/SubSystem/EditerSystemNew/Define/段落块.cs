@@ -1,4 +1,5 @@
-﻿using GeekDocument.SubSystem.LayoutEngine;
+﻿using GeekDocument.SubSystem.EditerSystemNew.Control;
+using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.Windows.Media;
 
@@ -6,7 +7,13 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Define;
 
 public class 段落块
 {
-    public 段落块(段落 段落) => this.段落 = 段落;
+    public 段落块(段落 段落)
+    {
+        段落.OwnerBlock = this;
+        this.段落 = 段落;
+    }
+
+    public Page OwnerPage { get; set; } = null!;
 
     public 段落 段落 { get; set; }
 
@@ -60,6 +67,16 @@ public class 段落块
         DrawingContext dc = _layer.Open();
         段落.绘图(dc);
         dc.Close();
+    }
+
+    public void MoveLeftCaret()
+    {
+        OwnerPage.MoveCaretToPrevBlock(this);
+    }
+
+    public void MoveCaretToEnd()
+    {
+        段落.MoveInCaretToEnd();
     }
 
     private readonly ElementLayer _layer = new ElementLayer();

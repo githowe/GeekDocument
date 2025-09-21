@@ -1,4 +1,6 @@
-﻿using GeekDocument.SubSystem.LayoutEngine.Tool;
+﻿using GeekDocument.SubSystem.EditerSystemNew.Control;
+using GeekDocument.SubSystem.EditerSystemNew.Define;
+using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 using System.Windows.Media;
 
@@ -19,9 +21,20 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public 段落() => 类型 = 元素类型.段落;
 
+        public 段落(string text, double firstLineIndent = 32, 水平对齐方式 水平对齐 = 水平对齐方式.Justify) : this()
+        {
+            Text = text;
+            首行缩进 = firstLineIndent;
+            this.水平对齐 = 水平对齐;
+        }
+
         #endregion
 
         #region 属性
+
+        public Page OwnerPage { get; set; } = null!;
+
+        public 段落块 OwnerBlock { get; set; } = null!;
 
         /// <summary>此偏移相对于第一个段落的纵坐标</summary>
         public double 段落偏移 { get; set; } = 0;
@@ -176,6 +189,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 命中行.GetHitedLine(point);
         }
 
+        public override void MoveInCaretToEnd()
+        {
+            总元素行列表.Last().MoveInCaretToEnd();
+        }
+
         #endregion
 
         #region 公开方法
@@ -236,6 +254,52 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 double 总宽 = 行.行宽;
                 if (行.首行) 总宽 += 首行缩进;
                 if (总宽 > ActualWidth) ActualWidth = 总宽;
+            }
+        }
+
+        /// <summary>
+        /// 左移光标
+        /// </summary>
+        /// <param name="元素行">从指定行左移</param>
+        public void MoveLeftCaret(元素行 元素行)
+        {
+            // 找到元素行所在行
+            行? 行 = null;
+            foreach (var item in 行列表)
+            {
+                if (item.元素行列表.Contains(元素行))
+                {
+                    行 = item;
+                    break;
+                }
+            }
+            if (行 == null) throw new Exception("没有找到元素行所的字文本行");
+            // 获取文本行索引与元素行索引
+            int 文本行索引 = 行列表.IndexOf(行);
+            int 元素行索引 = 行.元素行列表.IndexOf(元素行);
+            // 有上一行
+            if (元素行索引 > 0 || 文本行索引 > 0)
+            {
+                // 表示与上一行是同一文本行
+                if (元素行索引 > 0)
+                {
+                    元素行 上一行 = 行.元素行列表[元素行索引 - 1];
+                    上一行.MoveCaretToEnd(ElementSide.Left);
+                }
+                // 与上一行是不同文本行
+                else
+                {
+                    元素行 上一行 = 行列表[文本行索引 - 1].元素行列表.Last();
+                    上一行.MoveCaretToEnd(ElementSide.Right);
+                }
+            }
+            // 无上一行
+            else
+            {
+                // 如果当前段落没有父级，表示该段落为根元素，应该调用所属块的左移光标
+                if (Parent == null) OwnerBlock.MoveLeftCaret();
+                // 否则，调用父元素的移出光标
+                else ParentElement?.MoveOutCaretFromHead(this);
             }
         }
 

@@ -20,4 +20,10 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Define
         代码,
         公式
     }
+
+    public enum ElementSide
+    {
+        Left,
+        Right,
+    }
 }

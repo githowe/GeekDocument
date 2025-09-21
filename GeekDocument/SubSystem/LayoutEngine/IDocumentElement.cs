@@ -8,6 +8,8 @@ namespace GeekDocument.SubSystem.LayoutEngine;
 /// </summary>
 public interface IDocumentElement
 {
+    IDocumentElement? ParentElement { get; set; }
+
     string Icon { get; set; }
 
     string Name { get; set; }
@@ -54,4 +56,19 @@ public interface IDocumentElement
     /// 获取命中的元素行
     /// </summary>
     元素行 GetHitedLine(Point point);
+
+    /// <summary>
+    /// 左移光标
+    /// </summary>
+    void MoveLeftCaret();
+
+    /// <summary>
+    /// 移入光标至末尾
+    /// </summary>
+    void MoveInCaretToEnd();
+
+    /// <summary>
+    /// 从头部移出光标。子元素调用此方法以将光标移动至父元素
+    /// </summary>
+    void MoveOutCaretFromHead(IDocumentElement sender);
 }

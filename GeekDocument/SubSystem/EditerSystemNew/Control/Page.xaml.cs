@@ -1,4 +1,5 @@
-﻿using GeekDocument.SubSystem.EditerSystemNew.Core.Layer;
+﻿using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystemNew.Core.Layer;
 using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
@@ -55,6 +56,12 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             Mark_02.Margin = new Thickness(0, topMargin, rightMargin, 0);
             Mark_03.Margin = new Thickness(leftMargin, 0, 0, bottomMargin);
             Mark_04.Margin = new Thickness(0, 0, rightMargin, bottomMargin);
+            // 设置段落与块的所属页面
+            foreach (var block in BlockList)
+            {
+                block.OwnerPage = this;
+                block.段落.OwnerPage = this;
+            }
             // 添加段落中的图层至画布
             foreach (var 块 in BlockList)
             {
@@ -68,6 +75,24 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             // 初始化光标定时器
             _blinkTimer.Interval = TimeSpan.FromMilliseconds(500);
             _blinkTimer.Tick += BlinkTimer_Tick;
+
+            _editKeyDict.Add(Key.Up, EditKey.Up);
+            _editKeyDict.Add(Key.Down, EditKey.Down);
+            _editKeyDict.Add(Key.Left, EditKey.Left);
+            _editKeyDict.Add(Key.Right, EditKey.Right);
+            _editKeyDict.Add(Key.Home, EditKey.Home);
+            _editKeyDict.Add(Key.End, EditKey.End);
+            _editKeyDict.Add(Key.Back, EditKey.Backspace);
+            _editKeyDict.Add(Key.Delete, EditKey.Delete);
+            _editKeyDict.Add(Key.Enter, EditKey.Enter);
+            _ctrlEditKeyList.Add(Key.A);
+            _ctrlEditKeyList.Add(Key.X);
+            _ctrlEditKeyList.Add(Key.C);
+            _ctrlEditKeyList.Add(Key.V);
+            _ctrlEditKeyList.Add(Key.Z);
+            _ctrlEditKeyList.Add(Key.Y);
+            _ctrlEditKeyList.Add(Key.S);
+            _ctrlEditKeyList.Add(Key.Enter);
         }
 
         public void 更新页面()
@@ -172,6 +197,79 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             _caretLayer.Update();
         }
 
+        /// <summary>
+        /// 处理按键按下
+        /// </summary>
+        public void HandleKeyDown(KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.None)
+            {
+                if (_editKeyDict.TryGetValue(e.Key, out EditKey editKey))
+                {
+                    StopBlinkIBeam();
+                    _currentLine?.HandleEditKey(editKey);
+                    StartBlinkIBeam();
+                    e.Handled = true;
+                }
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (_ctrlEditKeyList.Contains(e.Key))
+                {
+                    StopBlinkIBeam();
+                    _currentLine?.HandleCtrlEditKey(e.Key);
+                    StartBlinkIBeam();
+                    e.Handled = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 处理按键松开
+        /// </summary>
+        public void HandleKeyUp(KeyEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 处理文本输入
+        /// </summary>
+        public void HandleTextInput(string text)
+        {
+
+        }
+
+        /// <summary>
+        /// 更新当前行
+        /// </summary>
+        public void UpdateCurrentLine(元素行 line)
+        {
+            _currentLine = line;
+            _inputBoxLayer.Line = _currentLine;
+            _inputBoxLayer.Update();
+        }
+
+        /// <summary>
+        /// 移动光标
+        /// </summary>
+        public void MoveCaret(double x, double y, double height)
+        {
+            _caretLayer.CaretX = x;
+            _caretLayer.CaretY = y;
+            _caretLayer.CaretHeight = height;
+            _caretLayer.Update();
+        }
+
+        /// <summary>
+        /// 移动光标至上一个块的末尾
+        /// </summary>
+        public void MoveCaretToPrevBlock(段落块 block)
+        {
+            int blockIndex = BlockList.IndexOf(block);
+            if (blockIndex > 0) BlockList[blockIndex - 1].MoveCaretToEnd();
+        }
+
         #endregion
 
         #region 工具方法
@@ -270,7 +368,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         private void UpdateHitedLine(Point point)
         {
             段落 命中段落 = GetHitedParagraph(point);
-            _inputBoxLayer.Line = 命中段落.GetHitedLine(point);
+            _currentLine = 命中段落.GetHitedLine(point);
+            _inputBoxLayer.Line = _currentLine;
             _inputBoxLayer.Update();
         }
 
@@ -357,6 +456,9 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         /// <summary>光标可见性，用于闪烁光标</summary>
         private bool _ibeamVisible = true;
         private readonly DispatcherTimer _blinkTimer = new DispatcherTimer();
+
+        private readonly Dictionary<Key, EditKey> _editKeyDict = new Dictionary<Key, EditKey>();
+        private readonly List<Key> _ctrlEditKeyList = new List<Key>();
 
         #endregion
     }

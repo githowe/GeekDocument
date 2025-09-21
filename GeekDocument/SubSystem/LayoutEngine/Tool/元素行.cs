@@ -1,6 +1,10 @@
-﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+﻿using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystemNew.Control;
+using GeekDocument.SubSystem.EditerSystemNew.Define;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.LayoutEngine.Ex;
 using System.Windows;
+using System.Windows.Input;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Tool;
 
@@ -8,11 +12,17 @@ public class 元素行 : IDocumentElement
 {
     #region 构造方法
 
-    public 元素行() { }
+    public 元素行()
+    {
+        _stateTree = new STElementLine(this);
+        _stateTree.Init();
+    }
 
     #endregion
 
     #region IDocumentElement 成员
+
+    public IDocumentElement? ParentElement { get; set; } = null;
 
     public string Icon { get; set; } = "Line";
 
@@ -86,26 +96,47 @@ public class 元素行 : IDocumentElement
 
     public CaretInfo MoveCaret(Point point)
     {
-        if (元素列表.Count == 0) return 获取空行光标信息();
+        if (元素列表.Count == 0)
+        {
+            元素索引 = 0;
+            return 获取空行光标信息();
+        }
 
         // 获取第一个元素与最后一个元素
         布局元素 first = 元素列表[0];
         布局元素 last = 元素列表.Last();
         // 横坐标位于第一个元素左侧
-        if (point.X < first.Left) return 移动光标至元素左侧(first);
+        if (point.X < first.Left)
+        {
+            元素索引 = 0;
+            return 移动光标至元素左侧(first);
+        }
         // 横坐标位于最后一个元素右侧
-        if (point.X >= last.Left + last.ActualWidth) return 移动光标至元素右侧(last);
+        if (point.X >= last.Left + last.ActualWidth)
+        {
+            元素索引 = 元素列表.Count;
+            return 移动光标至元素右侧(last);
+        }
 
         // 获取命中元素
         布局元素 命中元素 = 获取命中元素(point);
         // 命中元素可以输入，则进一步获取元素内部的光标位置
         if (命中元素.CanInput) return 命中元素.MoveCaret(point);
 
+        int elementIndex = 元素列表.IndexOf(命中元素);
         Rect elementRect = 命中元素.GetViewRect();
         // 命中元素左半部分
-        if (point.X < elementRect.Left + elementRect.Width / 2) return 移动光标至元素左侧(命中元素);
+        if (point.X < elementRect.Left + elementRect.Width / 2)
+        {
+            元素索引 = elementIndex;
+            return 移动光标至元素左侧(命中元素);
+        }
         // 命中元素右半部分
-        else return 移动光标至元素右侧(命中元素);
+        else
+        {
+            元素索引 = elementIndex + 1;
+            return 移动光标至元素右侧(命中元素);
+        }
     }
 
     public void HandleMouseDown(Point point)
@@ -132,11 +163,32 @@ public class 元素行 : IDocumentElement
         return this;
     }
 
+    public void MoveLeftCaret()
+    {
+
+    }
+
+    public void MoveInCaretToEnd()
+    {
+        MoveCaretToEnd(ElementSide.Right);
+    }
+
+    public void MoveOutCaretFromHead(IDocumentElement sender)
+    {
+        if (sender is 布局元素 element)
+        {
+            GetOwnerPage().UpdateCurrentLine(this);
+            元素索引 = 元素列表.IndexOf(element);
+            CaretInfo info = 移动光标至元素左侧(element);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+        }
+    }
+
     #endregion
 
     #region 属性
 
-    public 段落? Owner { get; set; } = null;
+    public 段落 Owner { get; set; } = null!;
 
     public double Left { get; set; } = double.NaN;
 
@@ -240,6 +292,83 @@ public class 元素行 : IDocumentElement
         return width;
     }
 
+    public void HandleEditKey(EditKey key)
+    {
+        _stateTree.HandleEditKey(key);
+    }
+
+    public void HandleCtrlEditKey(Key key)
+    {
+
+    }
+
+    /// <summary>
+    /// 移动光标至最后一个元素
+    /// </summary>
+    public void MoveCaretToEnd(ElementSide side)
+    {
+        // 当前行没有元素
+        if (元素列表.Count == 0)
+        {
+            // 更新页面的当前元素行
+            GetOwnerPage().UpdateCurrentLine(this);
+            元素索引 = 0;
+            // 移动光标
+            CaretInfo info = 获取空行光标信息();
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            return;
+        }
+        // 获取最后一个元素
+        布局元素 last = 元素列表.Last();
+        // 移动至最后一个元素右侧
+        if (side == ElementSide.Right)
+        {
+            元素索引 = 元素列表.Count;
+            // 更新页面的当前元素行
+            GetOwnerPage().UpdateCurrentLine(this);
+            CaretInfo info = 移动光标至元素右侧(last);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            return;
+        }
+        // 最后一个元素不支持输入
+        if (!last.CanInput)
+        {
+            元素索引 = 元素列表.Count - 1;
+            // 移动至最后一个元素左侧
+            GetOwnerPage().UpdateCurrentLine(this);
+            CaretInfo info = 移动光标至元素左侧(last);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            return;
+        }
+        // 支持输入，移入光标至元素末尾
+        last.MoveInCaretToEnd();
+    }
+
+    #endregion
+
+    #region 状态树接口
+
+    public bool 光标前有元素() => 元素索引 > 0;
+
+    public bool 前元素支持输入() => 元素列表[元素索引 - 1].CanInput;
+
+    public void 移入光标至前元素末尾()
+    {
+        元素列表[元素索引 - 1].MoveInCaretToEnd();
+    }
+
+    public void 前移光标()
+    {
+        元素索引--;
+        CaretInfo info = 移动光标至元素左侧(元素列表[元素索引]);
+        GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+    }
+
+    public void 调用所属段落的左移光标()
+    {
+        Owner.MoveLeftCaret(this);
+    }
+
     #endregion
 
     #region 私有方法
@@ -330,6 +459,7 @@ public class 元素行 : IDocumentElement
     {
         // 添加元素主要就两步：添加元素、更新当前行宽
 
+        元素.ParentElement = this;
         switch (状态)
         {
             case 行状态.空:
@@ -732,6 +862,12 @@ public class 元素行 : IDocumentElement
         return 命中元素;
     }
 
+    private Page GetOwnerPage()
+    {
+        if (_ownerPage == null) _ownerPage = Owner.GetPage();
+        return _ownerPage;
+    }
+
     #endregion
 
     #region 字段
@@ -748,6 +884,11 @@ public class 元素行 : IDocumentElement
     private double _fontSize = 0;
     private 水平对齐方式 _horizontal = 水平对齐方式.Left;
     private 垂直对齐方式 _vertical = 垂直对齐方式.Bottom;
+
+    private int 元素索引 = 0;
+
+    private STElementLine _stateTree;
+    private Page? _ownerPage = null;
 
     #endregion
 }

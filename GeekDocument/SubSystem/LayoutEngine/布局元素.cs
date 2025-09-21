@@ -10,6 +10,8 @@ public abstract class 布局元素 : IDocumentElement
 {
     #region IDocumentElement 成员
 
+    public IDocumentElement? ParentElement { get; set; } = null;
+
     public virtual string Icon { get; set; } = "Element";
 
     public virtual string Name { get; set; } = "未命名布局元素";
@@ -60,6 +62,12 @@ public abstract class 布局元素 : IDocumentElement
     {
         throw new Exception("布局元素不支持获取命中行");
     }
+
+    public virtual void MoveLeftCaret() { }
+
+    public virtual void MoveInCaretToEnd() { }
+
+    public virtual void MoveOutCaretFromHead(IDocumentElement sender) { }
 
     #endregion
 

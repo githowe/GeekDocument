@@ -8,11 +8,17 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
     {
         #region 构造方法
 
-        public 单元格(段落 内容) => this.内容 = 内容;
+        public 单元格(段落 内容)
+        {
+            内容.ParentElement = this;
+            this.内容 = 内容;
+        }
 
         #endregion
 
         #region IDocumentElement 成员
+
+        public IDocumentElement? ParentElement { get; set; } = null;
 
         public string Icon { get; set; } = "Cell";
 
@@ -71,6 +77,18 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 内容.GetHitedLine(point);
         }
 
+        public void MoveLeftCaret() { }
+
+        public void MoveInCaretToEnd()
+        {
+            内容.MoveInCaretToEnd();
+        }
+
+        public void MoveOutCaretFromHead(IDocumentElement sender)
+        {
+            Owner.移动光标至上一个单元格(this);
+        }
+
         #endregion
 
         #region IComparable 成员
@@ -86,7 +104,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 属性
 
-        public 表格? Owner { get; set; } = null;
+        public 表格 Owner { get; set; } = null!;
 
         public int 行 { get; set; } = 0;
 
@@ -117,6 +135,15 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         #region object 方法
 
         public override string ToString() => $"单元格({行},{列}) 宽度={宽度} 高度={高度} 内容={内容}";
+
+        #endregion
+
+        #region 公开方法
+
+        public void 移入光标至开头()
+        {
+
+        }
 
         #endregion
     }

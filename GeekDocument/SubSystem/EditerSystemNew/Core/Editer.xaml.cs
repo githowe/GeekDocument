@@ -3,7 +3,6 @@ using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.IO;
-using System.Runtime.InteropServices.JavaScript;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -69,26 +68,17 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
         /// <summary>
         /// 处理按键按下
         /// </summary>
-        public void HandleKeyDown(KeyEventArgs e)
-        {
-
-        }
+        public void HandleKeyDown(KeyEventArgs e) => _page.HandleKeyDown(e);
 
         /// <summary>
         /// 处理按键松开
         /// </summary>
-        public void HandleKeyUp(KeyEventArgs e)
-        {
-
-        }
+        public void HandleKeyUp(KeyEventArgs e) => _page.HandleKeyUp(e);
 
         /// <summary>
         /// 处理文本输入
         /// </summary>
-        public void HandleTextInput(string text)
-        {
-
-        }
+        public void HandleTextInput(string text) => _page.HandleTextInput(text);
 
         #endregion
 
@@ -160,8 +150,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         private void AddTestData(Document document)
         {
-            // 创建第一个段落：文本混合图片
-            段落 段落元素 = new 段落 { Text = File.ReadAllText("D:/示例文档3.txt") };
+            // 创建第一个段落：文本、图片、表格
+            段落 段落元素 = new 段落 { Text = File.ReadAllText("D:/示例文档3.txt"), 水平对齐 = 水平对齐方式.Left };
             // 嵌入图片至段落
             图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
             图片元素.Caption = null;
@@ -169,6 +159,18 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif");
             图片元素.Caption = null;
             段落元素.InsertLayoutElement(图片元素, 5, 16);
+            表格 表格元素 = new 表格
+            {
+                行数 = 2,
+                列数 = 2,
+                单元格高度 = 24,
+                单元格宽度 = 72,
+            };
+            表格元素.Init();
+            表格元素.设置行高(1, 44);
+            表格元素.设置单元格内容(0, 0, new 段落("一，一", 0));
+            表格元素.设置单元格内容(1, 1, new 段落("二，\n二", 0));
+            段落元素.InsertLayoutElement(表格元素, 6, 20);
             // 添加段落
             document.段落列表.Add(段落元素);
 
@@ -186,7 +188,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             // 创建第三个段落：仅表格
             段落元素 = new 段落() { 首行缩进 = 0, 水平对齐 = 水平对齐方式.Center };
             document.段落列表.Add(段落元素);
-            表格 表格元素 = new 表格
+            表格元素 = new 表格
             {
                 行数 = 5,
                 列数 = 5,
