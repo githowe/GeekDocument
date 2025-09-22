@@ -74,6 +74,16 @@ public class 段落块
         OwnerPage.MoveCaretToPrevBlock(this);
     }
 
+    public void MoveRightCaret()
+    {
+        OwnerPage.MoveCaretToNextBlock(this);
+    }
+
+    public void MoveCaretToStart()
+    {
+        段落.MoveInCaretToStart();
+    }
+
     public void MoveCaretToEnd()
     {
         段落.MoveInCaretToEnd();

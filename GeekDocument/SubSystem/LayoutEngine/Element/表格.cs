@@ -42,9 +42,13 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 命中单元格.内容.GetHitedLine(point);
         }
 
+        public override void MoveInCaretToStart()
+        {
+            单元格列表[0].MoveInCaretToStart();
+        }
+
         public override void MoveInCaretToEnd()
         {
-            // 移入光标至最后一个单元格的末尾
             单元格列表.Last().MoveInCaretToEnd();
         }
 
@@ -284,7 +288,22 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 return;
             }
             // 无上一个单元格，从头部移出光标
-            ParentElement?.MoveOutCaretFromHead(this);
+            ParentElement?.MoveOutCaretFromStart(this);
+        }
+
+        public void 移动光标至下一个单元格(单元格 cell)
+        {
+            // 获取当前单元格索引
+            int cellIndex = 单元格列表.IndexOf(cell);
+            // 有下一个单元格
+            if (cellIndex < 单元格列表.Count - 1)
+            {
+                单元格 nextCell = 单元格列表[cellIndex + 1];
+                nextCell.MoveInCaretToStart();
+                return;
+            }
+            // 无下一个单元格，从尾部移出光标
+            ParentElement?.MoveOutCaretFromEnd(this);
         }
 
         #endregion

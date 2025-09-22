@@ -156,9 +156,9 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
             图片元素.Caption = null;
             段落元素.InsertLayoutElement(图片元素, 2, 20);
-            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235855420_org.v1461646057.gif");
+            图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01bd8c5e53ec3da801216518ea512d.png", 400, true);
             图片元素.Caption = null;
-            段落元素.InsertLayoutElement(图片元素, 5, 16);
+            段落元素.InsertLayoutElement(图片元素, 5, 8);
             表格 表格元素 = new 表格
             {
                 行数 = 2,

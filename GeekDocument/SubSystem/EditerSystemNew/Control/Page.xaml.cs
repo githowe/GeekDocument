@@ -143,7 +143,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         /// </summary>
         public void InitCaret()
         {
-            MoveCaretByPoint(new Point());
+            BlockList[0].MoveCaretToStart();
             StartBlinkIBeam();
         }
 
@@ -268,6 +268,15 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         {
             int blockIndex = BlockList.IndexOf(block);
             if (blockIndex > 0) BlockList[blockIndex - 1].MoveCaretToEnd();
+        }
+
+        /// <summary>
+        /// 移动光标至下一个块的开头
+        /// </summary>
+        public void MoveCaretToNextBlock(段落块 block)
+        {
+            int blockIndex = BlockList.IndexOf(block);
+            if (blockIndex < BlockList.Count - 1) BlockList[blockIndex + 1].MoveCaretToStart();
         }
 
         #endregion

@@ -163,23 +163,28 @@ public class 元素行 : IDocumentElement
         return this;
     }
 
-    public void MoveLeftCaret()
-    {
+    public void MoveInCaretToStart() => MoveCaretToStart(ElementSide.Left);
 
-    }
+    public void MoveInCaretToEnd() => MoveCaretToEnd(ElementSide.Right);
 
-    public void MoveInCaretToEnd()
-    {
-        MoveCaretToEnd(ElementSide.Right);
-    }
-
-    public void MoveOutCaretFromHead(IDocumentElement sender)
+    public void MoveOutCaretFromStart(IDocumentElement sender)
     {
         if (sender is 布局元素 element)
         {
             GetOwnerPage().UpdateCurrentLine(this);
             元素索引 = 元素列表.IndexOf(element);
             CaretInfo info = 移动光标至元素左侧(element);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+        }
+    }
+
+    public void MoveOutCaretFromEnd(IDocumentElement sender)
+    {
+        if (sender is 布局元素 element)
+        {
+            GetOwnerPage().UpdateCurrentLine(this);
+            元素索引 = 元素列表.IndexOf(element) + 1;
+            CaretInfo info = 移动光标至元素右侧(element);
             GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
         }
     }
@@ -302,6 +307,38 @@ public class 元素行 : IDocumentElement
 
     }
 
+    public void MoveCaretToStart(ElementSide side)
+    {
+        // 当前行没有元素
+        if (元素列表.Count == 0)
+        {
+            EmptyLineMoveCaret();
+            return;
+        }
+        // 获取第一个元素
+        布局元素 first = 元素列表[0];
+        // 移动至第一个元素左侧
+        if (side == ElementSide.Left)
+        {
+            元素索引 = 0;
+            GetOwnerPage().UpdateCurrentLine(this);
+            CaretInfo info = 移动光标至元素左侧(first);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            return;
+        }
+        // 第一个元素不支持输入
+        if (!first.CanInput)
+        {
+            元素索引 = 1;
+            GetOwnerPage().UpdateCurrentLine(this);
+            CaretInfo info = 移动光标至元素右侧(first);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            return;
+        }
+        // 支持输入，移入光标至元素开头
+        first.MoveInCaretToStart();
+    }
+
     /// <summary>
     /// 移动光标至最后一个元素
     /// </summary>
@@ -310,12 +347,7 @@ public class 元素行 : IDocumentElement
         // 当前行没有元素
         if (元素列表.Count == 0)
         {
-            // 更新页面的当前元素行
-            GetOwnerPage().UpdateCurrentLine(this);
-            元素索引 = 0;
-            // 移动光标
-            CaretInfo info = 获取空行光标信息();
-            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+            EmptyLineMoveCaret();
             return;
         }
         // 获取最后一个元素
@@ -367,6 +399,27 @@ public class 元素行 : IDocumentElement
     public void 调用所属段落的左移光标()
     {
         Owner.MoveLeftCaret(this);
+    }
+
+    public bool 光标后有元素() => 元素索引 < 元素列表.Count;
+
+    public bool 当前元素支持输入() => 元素列表[元素索引].CanInput;
+
+    public void 移入光标至当前元素开头()
+    {
+        元素列表[元素索引].MoveInCaretToStart();
+    }
+
+    public void 后移光标()
+    {
+        CaretInfo info = 移动光标至元素右侧(元素列表[元素索引]);
+        GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+        元素索引++;
+    }
+
+    public void 调用所属段落的右移光标()
+    {
+        Owner.MoveRightCaret(this);
     }
 
     #endregion
@@ -710,6 +763,19 @@ public class 元素行 : IDocumentElement
             else break;
         }
         return 结果;
+    }
+
+    /// <summary>
+    /// 空行移动光标：直接移动至行首
+    /// </summary>
+    private void EmptyLineMoveCaret()
+    {
+        // 更新页面的当前元素行
+        GetOwnerPage().UpdateCurrentLine(this);
+        元素索引 = 0;
+        // 移动光标
+        CaretInfo info = 获取空行光标信息();
+        GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
     }
 
     private CaretInfo 获取空行光标信息()

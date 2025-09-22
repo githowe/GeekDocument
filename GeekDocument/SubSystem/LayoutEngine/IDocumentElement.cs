@@ -48,7 +48,7 @@ public interface IDocumentElement
     void HandleMouseDown(Point point);
 
     /// <summary>
-    /// 尝试移动光标至指定坐标处，返回光标信息
+    /// 将光标移动至离指定坐标最近的位置，并返回光标信息
     /// </summary>
     CaretInfo MoveCaret(Point point);
 
@@ -58,9 +58,9 @@ public interface IDocumentElement
     元素行 GetHitedLine(Point point);
 
     /// <summary>
-    /// 左移光标
+    /// 移入光标至开头
     /// </summary>
-    void MoveLeftCaret();
+    void MoveInCaretToStart();
 
     /// <summary>
     /// 移入光标至末尾
@@ -68,7 +68,12 @@ public interface IDocumentElement
     void MoveInCaretToEnd();
 
     /// <summary>
-    /// 从头部移出光标。子元素调用此方法以将光标移动至父元素
+    /// 从开头移出光标。子元素调用此方法以将光标移动至父元素
     /// </summary>
-    void MoveOutCaretFromHead(IDocumentElement sender);
+    void MoveOutCaretFromStart(IDocumentElement sender);
+
+    /// <summary>
+    /// 从末尾移出光标。子元素调用此方法以将光标移动至父元素
+    /// </summary>
+    void MoveOutCaretFromEnd(IDocumentElement sender);
 }

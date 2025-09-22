@@ -77,16 +77,24 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 内容.GetHitedLine(point);
         }
 
-        public void MoveLeftCaret() { }
+        public void MoveInCaretToStart()
+        {
+            内容.MoveInCaretToStart();
+        }
 
         public void MoveInCaretToEnd()
         {
             内容.MoveInCaretToEnd();
         }
 
-        public void MoveOutCaretFromHead(IDocumentElement sender)
+        public void MoveOutCaretFromStart(IDocumentElement sender)
         {
             Owner.移动光标至上一个单元格(this);
+        }
+
+        public void MoveOutCaretFromEnd(IDocumentElement sender)
+        {
+            Owner.移动光标至下一个单元格(this);
         }
 
         #endregion

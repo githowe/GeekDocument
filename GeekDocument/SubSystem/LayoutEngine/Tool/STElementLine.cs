@@ -70,7 +70,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Tool
 
         private void Init_Right()
         {
-
+            // 光标后有元素
+            //     当前元素支持输入：移入光标至当前元素开头
+            //     当前元素不支持输入：后移光标
+            // 光标后无元素：调用所属段落的右移光标
+            StateNode 光标后有元素 = _right.NewNode("光标后有元素", Line.光标后有元素, null);
+            _right.NewNode("当前元素支持输入", Line.当前元素支持输入, Line.移入光标至当前元素开头, 光标后有元素);
+            _right.NewNode("当前元素不支持输入", () => !Line.当前元素支持输入(), Line.后移光标, 光标后有元素);
+            _right.NewNode("光标后无元素", () => !Line.光标后有元素(), Line.调用所属段落的右移光标);
         }
 
         private void 无操作() => Console.WriteLine("无操作");

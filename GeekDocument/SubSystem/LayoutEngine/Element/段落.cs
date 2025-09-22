@@ -189,6 +189,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             return 命中行.GetHitedLine(point);
         }
 
+        public override void MoveInCaretToStart()
+        {
+            总元素行列表[0].MoveInCaretToStart();
+        }
+
         public override void MoveInCaretToEnd()
         {
             总元素行列表.Last().MoveInCaretToEnd();
@@ -299,7 +304,47 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 // 如果当前段落没有父级，表示该段落为根元素，应该调用所属块的左移光标
                 if (Parent == null) OwnerBlock.MoveLeftCaret();
                 // 否则，调用父元素的移出光标
-                else ParentElement?.MoveOutCaretFromHead(this);
+                else ParentElement?.MoveOutCaretFromStart(this);
+            }
+        }
+
+        public void MoveRightCaret(元素行 元素行)
+        {
+            // 找到元素行所在行
+            行? 行 = null;
+            foreach (var item in 行列表)
+            {
+                if (item.元素行列表.Contains(元素行))
+                {
+                    行 = item;
+                    break;
+                }
+            }
+            if (行 == null) throw new Exception("没有找到元素行所的字文本行");
+            // 获取文本行索引与元素行索引
+            int 文本行索引 = 行列表.IndexOf(行);
+            int 元素行索引 = 行.元素行列表.IndexOf(元素行);
+            // 有下一行
+            if (元素行索引 < 行.元素行列表.Count - 1 || 文本行索引 < 行列表.Count - 1)
+            {
+                // 表示与下一行是同一文本行
+                if (元素行索引 < 行.元素行列表.Count - 1)
+                {
+                    元素行 nextLine = 行.元素行列表[元素行索引 + 1];
+                    nextLine.MoveCaretToStart(ElementSide.Right);
+                }
+                // 与下一行是不同文本行
+                else
+                {
+                    元素行 nextLine = 行列表[文本行索引 + 1].元素行列表[0];
+                    nextLine.MoveCaretToStart(ElementSide.Left);
+                }
+            }
+            // 无下一行
+            else
+            {
+                if (Parent == null) OwnerBlock.MoveRightCaret();
+                else ParentElement?.MoveOutCaretFromEnd(this);
             }
         }
 
