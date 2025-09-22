@@ -107,9 +107,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void 绘图(DrawingContext dc)
         {
-            foreach (var 行 in 总元素行列表)
-                foreach (var 元素 in 行.元素列表)
-                    元素.绘图(dc);
+            foreach (var 行 in 总元素行列表) 行.绘图(dc);
         }
 
         #endregion

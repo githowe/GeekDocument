@@ -3,8 +3,10 @@ using GeekDocument.SubSystem.EditerSystemNew.Control;
 using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.LayoutEngine.Ex;
+using GeekDocument.SubSystem.OptionSystem;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Tool;
 
@@ -16,6 +18,7 @@ public class 元素行 : IDocumentElement
     {
         _stateTree = new STElementLine(this);
         _stateTree.Init();
+        _rowLinePen.Freeze();
     }
 
     #endregion
@@ -374,6 +377,18 @@ public class 元素行 : IDocumentElement
         }
         // 支持输入，移入光标至元素末尾
         last.MoveInCaretToEnd();
+    }
+
+    public void 绘图(DrawingContext dc)
+    {
+        // 绘制行线
+        if (Options.Instance.View.ShowRowLine)
+        {
+            dc.DrawLine(_rowLinePen, new Point(Left, Top + 0.5), new Point(Left + 行宽, Top + 0.5));
+            dc.DrawLine(_rowLinePen, new Point(Left, Top + 行高 - 0.5), new Point(Left + 行宽, Top + 行高 - 0.5));
+        }
+        // 绘制元素
+        foreach (var item in 元素列表) item.绘图(dc);
     }
 
     #endregion
@@ -955,6 +970,8 @@ public class 元素行 : IDocumentElement
 
     private STElementLine _stateTree;
     private Page? _ownerPage = null;
+
+    private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);
 
     #endregion
 }

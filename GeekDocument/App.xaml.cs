@@ -25,7 +25,7 @@ namespace GeekDocument
         private void App_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG
-            Kernel32Interop.AllocConsole();
+            // Kernel32Interop.AllocConsole();
 #endif
 
             // 创建必要文件夹
