@@ -14,6 +14,13 @@ public enum 元素类型
     公式
 }
 
+public enum 行状态
+{
+    空,
+    填充空格,
+    填充元素,
+}
+
 public enum 字类型
 {
     Chinese,

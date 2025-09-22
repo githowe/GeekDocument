@@ -86,6 +86,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         public void LoadDocument(Document document)
         {
+            // InitDocumentData(document);
             AddTestData(document);
             // 创建页面控件并加载文档中的页面属性
             _page = new Page();
@@ -147,6 +148,12 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
         }
 
         private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElementView(element);
+
+        private void InitDocumentData(Document document)
+        {
+            段落 段落 = new 段落 { Text = "这是一个测试段落，用于测试编辑器的基本功能。", 水平对齐 = 水平对齐方式.Left };
+            document.段落列表.Add(段落);
+        }
 
         private void AddTestData(Document document)
         {

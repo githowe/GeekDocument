@@ -101,7 +101,7 @@ public class 元素行 : IDocumentElement
     {
         if (元素列表.Count == 0)
         {
-            元素索引 = 0;
+            _elementIndex = 0;
             return 获取空行光标信息();
         }
 
@@ -111,13 +111,13 @@ public class 元素行 : IDocumentElement
         // 横坐标位于第一个元素左侧
         if (point.X < first.Left)
         {
-            元素索引 = 0;
+            _elementIndex = 0;
             return 移动光标至元素左侧(first);
         }
         // 横坐标位于最后一个元素右侧
         if (point.X >= last.Left + last.ActualWidth)
         {
-            元素索引 = 元素列表.Count;
+            _elementIndex = 元素列表.Count;
             return 移动光标至元素右侧(last);
         }
 
@@ -131,13 +131,13 @@ public class 元素行 : IDocumentElement
         // 命中元素左半部分
         if (point.X < elementRect.Left + elementRect.Width / 2)
         {
-            元素索引 = elementIndex;
+            _elementIndex = elementIndex;
             return 移动光标至元素左侧(命中元素);
         }
         // 命中元素右半部分
         else
         {
-            元素索引 = elementIndex + 1;
+            _elementIndex = elementIndex + 1;
             return 移动光标至元素右侧(命中元素);
         }
     }
@@ -175,7 +175,7 @@ public class 元素行 : IDocumentElement
         if (sender is 布局元素 element)
         {
             GetOwnerPage().UpdateCurrentLine(this);
-            元素索引 = 元素列表.IndexOf(element);
+            _elementIndex = 元素列表.IndexOf(element);
             CaretInfo info = 移动光标至元素左侧(element);
             GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
         }
@@ -186,7 +186,7 @@ public class 元素行 : IDocumentElement
         if (sender is 布局元素 element)
         {
             GetOwnerPage().UpdateCurrentLine(this);
-            元素索引 = 元素列表.IndexOf(element) + 1;
+            _elementIndex = 元素列表.IndexOf(element) + 1;
             CaretInfo info = 移动光标至元素右侧(element);
             GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
         }
@@ -210,19 +210,6 @@ public class 元素行 : IDocumentElement
 
     public List<布局元素> 元素列表 { get; set; } = new List<布局元素>();
 
-    public bool 无可见元素
-    {
-        get
-        {
-            if (元素列表.Count == 0) return true;
-            return 全是空白();
-        }
-    }
-
-    public double 剩余空间 => 行宽 - 当前行宽;
-
-    public double 最后一个元素右边距 { get; private set; } = 0;
-
     #endregion
 
     #region object 方法
@@ -236,38 +223,6 @@ public class 元素行 : IDocumentElement
     #endregion
 
     #region 公开方法
-
-    public bool 尝试添加元素(布局元素 元素, bool 两端对齐)
-    {
-        if (能否添加元素(元素, 两端对齐, out bool 已压缩))
-        {
-            // 如果是通过压缩后才能添加元素，则比较压缩与拉伸的幅度，以决定是压缩还是拉伸，如果是拉伸，则不添加元素
-            if (已压缩)
-            {
-                // 计算未压缩宽度：当前行宽 - 头部空白宽度 + 最后一个元素右边距+ 元素左边距 + 元素实际宽度
-                double 未压缩宽度 = 当前行宽 - 获取头部空白宽度() + 最后一个元素右边距 + 元素.LeftMargin + 元素.ActualWidth;
-                // 容器宽度 = 行宽 - 头部空白宽度
-                double 容器宽度 = 行宽 - 获取头部空白宽度();
-                // 计算压缩幅度与拉伸幅度
-                double 压缩幅度 = 未压缩宽度 - 容器宽度;
-                double 拉伸幅度 = 剩余空间;
-                // 压缩幅度小，则添加元素
-                if (压缩幅度 < 拉伸幅度)
-                {
-                    添加元素(元素);
-                    return true;
-                }
-                // 否则，不添加元素
-                else return false;
-            }
-            else
-            {
-                添加元素(元素);
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void 更新行高(double minHeight)
     {
@@ -300,10 +255,7 @@ public class 元素行 : IDocumentElement
         return width;
     }
 
-    public void HandleEditKey(EditKey key)
-    {
-        _stateTree.HandleEditKey(key);
-    }
+    public void HandleEditKey(EditKey key) => _stateTree.HandleEditKey(key);
 
     public void HandleCtrlEditKey(Key key)
     {
@@ -323,7 +275,7 @@ public class 元素行 : IDocumentElement
         // 移动至第一个元素左侧
         if (side == ElementSide.Left)
         {
-            元素索引 = 0;
+            _elementIndex = 0;
             GetOwnerPage().UpdateCurrentLine(this);
             CaretInfo info = 移动光标至元素左侧(first);
             GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
@@ -332,7 +284,7 @@ public class 元素行 : IDocumentElement
         // 第一个元素不支持输入
         if (!first.CanInput)
         {
-            元素索引 = 1;
+            _elementIndex = 1;
             GetOwnerPage().UpdateCurrentLine(this);
             CaretInfo info = 移动光标至元素右侧(first);
             GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
@@ -358,7 +310,7 @@ public class 元素行 : IDocumentElement
         // 移动至最后一个元素右侧
         if (side == ElementSide.Right)
         {
-            元素索引 = 元素列表.Count;
+            _elementIndex = 元素列表.Count;
             // 更新页面的当前元素行
             GetOwnerPage().UpdateCurrentLine(this);
             CaretInfo info = 移动光标至元素右侧(last);
@@ -368,7 +320,7 @@ public class 元素行 : IDocumentElement
         // 最后一个元素不支持输入
         if (!last.CanInput)
         {
-            元素索引 = 元素列表.Count - 1;
+            _elementIndex = 元素列表.Count - 1;
             // 移动至最后一个元素左侧
             GetOwnerPage().UpdateCurrentLine(this);
             CaretInfo info = 移动光标至元素左侧(last);
@@ -395,19 +347,19 @@ public class 元素行 : IDocumentElement
 
     #region 状态树接口
 
-    public bool 光标前有元素() => 元素索引 > 0;
+    public bool 光标前有元素() => _elementIndex > 0;
 
-    public bool 前元素支持输入() => 元素列表[元素索引 - 1].CanInput;
+    public bool 前元素支持输入() => 元素列表[_elementIndex - 1].CanInput;
 
     public void 移入光标至前元素末尾()
     {
-        元素列表[元素索引 - 1].MoveInCaretToEnd();
+        元素列表[_elementIndex - 1].MoveInCaretToEnd();
     }
 
     public void 前移光标()
     {
-        元素索引--;
-        CaretInfo info = 移动光标至元素左侧(元素列表[元素索引]);
+        _elementIndex--;
+        CaretInfo info = 移动光标至元素左侧(元素列表[_elementIndex]);
         GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
     }
 
@@ -416,20 +368,20 @@ public class 元素行 : IDocumentElement
         Owner.MoveLeftCaret(this);
     }
 
-    public bool 光标后有元素() => 元素索引 < 元素列表.Count;
+    public bool 光标后有元素() => _elementIndex < 元素列表.Count;
 
-    public bool 当前元素支持输入() => 元素列表[元素索引].CanInput;
+    public bool 当前元素支持输入() => 元素列表[_elementIndex].CanInput;
 
     public void 移入光标至当前元素开头()
     {
-        元素列表[元素索引].MoveInCaretToStart();
+        元素列表[_elementIndex].MoveInCaretToStart();
     }
 
     public void 后移光标()
     {
-        CaretInfo info = 移动光标至元素右侧(元素列表[元素索引]);
+        CaretInfo info = 移动光标至元素右侧(元素列表[_elementIndex]);
         GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
-        元素索引++;
+        _elementIndex++;
     }
 
     public void 调用所属段落的右移光标()
@@ -448,116 +400,6 @@ public class 元素行 : IDocumentElement
         return true;
     }
 
-    private bool 能否添加元素(布局元素 元素, bool 两端对齐, out bool 已压缩)
-    {
-        // 如果是压缩后才能添加元素，设置此标记为真
-        已压缩 = false;
-
-        // 无限行宽，直接添加
-        if (double.IsPositiveInfinity(行宽)) return true;
-        // 空白元素可以无限添加，不管行有没有满
-        if (元素.IsSpace) return true;
-        // 没有元素，直接添加。可断开元素已在外部处理
-        if (状态 == 行状态.空) return true;
-
-        // 非空白元素，首先判断未压缩状态下能否添加，再判断极限压缩后能否添加
-
-        // 当前行全是空白元素时，判断能否添加只考虑元素的实际宽度
-        if (状态 == 行状态.填充空格)
-        {
-            // 空白元素已经满行时，无法添加非空白元素
-            if (剩余空间 <= 0) return false;
-            // 剩余空间>= 元素实际宽度，可以添加
-            if (剩余空间 >= 元素.ActualWidth) return true;
-            // 如果两端对齐
-            if (两端对齐)
-            {
-                // 剩余空间 >= 极限压缩后的实际宽度，可以添加
-                if (剩余空间 >= 元素.压缩实际宽度())
-                {
-                    已压缩 = true;
-                    return true;
-                }
-            }
-        }
-        // 否则，判断元素的左边距加实际宽度能否添加
-        else
-        {
-            // 剩余空间>= 最后一个元素右边距 + 元素左边距 + 实际宽度，可以添加
-            if (剩余空间 >= 最后一个元素右边距 + 元素.LeftMargin + 元素.ActualWidth) return true;
-            // 如果两端对齐
-            if (两端对齐)
-            {
-                // 获取非头部元素列表并加上当前元素
-                List<布局元素> 非头部元素列表 = 获取非头部元素列表();
-                非头部元素列表.Add(元素);
-                // 进行极限压缩。第一个元素忽略左边距，最后一个元素忽略右边距
-                double 压缩后宽度 = 0;
-                if (非头部元素列表.Count == 1)
-                {
-                    压缩后宽度 = 非头部元素列表[0].压缩实际宽度();
-                }
-                else if (非头部元素列表.Count == 2)
-                {
-                    压缩后宽度 += 非头部元素列表[0].压缩右边距();
-                    压缩后宽度 += 非头部元素列表[1].压缩左边距();
-                }
-                else
-                {
-                    压缩后宽度 += 非头部元素列表[0].压缩右边距();
-                    for (int index = 1; index < 非头部元素列表.Count - 1; index++)
-                        压缩后宽度 += 非头部元素列表[index].压缩元素();
-                    压缩后宽度 += 非头部元素列表.Last().压缩左边距();
-                }
-                // 容器宽度 = 行宽 - 头部空白宽度
-                double 容器宽度 = 行宽 - 获取头部空白宽度();
-                // 容器宽度 >= 极限压缩后的实际宽度，可以添加
-                if (容器宽度 >= 压缩后宽度)
-                {
-                    已压缩 = true;
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private void 添加元素(布局元素 元素)
-    {
-        // 添加元素主要就两步：添加元素、更新当前行宽
-
-        元素.ParentElement = this;
-        switch (状态)
-        {
-            case 行状态.空:
-                元素列表.Add(元素);
-                当前行宽 += 元素.ActualWidth;
-                if (元素.IsSpace) 状态 = 行状态.填充空格;
-                else
-                {
-                    最后一个元素右边距 = 元素.RightMargin;
-                    状态 = 行状态.填充元素;
-                }
-                break;
-            case 行状态.填充空格:
-                元素列表.Add(元素);
-                当前行宽 += 元素.ActualWidth;
-                if (!元素.IsSpace)
-                {
-                    最后一个元素右边距 = 元素.RightMargin;
-                    状态 = 行状态.填充元素;
-                }
-                break;
-            case 行状态.填充元素:
-                元素列表.Add(元素);
-                当前行宽 += 最后一个元素右边距;
-                当前行宽 += 元素.LeftMargin + 元素.ActualWidth;
-                最后一个元素右边距 = 元素.RightMargin;
-                break;
-        }
-    }
-
     private double 获取头部空白宽度()
     {
         // 头部空白宽度 = 头部连续空格元素宽度
@@ -570,18 +412,6 @@ public class 元素行 : IDocumentElement
             布局元素 元素 = 元素列表[index];
             if (元素.IsSpace) 结果 += 元素.ActualWidth;
             // 遇到非空白元素时，退出循环
-            else break;
-        }
-        return 结果;
-    }
-
-    private List<布局元素> 获取非头部元素列表()
-    {
-        List<布局元素> 结果 = new List<布局元素>(元素列表);
-        // 移除头部空白元素
-        while (结果.Count > 0)
-        {
-            if (结果[0].IsSpace) 结果.RemoveAt(0);
             else break;
         }
         return 结果;
@@ -787,7 +617,7 @@ public class 元素行 : IDocumentElement
     {
         // 更新页面的当前元素行
         GetOwnerPage().UpdateCurrentLine(this);
-        元素索引 = 0;
+        _elementIndex = 0;
         // 移动光标
         CaretInfo info = 获取空行光标信息();
         GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
@@ -953,22 +783,13 @@ public class 元素行 : IDocumentElement
 
     #region 字段
 
-    public enum 行状态
-    {
-        空,
-        填充空格,
-        填充元素,
-    }
-
-    private 行状态 状态 = 行状态.空;
-    private double 当前行宽 = 0;
     private double _fontSize = 0;
     private 水平对齐方式 _horizontal = 水平对齐方式.Left;
     private 垂直对齐方式 _vertical = 垂直对齐方式.Bottom;
 
-    private int 元素索引 = 0;
+    private int _elementIndex = 0;
 
-    private STElementLine _stateTree;
+    private readonly STElementLine _stateTree;
     private Page? _ownerPage = null;
 
     private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);

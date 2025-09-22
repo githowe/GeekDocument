@@ -423,16 +423,19 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 注意：此方法仅用于分割行之后计算元素高度，不会根据对齐方式调整元素坐标
 
             总元素行列表.Clear();
+            // 遍历文本行
             foreach (var 行 in 行列表)
             {
+                // 清空文本行内的元素行
                 行.元素行列表.Clear();
-                元素队列 队列 = new 元素队列 { 元素列表 = 行.元素列表 };
+                // 创建生成器
+                元素行生成器 生成器 = new 元素行生成器 { 源元素列表 = 行.元素列表 };
+                // 循环生成元素行
                 while (true)
                 {
                     double 行宽 = MaxWidth;
                     if (行.元素行列表.Count == 0 && 首行缩进 > 0) 行宽 -= 首行缩进;
-                    // 生成行
-                    元素行? 元素行 = 队列.生成元素行(行宽, 行.元素行列表.Count == 0, 水平对齐 == 水平对齐方式.Justify);
+                    元素行? 元素行 = 生成器.生成元素行(行宽, 行.元素行列表.Count == 0, 水平对齐 == 水平对齐方式.Justify);
                     if (元素行 != null)
                     {
                         元素行.Owner = this;
@@ -442,6 +445,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     }
                     else break;
                 }
+                // 没有生成任何元素行，则添加一个空元素行
                 if (行.元素行列表.Count == 0)
                 {
                     元素行 空行 = new 元素行();
