@@ -155,7 +155,7 @@
                     </EventTrigger>
                 </Grid.Triggers>
                 <Grid x:Name="DocBox">
-                    <Grid x:Name="PageBox"/>
+                    <Grid x:Name="PageBox" Background="Transparent" ClipToBounds="True"/>
                     <Grid x:Name="LayerBox"/>
                 </Grid>
                 <!-- 工具栏阴影 -->

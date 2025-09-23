@@ -80,6 +80,17 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
         /// </summary>
         public void HandleTextInput(string text) => _page.HandleTextInput(text);
 
+        public void UpdateScrollBar()
+        {
+            PageScrollBar.ViewportSize = PageBox.ActualHeight;
+            PageScrollBar.Maximum = _page.PageHeight - PageBox.ActualHeight;
+        }
+
+        public void ScrollPage(int delta)
+        {
+            PageScrollBar.Value -= delta * 64;
+        }
+
         #endregion
 
         #region 核心接口
@@ -90,6 +101,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             // 创建页面控件并加载文档中的页面属性
             _page = new Page();
             PageBox.Children.Add(_page);
+            _page.OwnerEditer = this;
             _page.Width = document.PageWidth;
             OptionSystem.PageThickness padding = document.Padding;
             _page.PagePadding = new Thickness(padding.Left, padding.Top, padding.Right, padding.Bottom);
@@ -138,15 +150,41 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
         /// </summary>
         private void InitEditSystem()
         {
+            // 更新滚动条
+            UpdateScrollBar();
+            PageBox.SizeChanged += PageBox_SizeChanged;
+            PageBox.MouseWheel += PageBox_MouseWheel;
+            PageScrollBar.ValueChanged += PageScrollBar_ValueChanged;
             // 加载布局树
             Panel_LayoutTree.LoadLayoutTree(_page);
             // 监听事件
             Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
 
             _page.InitCaret();
+            _page.PageHeightChaged += PageHeightChaged;
+        }
+
+        private void PageBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateScrollBar();
+        }
+
+        private void PageBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            PageScrollBar.Value -= e.Delta / 120 * 64;
+        }
+
+        private void PageScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _page.UpdatePageOffset(PageScrollBar.Value);
         }
 
         private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElementView(element);
+
+        private void PageHeightChaged()
+        {
+            UpdateScrollBar();
+        }
 
         private void AddTestData(Document document)
         {

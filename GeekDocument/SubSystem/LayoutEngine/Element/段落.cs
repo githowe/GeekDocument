@@ -81,7 +81,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             计算内嵌元素大小();
             生成字元素();
             分割行();
-            更新高度();
+            更新段落高度();
 
             // 如果实际宽度为无限，需更新为内容实际宽度
             if (double.IsPositiveInfinity(ActualWidth))
@@ -337,10 +337,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 重新分割子段落的元素行
             分割元素行(子段落);
             更新总元素行列表();
-            // 重新排列全部行
-            排列行();
-            更新行内布局();
-            更新高度();
+            更新段落高度();
+            // 重排段落
+            OwnerBlock?.ReArrange(this);
             // 更新视图
             this.GetRootParagraph().OwnerBlock.Update();
             // 移动光标
@@ -431,9 +430,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         private 布局元素 获取一个内嵌元素()
         {
-            if (内嵌元素列表.Count == 0) throw new Exception("没有内嵌元素");
-            布局元素 元素 = 内嵌元素列表[0];
-            内嵌元素列表.RemoveAt(0);
+            if (_innerElementIndex >= 内嵌元素列表.Count) throw new Exception("没有内嵌元素");
+            布局元素 元素 = 内嵌元素列表[_innerElementIndex];
+            _innerElementIndex++;
             return 元素;
         }
 
@@ -525,7 +524,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
-        private void 更新高度()
+        private void 更新段落高度()
         {
             ActualHeight = 0;
             foreach (var item in 总元素行列表) ActualHeight += item.行高;
@@ -563,6 +562,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private List<string> _lineList = new List<string>();
         private readonly List<子段落> 子段落列表 = new List<子段落>();
         private readonly List<元素行> 总元素行列表 = new List<元素行>();
+
+        private int _innerElementIndex = 0;
 
         #endregion
     }

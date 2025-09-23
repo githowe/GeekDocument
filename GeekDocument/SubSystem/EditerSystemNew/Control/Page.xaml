@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystemNew.Control"
              mc:Ignorable="d" VerticalAlignment="Top" UseLayoutRounding="True"
              d:DesignWidth="800">
-    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+    <StackPanel x:Name="PaperPanel" Orientation="Vertical" VerticalAlignment="Top">
         <!-- 纸张 -->
         <Grid x:Name="Paper" Height="200" Margin="0,16,0,16" Cursor="IBeam">
             <!-- 背景框 -->
@@ -21,7 +21,7 @@
             <!-- 页面标记：选中框、光标等 -->
             <Canvas x:Name="MarkBox"/>
             <!-- 交互层 -->
-            <Grid x:Name="InteractionLayer" Background="Transparent" MouseMove="InteractionLayer_MouseMove" MouseDown="InteractionLayer_MouseDown" MouseUp="InteractionLayer_MouseUp"/>
+            <Grid x:Name="InteractionLayer" Background="Transparent" MouseMove="InteractionLayer_MouseMove" MouseDown="InteractionLayer_MouseDown" MouseUp="InteractionLayer_MouseUp" MouseWheel="InteractionLayer_MouseWheel"/>
         </Grid>
     </StackPanel>
 </UserControl>

@@ -11,6 +11,7 @@ public class EditTool : ToolBase<Page>
     {
         移动();
         点击页面();
+        滚轮();
     }
 
     public override void OnLeftButtonDown(BehaviorArgs? args = null)
@@ -39,6 +40,17 @@ public class EditTool : ToolBase<Page>
         {
             ResetTree();
             _host.StartBlinkIBeam();
+        });
+        Finish();
+    }
+
+    private void 滚轮()
+    {
+        NewTree(Behaviors.Wheel, (e) =>
+        {
+            ResetTree();
+            // 处理鼠标滚轮
+            _host.HandleMouseWheel(((MouseWheelBehaviorArgs)e).WheelArgs);
         });
         Finish();
     }

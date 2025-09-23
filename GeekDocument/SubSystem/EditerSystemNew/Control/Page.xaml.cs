@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystemNew.Core;
 using GeekDocument.SubSystem.EditerSystemNew.Core.Layer;
 using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.LayoutEngine;
@@ -24,6 +25,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
 
         #region 属性
 
+        public Editer OwnerEditer { get; set; } = null!;
+
         /// <summary>内边距</summary>
         public Thickness PagePadding { get; set; } = new Thickness(0);
 
@@ -40,6 +43,14 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         public int TextSize { get; set; } = 16;
 
         public List<段落块> BlockList { get; set; } = new List<段落块>();
+
+        public double PageHeight => Paper.Height + 32;
+
+        #endregion
+
+        #region 事件
+
+        public event Action PageHeightChaged;
 
         #endregion
 
@@ -281,6 +292,45 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             if (blockIndex < BlockList.Count - 1) BlockList[blockIndex + 1].MoveCaretToStart();
         }
 
+        public void ReArrange(段落块 sender)
+        {
+            // 获取当前块索引
+            int blockIndex = BlockList.IndexOf(sender);
+            // 获取当前块的纵纵坐标
+            double y = sender.BlockTop;
+            // 更新后续块的纵坐标
+            for (int index = blockIndex; index < BlockList.Count; index++)
+            {
+                段落块 item = BlockList[index];
+                y += item.段前距;
+                item.BlockTop = y;
+                item.TopOffset = y - PagePadding.Top;
+                item.ArrangeBlock();
+                y += item.BlockHeight + item.段后距 + BlockInterval;
+            }
+            // 更新块内图层的纵坐标
+            foreach (var block in BlockList)
+                foreach (var layer in block.LayerList)
+                    Canvas.SetTop(layer, block.BlockTop);
+            // 更新页面高度
+            Paper.Height = 0;
+            foreach (var item in BlockList)
+            {
+                Paper.Height += item.段前距;
+                Paper.Height += item.BlockHeight;
+                Paper.Height += item.段后距;
+            }
+            Paper.Height += (BlockList.Count - 1) * BlockInterval;
+            Paper.Height += PagePadding.Top + PagePadding.Bottom;
+
+            PageHeightChaged?.Invoke();
+        }
+
+        public void UpdatePageOffset(double offset)
+        {
+            PaperPanel.Margin = new Thickness(0, -offset, 0, 0);
+        }
+
         #endregion
 
         #region 工具方法
@@ -315,23 +365,35 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             MoveCaretByPoint(point);
         }
 
+        public void HandleMouseWheel(MouseWheelEventArgs e)
+        {
+            OwnerEditer.ScrollPage(e.Delta);
+            e.Handled = true;
+        }
+
         #endregion
 
         #region 控件事件
 
-        private void InteractionLayer_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void InteractionLayer_MouseMove(object sender, MouseEventArgs e)
         {
             _tool.OnMouseMove();
         }
 
-        private void InteractionLayer_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InteractionLayer_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _tool.OnMouseDown(e.ChangedButton);
         }
 
-        private void InteractionLayer_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InteractionLayer_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _tool.OnMouseUp(e.ChangedButton);
+        }
+
+        private void InteractionLayer_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            _tool.OnMouseWheel(e);
+            e.Handled = true;
         }
 
         #endregion

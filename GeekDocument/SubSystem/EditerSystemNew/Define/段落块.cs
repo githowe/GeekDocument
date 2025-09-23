@@ -62,6 +62,13 @@ public class 段落块
         BlockHeight = 段落.ActualHeight;
     }
 
+    public void ArrangeBlock()
+    {
+        段落.段落偏移 = TopOffset;
+        段落.Arrange();
+        BlockHeight = 段落.ActualHeight;
+    }
+
     public void Update()
     {
         DrawingContext dc = _layer.Open();
@@ -87,6 +94,11 @@ public class 段落块
     public void MoveCaretToEnd()
     {
         段落.MoveInCaretToEnd();
+    }
+
+    public void ReArrange(段落 sender)
+    {
+        OwnerPage?.ReArrange(this);
     }
 
     private readonly ElementLayer _layer = new ElementLayer();
