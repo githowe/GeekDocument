@@ -210,6 +210,8 @@ public class 元素行 : IDocumentElement
 
     public List<布局元素> 元素列表 { get; set; } = new List<布局元素>();
 
+    public int 当前索引 => _elementIndex;
+
     #endregion
 
     #region object 方法
@@ -259,7 +261,49 @@ public class 元素行 : IDocumentElement
 
     public void HandleCtrlEditKey(Key key)
     {
+        switch (key)
+        {
+            // 全选
+            case Key.A:
+                break;
+            // 剪切
+            case Key.X:
+                break;
+            // 复制
+            case Key.C:
+                break;
+            // 粘贴
+            case Key.V:
+                string text = Clipboard.GetText();
+                if (string.IsNullOrEmpty(text)) return;
+                HandleTextInput(text);
+                break;
+            // 撤销
+            case Key.Z:
+                break;
+            // 重做
+            case Key.Y:
+                break;
+            // 保存
+            case Key.S:
+                break;
+            // 回车
+            case Key.Enter:
+                HandleEditKey(EditKey.Enter);
+                break;
+        }
+    }
 
+    public void HandleTextInput(string text)
+    {
+        // 忽略空字符、退格、回车、Esc
+        if (text is "" or "\b" or "\r" or "\u001b") return;
+        // 将制表符转换为空格
+        text = text.Replace("\t", "    ");
+        // 统一换行符
+        text = text.Replace("\r\n", "\n");
+
+        Owner.InputText(text, this);
     }
 
     public void MoveCaretToStart(ElementSide side)
@@ -329,6 +373,27 @@ public class 元素行 : IDocumentElement
         }
         // 支持输入，移入光标至元素末尾
         last.MoveInCaretToEnd();
+    }
+
+    /// <summary>
+    /// 移动光标至
+    /// </summary>
+    public void MoveCaretTo(int index)
+    {
+        _elementIndex = index;
+        GetOwnerPage().UpdateCurrentLine(this);
+        if (_elementIndex < 元素列表.Count)
+        {
+            布局元素 target = 元素列表[_elementIndex];
+            CaretInfo info = 移动光标至元素左侧(target);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+        }
+        else if (_elementIndex == 元素列表.Count)
+        {
+            布局元素 target = 元素列表[_elementIndex - 1];
+            CaretInfo info = 移动光标至元素右侧(target);
+            GetOwnerPage().MoveCaret(info.X, info.Y, info.Height);
+        }
     }
 
     public void 绘图(DrawingContext dc)
@@ -419,6 +484,8 @@ public class 元素行 : IDocumentElement
 
     private void 更新元素横坐标(水平对齐方式 对齐)
     {
+        // 重置右侧扩展距离
+        foreach (var item in 元素列表) item.RightExtend = 0;
         switch (对齐)
         {
             case 水平对齐方式.Left:
@@ -457,7 +524,7 @@ public class 元素行 : IDocumentElement
                     }
                     else
                     {
-                        横坐标 += 元素.ActualWidth + 元素.RightMargin;
+                        横坐标 += 元素.ActualWidth + 元素.RightMargin + 元素.RightExtend;
                         状态 = 行状态.填充元素;
                     }
                     break;
@@ -466,14 +533,14 @@ public class 元素行 : IDocumentElement
                     if (元素.IsSpace) 横坐标 += 元素.ActualWidth;
                     else
                     {
-                        横坐标 += 元素.ActualWidth + 元素.RightMargin;
+                        横坐标 += 元素.ActualWidth + 元素.RightMargin + 元素.RightExtend;
                         状态 = 行状态.填充元素;
                     }
                     break;
                 case 行状态.填充元素:
                     横坐标 += 元素.LeftMargin;
                     元素.Left = 横坐标;
-                    横坐标 += 元素.ActualWidth + 元素.RightMargin;
+                    横坐标 += 元素.ActualWidth + 元素.RightMargin + 元素.RightExtend;
                     break;
             }
             index++;
@@ -534,7 +601,7 @@ public class 元素行 : IDocumentElement
             double 总拉伸量 = 容器宽度 - 未压缩宽度;
             double 平均拉伸量 = 总拉伸量 / (可伸缩部分.Count - 1);
             for (int index = 0; index < 可伸缩部分.Count - 1; index++)
-                可伸缩部分[index].RightMargin += 平均拉伸量;
+                可伸缩部分[index].RightExtend += 平均拉伸量;
         }
         // 执行压缩
         else if (未压缩宽度 > 容器宽度)
@@ -678,8 +745,8 @@ public class 元素行 : IDocumentElement
         // 前一个元素为字元素
         if (前一个元素.类型 == 元素类型.字)
         {
-            // 坐标取前一个元素右上角
-            result.X = prevRect.Right;
+            // 坐标取前一个元素右上角 + 右间距
+            result.X = prevRect.Right + 前一个元素.RightMargin + 前一个元素.RightExtend;
             result.Y = prevRect.Top;
             // 高度取前一个元素高度
             result.Height = 前一个元素.ActualHeight;
@@ -688,7 +755,7 @@ public class 元素行 : IDocumentElement
         else
         {
             // 横坐标取前一个元素右 + 右间距
-            result.X = prevRect.Right + 前一个元素.RightMargin;
+            result.X = prevRect.Right + 前一个元素.RightMargin + 前一个元素.RightExtend;
             // 纵坐标根据垂直对齐与字号计算
             result.Y = 计算光标纵坐标();
             // 高度取字号
@@ -707,7 +774,7 @@ public class 元素行 : IDocumentElement
         if (元素.类型 == 元素类型.字)
         {
             // 坐标取当前字右上角
-            result.X = elementRect.Right;
+            result.X = elementRect.Right + 元素.RightMargin + 元素.RightExtend;
             result.Y = elementRect.Top;
             // 高度取当前字高度
             result.Height = 元素.ActualHeight;
@@ -715,7 +782,7 @@ public class 元素行 : IDocumentElement
         // 其他元素
         {
             // 横坐标取当前元素右
-            result.X = elementRect.Right + 元素.RightMargin;
+            result.X = elementRect.Right + 元素.RightMargin + 元素.RightExtend;
             // 纵坐标根据垂直对齐与字号计算
             result.Y = 计算光标纵坐标();
             // 高度取字号

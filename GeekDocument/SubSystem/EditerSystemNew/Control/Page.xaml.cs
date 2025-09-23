@@ -237,7 +237,9 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
         /// </summary>
         public void HandleTextInput(string text)
         {
-
+            StopBlinkIBeam();
+            _currentLine?.HandleTextInput(text);
+            StartBlinkIBeam();
         }
 
         /// <summary>
@@ -393,6 +395,8 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Control
             _caretLayer.CaretY = info.Y;
             _caretLayer.CaretHeight = info.Height;
             _caretLayer.Update();
+
+            Console.WriteLine($"光标坐标：{info.X},{info.Y}");
         }
 
         /// <summary>

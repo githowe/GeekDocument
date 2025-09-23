@@ -97,6 +97,9 @@ public abstract class 布局元素 : IDocumentElement
     /// <summary>右边距</summary>
     public double RightMargin { get; set; } = 0;
 
+    /// <summary>右侧扩展距离。用于两端对齐时的字间距</summary>
+    public double RightExtend { get; set; } = 0;
+
     public 水平对齐方式 水平对齐 { get; set; } = 水平对齐方式.Justify;
 
     public 垂直对齐方式 垂直对齐 { get; set; } = 垂直对齐方式.Bottom;

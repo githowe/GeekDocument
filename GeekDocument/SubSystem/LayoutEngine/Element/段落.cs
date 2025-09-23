@@ -1,20 +1,12 @@
 ﻿using GeekDocument.SubSystem.EditerSystemNew.Control;
 using GeekDocument.SubSystem.EditerSystemNew.Define;
+using GeekDocument.SubSystem.LayoutEngine.Ex;
 using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
 using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 段落内嵌元素
-    {
-        public int LineIndex { get; set; } = 0;
-
-        public int CharIndex { get; set; } = 0;
-
-        public List<布局元素> ElementList { get; set; } = new List<布局元素>();
-    }
-
     public class 段落 : 布局元素
     {
         #region 构造方法
@@ -52,7 +44,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         /// <summary>行间距</summary>
         public double LineSpace { get; set; } = 4;
 
-        public List<段落内嵌元素> 内嵌元素列表 { get; set; } = new List<段落内嵌元素>();
+        public List<布局元素> 内嵌元素列表 { get; set; } = new List<布局元素>();
 
         /// <summary>纯文本模式。该模式只允许包含字元素</summary>
         public bool PlainText { get; set; } = false;
@@ -61,14 +53,19 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 布局元素方法
 
+        public override void Init()
+        {
+            // 统一换行符
+            Text = Text.Replace("\r\n", "\n");
+            // 分割行
+            _lineList = Text.Split('\n').ToList();
+        }
+
         public override List<ElementLayer> GetLayerList()
         {
             List<ElementLayer> result = new List<ElementLayer>();
-
-            foreach (var 内嵌元素 in 内嵌元素列表)
-                foreach (var 元素 in 内嵌元素.ElementList)
-                    result.AddRange(元素.GetLayerList());
-
+            foreach (var 元素 in 内嵌元素列表)
+                result.AddRange(元素.GetLayerList());
             return result;
         }
 
@@ -124,7 +121,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             List<IDocumentElement> result = new List<IDocumentElement>();
             int index = 0;
-            foreach (var 行 in 行列表)
+            foreach (var 行 in 子段落列表)
             {
                 foreach (var 元素行 in 行.元素行列表)
                 {
@@ -201,48 +198,16 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 公开方法
 
-        /// <summary>
-        /// 添加布局元素
-        /// </summary>
         public void AddLayoutElement(布局元素 element)
         {
-            if (行列表.Count == 0)
-            {
-                InsertLayoutElement(element, 0, 0);
-                return;
-            }
-            int lineIndex = 行列表.Count - 1;
-            int charIndex = 行列表[lineIndex].Length;
-            InsertLayoutElement(element, lineIndex, charIndex);
+            _lineList[_lineList.Count - 1] += "%%";
+            内嵌元素列表.Add(element);
         }
 
-        /// <summary>
-        /// 插入布局元素
-        /// </summary>
         public void InsertLayoutElement(布局元素 element, int lineIndex, int charIndex)
         {
-            // 查找内嵌元素
-            段落内嵌元素? 内嵌元素 = null;
-            foreach (var item in 内嵌元素列表)
-            {
-                if (item.LineIndex == lineIndex && item.CharIndex == charIndex)
-                {
-                    内嵌元素 = item;
-                    break;
-                }
-            }
-            // 没有找到时，创建新的内嵌元素
-            if (内嵌元素 == null)
-            {
-                内嵌元素 = new 段落内嵌元素
-                {
-                    LineIndex = lineIndex,
-                    CharIndex = charIndex,
-                };
-                内嵌元素列表.Add(内嵌元素);
-            }
-            // 插入元素
-            内嵌元素.ElementList.Insert(0, element);
+            _lineList[lineIndex] = _lineList[lineIndex].Insert(charIndex, "%%");
+            内嵌元素列表.Add(element);
         }
 
         /// <summary>
@@ -267,18 +232,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public void MoveLeftCaret(元素行 元素行)
         {
             // 找到元素行所在行
-            行? 行 = null;
-            foreach (var item in 行列表)
-            {
-                if (item.元素行列表.Contains(元素行))
-                {
-                    行 = item;
-                    break;
-                }
-            }
-            if (行 == null) throw new Exception("没有找到元素行所的字文本行");
+            子段落 行 = GetLineByElementLine(元素行);
             // 获取文本行索引与元素行索引
-            int 文本行索引 = 行列表.IndexOf(行);
+            int 文本行索引 = 子段落列表.IndexOf(行);
             int 元素行索引 = 行.元素行列表.IndexOf(元素行);
             // 有上一行
             if (元素行索引 > 0 || 文本行索引 > 0)
@@ -292,7 +248,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 // 与上一行是不同文本行
                 else
                 {
-                    元素行 上一行 = 行列表[文本行索引 - 1].元素行列表.Last();
+                    元素行 上一行 = 子段落列表[文本行索引 - 1].元素行列表.Last();
                     上一行.MoveCaretToEnd(ElementSide.Right);
                 }
             }
@@ -309,21 +265,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public void MoveRightCaret(元素行 元素行)
         {
             // 找到元素行所在行
-            行? 行 = null;
-            foreach (var item in 行列表)
-            {
-                if (item.元素行列表.Contains(元素行))
-                {
-                    行 = item;
-                    break;
-                }
-            }
-            if (行 == null) throw new Exception("没有找到元素行所的字文本行");
+            子段落 行 = GetLineByElementLine(元素行);
             // 获取文本行索引与元素行索引
-            int 文本行索引 = 行列表.IndexOf(行);
+            int 文本行索引 = 子段落列表.IndexOf(行);
             int 元素行索引 = 行.元素行列表.IndexOf(元素行);
             // 有下一行
-            if (元素行索引 < 行.元素行列表.Count - 1 || 文本行索引 < 行列表.Count - 1)
+            if (元素行索引 < 行.元素行列表.Count - 1 || 文本行索引 < 子段落列表.Count - 1)
             {
                 // 表示与下一行是同一文本行
                 if (元素行索引 < 行.元素行列表.Count - 1)
@@ -334,7 +281,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 // 与下一行是不同文本行
                 else
                 {
-                    元素行 nextLine = 行列表[文本行索引 + 1].元素行列表[0];
+                    元素行 nextLine = 子段落列表[文本行索引 + 1].元素行列表[0];
                     nextLine.MoveCaretToStart(ElementSide.Left);
                 }
             }
@@ -346,121 +293,200 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
+        public void InputText(string text, 元素行 元素行)
+        {
+            // 找到元素行所在子段落
+            子段落 子段落 = GetLineByElementLine(元素行);
+            // 计算相对于子段落的索引
+            int indexInLine = 0;
+            foreach (var item in 子段落.元素行列表)
+            {
+                if (item == 元素行)
+                {
+                    indexInLine += 元素行.当前索引;
+                    break;
+                }
+                indexInLine += item.元素列表.Count;
+            }
+            // 找到当前索引所在的子元素集，并插入文本
+            元素集? 集 = null;
+            int index = 0;
+            foreach (var 元素集 in 子段落.元素集列表)
+            {
+                // 跳过内嵌元素
+                if (元素集.InnerElement)
+                {
+                    index++;
+                    continue;
+                }
+                // 计算当前元素的索引范围（相对子段落）
+                int startIndex = index;
+                int endIndex = startIndex + 元素集.Length;
+                // 判断索引是否在此元素集内
+                if (startIndex <= indexInLine && indexInLine <= endIndex)
+                {
+                    集 = 元素集;
+                    集.Text = 集.Text.Insert(indexInLine - startIndex, text);
+                    break;
+                }
+                index += 元素集.Length;
+            }
+            // 重新生成元素集的字元素
+            集.ElementList.Clear();
+            生成元素集的布局元素(集);
+            // 重新分割子段落的元素行
+            分割元素行(子段落);
+            更新总元素行列表();
+            // 重新排列全部行
+            排列行();
+            更新行内布局();
+            更新高度();
+            // 更新视图
+            this.GetRootParagraph().OwnerBlock.Update();
+            // 移动光标
+            indexInLine += text.Length;
+            子段落.MoveCaretTo(indexInLine);
+        }
+
         #endregion
 
         #region 私有方法
 
         private void 计算内嵌元素大小()
         {
-            foreach (var 内嵌元素 in 内嵌元素列表)
-                foreach (var element in 内嵌元素.ElementList)
-                {
-                    element.Parent = this;
+            foreach (var element in 内嵌元素列表)
+            {
+                element.Parent = this;
 
-                    // 内嵌元素没有设置最大宽度时，设置为段落最大宽度
-                    if (double.IsNaN(element.MaxWidth)) element.MaxWidth = MaxWidth;
-                    // 或者最大宽度大于段落最大宽度时，设置为段落最大宽度
-                    else if (element.MaxWidth > MaxWidth) element.MaxWidth = MaxWidth;
+                // 内嵌元素没有设置最大宽度时，设置为段落最大宽度
+                if (double.IsNaN(element.MaxWidth)) element.MaxWidth = MaxWidth;
+                // 或者最大宽度大于段落最大宽度时，设置为段落最大宽度
+                else if (element.MaxWidth > MaxWidth) element.MaxWidth = MaxWidth;
 
-                    // 如果设置了最大高度，则限定最大高度
-                    if (!double.IsNaN(MaxHeight)) element.MaxHeight = MaxHeight;
+                // 如果设置了最大高度，则限定最大高度
+                if (!double.IsNaN(MaxHeight)) element.MaxHeight = MaxHeight;
 
-                    element.Measure();
-                }
+                element.Measure();
+            }
         }
 
         private void 生成字元素()
         {
-            Text = Text.Replace("\r\n", "\n");
-            _lineList = Text.Split('\n').ToList();
+            // 遍历行
             int lineIndex = 0;
             foreach (var line in _lineList)
             {
-                行 子段落 = new 行();
-                // 遍历字
-                foreach (var c in line)
-                {
-                    字 element = new 字
-                    {
-                        Parent = this,
-                        文本 = c.ToString(),
-                        字体列表 = new List<string> { Font },
-                        字号列表 = new List<double> { FontSize },
-                    };
-                    element.Init();
-                    element.Measure();
-                    子段落.元素列表.Add(element);
-                }
-                // 插入内嵌元素
-                foreach (var 内嵌元素 in 内嵌元素列表)
-                {
-                    if (内嵌元素.LineIndex != lineIndex) continue;
-                    子段落.元素列表.InsertRange(内嵌元素.CharIndex, 内嵌元素.ElementList);
-                }
-                // 添加中英文间距
-                布局元素? 当前;
-                布局元素? 下一个;
-                for (int index = 0; index < 子段落.元素列表.Count - 1; index++)
-                {
-                    当前 = 子段落.元素列表[index];
-                    下一个 = 子段落.元素列表[index + 1];
-                    // 两个元素都为字时，需要添加字间距
-                    if (当前 is 字 当前字 && 下一个 is 字 下一个字)
-                    {
-                        if (当前字.字类型 == 字类型.Chinese && 下一个字.字类型 == 字类型.English ||
-                            当前字.字类型 == 字类型.English && 下一个字.字类型 == 字类型.Chinese)
-                            当前字.RightMargin = 当前字.最后一个字宽() * 0.25;
-                    }
-                }
+                // 创建子段落
+                子段落 子段落 = new 子段落();
+                子段落.SourceText = line;
+                子段落.Init();
+                // 生成子段落的布局元素，包括内嵌元素
+                生成子段落的布局元素(子段落);
                 // 添加子段落
-                行列表.Add(子段落);
+                子段落列表.Add(子段落);
                 lineIndex++;
             }
+        }
+
+        private void 生成子段落的布局元素(子段落 子段落)
+        {
+            // 遍历元素集
+            foreach (var 集 in 子段落.元素集列表) 生成元素集的布局元素(集);
+            // 只有一个元素集，表示没有内嵌元素，直接返回
+            if (子段落.元素集列表.Count < 2) return;
+            List<元素集> 元素集列表 = new List<元素集>();
+            // 每两个元素集之间添加一个内嵌元素
+            for (int index = 0; index < 子段落.元素集列表.Count - 1; index++)
+            {
+                元素集列表.Add(子段落.元素集列表[index]);
+                元素集 单元素集 = new 元素集 { InnerElement = true };
+                单元素集.ElementList.Add(获取一个内嵌元素());
+                元素集列表.Add(单元素集);
+            }
+            // 添加最后一个元素集
+            元素集列表.Add(子段落.元素集列表.Last());
+            // 替换元素集列表
+            子段落.元素集列表 = 元素集列表;
+        }
+
+        private void 生成元素集的布局元素(元素集 集)
+        {
+            // 生成元素集的字元素
+            foreach (var c in 集.Text)
+            {
+                字 element = new 字
+                {
+                    Parent = this,
+                    文本 = c.ToString(),
+                    字体列表 = new List<string> { Font },
+                    字号列表 = new List<double> { FontSize },
+                };
+                element.Init();
+                element.Measure();
+                集.ElementList.Add(element);
+            }
+            // 生成中英文间距
+            集.生成中英文间距();
+        }
+
+        private 布局元素 获取一个内嵌元素()
+        {
+            if (内嵌元素列表.Count == 0) throw new Exception("没有内嵌元素");
+            布局元素 元素 = 内嵌元素列表[0];
+            内嵌元素列表.RemoveAt(0);
+            return 元素;
         }
 
         private void 分割行()
         {
             // 注意：此方法仅用于分割行之后计算元素高度，不会根据对齐方式调整元素坐标
 
-            总元素行列表.Clear();
-            // 遍历文本行
-            foreach (var 行 in 行列表)
+            // 遍历子段落，并为每个子段落分割元素行
+            foreach (var 子段落 in 子段落列表) 分割元素行(子段落);
+            更新总元素行列表();
+        }
+
+        private void 分割元素行(子段落 子段落)
+        {
+            // 清空文本行内的元素行
+            子段落.元素行列表.Clear();
+            // 创建生成器
+            元素行生成器 生成器 = new 元素行生成器 { 源元素列表 = 子段落.GetAllElement() };
+            // 循环生成元素行
+            while (true)
             {
-                // 清空文本行内的元素行
-                行.元素行列表.Clear();
-                // 创建生成器
-                元素行生成器 生成器 = new 元素行生成器 { 源元素列表 = 行.元素列表 };
-                // 循环生成元素行
-                while (true)
+                double 行宽 = MaxWidth;
+                if (子段落.元素行列表.Count == 0 && 首行缩进 > 0) 行宽 -= 首行缩进;
+                元素行? 元素行 = 生成器.生成元素行(行宽, 子段落.元素行列表.Count == 0, 水平对齐 == 水平对齐方式.Justify);
+                if (元素行 != null)
                 {
-                    double 行宽 = MaxWidth;
-                    if (行.元素行列表.Count == 0 && 首行缩进 > 0) 行宽 -= 首行缩进;
-                    元素行? 元素行 = 生成器.生成元素行(行宽, 行.元素行列表.Count == 0, 水平对齐 == 水平对齐方式.Justify);
-                    if (元素行 != null)
-                    {
-                        元素行.Owner = this;
-                        元素行.更新行高(FontSize);
-                        行.元素行列表.Add(元素行);
-                        总元素行列表.Add(元素行);
-                    }
-                    else break;
+                    元素行.Owner = this;
+                    元素行.更新行高(FontSize);
+                    子段落.元素行列表.Add(元素行);
                 }
-                // 没有生成任何元素行，则添加一个空元素行
-                if (行.元素行列表.Count == 0)
-                {
-                    元素行 空行 = new 元素行();
-                    空行.Owner = this;
-                    空行.更新行高(FontSize);
-                    行.元素行列表.Add(空行);
-                    总元素行列表.Add(空行);
-                }
+                else break;
             }
+            // 没有生成任何元素行，则添加一个空元素行
+            if (子段落.元素行列表.Count == 0)
+            {
+                元素行 空行 = new 元素行();
+                空行.Owner = this;
+                空行.更新行高(FontSize);
+                子段落.元素行列表.Add(空行);
+            }
+        }
+
+        private void 更新总元素行列表()
+        {
+            总元素行列表.Clear();
+            foreach (var 子段落 in 子段落列表)
+                总元素行列表.AddRange(子段落.元素行列表);
         }
 
         private void 排列行()
         {
             double y = Top;
-            foreach (var 行 in 行列表)
+            foreach (var 行 in 子段落列表)
             {
                 int index = 0;
                 foreach (var 元素行 in 行.元素行列表)
@@ -476,7 +502,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         private void 更新行内布局()
         {
-            foreach (var 行 in 行列表)
+            foreach (var 行 in 子段落列表)
             {
                 // 单行
                 if (行.元素行列表.Count == 1)
@@ -509,27 +535,33 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private List<元素行> GetElementLineList()
         {
             List<元素行> result = new List<元素行>();
-            foreach (var 行 in 行列表)
+            foreach (var 行 in 子段落列表)
                 foreach (var 元素行 in 行.元素行列表)
                     result.Add(元素行);
             return result;
+        }
+
+        private 子段落 GetLineByElementLine(元素行 elementLine)
+        {
+            子段落? 行 = null;
+            foreach (var item in 子段落列表)
+            {
+                if (item.元素行列表.Contains(elementLine))
+                {
+                    行 = item;
+                    break;
+                }
+            }
+            if (行 == null) throw new Exception("没有找到元素行所的字文本行");
+            return 行;
         }
 
         #endregion
 
         #region 字段
 
-        private class 行
-        {
-            public List<布局元素> 元素列表 { get; set; } = new List<布局元素>();
-
-            public List<元素行> 元素行列表 { get; set; } = new List<元素行>();
-
-            public int Length => 元素列表.Count;
-        }
-
         private List<string> _lineList = new List<string>();
-        private readonly List<行> 行列表 = new List<行>();
+        private readonly List<子段落> 子段落列表 = new List<子段落>();
         private readonly List<元素行> 总元素行列表 = new List<元素行>();
 
         #endregion

@@ -86,7 +86,6 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         public void LoadDocument(Document document)
         {
-            // InitDocumentData(document);
             AddTestData(document);
             // 创建页面控件并加载文档中的页面属性
             _page = new Page();
@@ -149,16 +148,11 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
         private void Panel_LayoutTree_HoverElementChanged(IDocumentElement? element) => _page.UpdateHoverElementView(element);
 
-        private void InitDocumentData(Document document)
-        {
-            段落 段落 = new 段落 { Text = "这是一个测试段落，用于测试编辑器的基本功能。", 水平对齐 = 水平对齐方式.Left };
-            document.段落列表.Add(段落);
-        }
-
         private void AddTestData(Document document)
         {
             // 创建第一个段落：文本、图片、表格
-            段落 段落元素 = new 段落 { Text = File.ReadAllText("D:/示例文档3.txt"), 水平对齐 = 水平对齐方式.Left };
+            段落 段落元素 = new 段落 { Text = File.ReadAllText("D:/示例文档3.txt"), 水平对齐 = 水平对齐方式.Justify };
+            段落元素.Init();
             // 嵌入图片至段落
             图片 图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\01f0d15b7847b1a801218d3218024a.gif", 320, true);
             图片元素.Caption = null;
@@ -176,13 +170,16 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             表格元素.Init();
             表格元素.设置行高(1, 44);
             表格元素.设置单元格内容(0, 0, new 段落("一，一", 0));
+            表格元素.获取单元格内容<段落>(0, 0)?.Init();
             表格元素.设置单元格内容(1, 1, new 段落("二，\n二", 0));
+            表格元素.获取单元格内容<段落>(1, 1)?.Init();
             段落元素.InsertLayoutElement(表格元素, 6, 20);
             // 添加段落
             document.段落列表.Add(段落元素);
 
             // 创建第二个段落：仅图片
             段落元素 = new 段落() { 首行缩进 = 0, 水平对齐 = 水平对齐方式.Center };
+            段落元素.Init();
             图片元素 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\1_FuyupvvnXjN4ilD-e0BDCQ.gif", 278, pixelArt: true);
             图片元素.FontSize = 12;
             段落元素.AddLayoutElement(图片元素);
@@ -194,6 +191,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
 
             // 创建第三个段落：仅表格
             段落元素 = new 段落() { 首行缩进 = 0, 水平对齐 = 水平对齐方式.Center };
+            段落元素.Init();
             document.段落列表.Add(段落元素);
             表格元素 = new 表格
             {
@@ -207,9 +205,13 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             段落元素.AddLayoutElement(表格元素);
 
             表格元素.设置单元格内容(1, 2, new 段落 { Text = File.ReadAllText("D:/示例文档4.txt") });
+            表格元素.获取单元格内容<段落>(1, 2)?.Init();
             表格元素.设置单元格内容(0, 1, new 段落 { Text = "一行，二列", 首行缩进 = 0 });
+            表格元素.获取单元格内容<段落>(0, 1)?.Init();
             表格元素.设置单元格内容(2, 1, new 段落 { Text = "三行，二列", 首行缩进 = 0 });
+            表格元素.获取单元格内容<段落>(2, 1)?.Init();
             表格元素.设置单元格内容(3, 4, new 段落 { Text = "四行，五列", 首行缩进 = 0 });
+            表格元素.获取单元格内容<段落>(3, 4)?.Init();
 
             图片 图标 = 创建图片元素("J:\\产品库\\设计库\\图标设计\\16\\企业.png");
             图标.Caption = null;
@@ -237,11 +239,7 @@ namespace GeekDocument.SubSystem.EditerSystemNew.Core
             if (单元格段落 != null)
             {
                 单元格段落.垂直对齐 = 垂直对齐方式.Top;
-                单元格段落.内嵌元素列表.Add(new 段落内嵌元素
-                {
-                    CharIndex = 5,
-                    ElementList = new List<布局元素> { 图标 }
-                });
+                单元格段落.AddLayoutElement(图标);
             }
 
             图标 = 创建图片元素("C:\\Users\\12460\\Desktop\\一一五\\像素艺术\\235854958_org.v1461644802.gif");

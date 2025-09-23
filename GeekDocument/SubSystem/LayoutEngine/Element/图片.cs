@@ -110,6 +110,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     FontSize = FontSize,
                     PlainText = true,
                 };
+                图注.Init();
 
                 // 跟随图片时，设置图注最大宽度为图片宽度
                 if (CaptionMaxWidthType == 图注最大宽度.跟随图片)

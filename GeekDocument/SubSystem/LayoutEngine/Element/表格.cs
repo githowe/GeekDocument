@@ -109,6 +109,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 for (int list = 0; list < 列数; list++)
                 {
                     段落 段落 = new 段落 { 首行缩进 = 0 };
+                    段落.Init();
                     设置单元格内容(line, list, 段落);
                 }
             }
@@ -190,6 +191,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             else
             {
                 段落 = new 段落 { 首行缩进 = 0 };
+                段落.Init();
                 段落.AddLayoutElement(内容);
             }
             段落.Parent = this;

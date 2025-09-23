@@ -94,8 +94,6 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             // 空白元素，最大可压缩一半
             if (IsSpace) return ActualWidth / 2;
-            // 非空白元素，且存在右边距，最大可压缩右边距的一半
-            if (RightMargin > 0) return ActualWidth + RightMargin / 2;
             // 其他情况不压缩
             return ActualWidth;
         }
@@ -106,11 +104,6 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 double max = ActualWidth / 2;
                 ActualWidth -= max * 比例;
-            }
-            else if (RightMargin > 0)
-            {
-                double max = RightMargin / 2;
-                RightMargin -= max * 比例;
             }
         }
 
