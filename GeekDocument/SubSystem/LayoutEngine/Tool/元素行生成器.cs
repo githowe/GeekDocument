@@ -2,9 +2,9 @@
 
 public class 元素行生成器
 {
-    public List<布局元素> 源元素列表 { get; set; } = new List<布局元素>();
+    public List<行内元素> 源元素列表 { get; set; } = new List<行内元素>();
 
-    public 元素行? 生成元素行(double 行宽, bool 首行, bool 两端对齐)
+    public 元素行? 生成元素行(double 行宽, bool 两端对齐)
     {
         // 重置生成器状态
         Reset();
@@ -14,12 +14,11 @@ public class 元素行生成器
 
         // 创建行
         _行宽 = 行宽;
-        _首行 = 首行;
         // 循环添加元素至行
         while (_currentIndex < 源元素列表.Count)
         {
             // 取出元素
-            布局元素 元素 = 源元素列表[_currentIndex];
+            行内元素 元素 = 源元素列表[_currentIndex];
             // 空白元素直接添加，必然添加成功
             if (元素.IsSpace)
             {
@@ -33,7 +32,7 @@ public class 元素行生成器
                 // 非两端对齐，
                 if (!两端对齐 || 元素.压缩实际宽度() > 剩余空间)
                 {
-                    布局元素 断开部分 = 元素.断开(剩余空间);
+                    行内元素 断开部分 = 元素.断开(剩余空间);
                     源元素列表.Insert(_currentIndex, 断开部分);
                     continue;
                 }
@@ -50,14 +49,13 @@ public class 元素行生成器
     private void Reset()
     {
         _行宽 = 0;
-        _首行 = false;
         _当前元素列表.Clear();
         _最后一个元素右边距 = 0;
         状态 = 行状态.空;
         当前行宽 = 0;
     }
 
-    private bool 尝试添加元素(布局元素 元素, bool 两端对齐)
+    private bool 尝试添加元素(行内元素 元素, bool 两端对齐)
     {
         if (能否添加元素(元素, 两端对齐, out bool 已压缩))
         {
@@ -96,7 +94,7 @@ public class 元素行生成器
         return true;
     }
 
-    private bool 能否添加元素(布局元素 元素, bool 两端对齐, out bool 已压缩)
+    private bool 能否添加元素(行内元素 元素, bool 两端对齐, out bool 已压缩)
     {
         // 如果是压缩后才能添加元素，设置此标记为真
         已压缩 = false;
@@ -137,7 +135,7 @@ public class 元素行生成器
             if (两端对齐)
             {
                 // 获取非头部元素列表并加上当前元素
-                List<布局元素> 非头部元素列表 = 获取非头部元素列表();
+                List<行内元素> 非头部元素列表 = 获取非头部元素列表();
                 非头部元素列表.Add(元素);
                 // 进行极限压缩。第一个元素忽略左边距，最后一个元素忽略右边距
                 double 压缩后宽度 = 0;
@@ -171,7 +169,7 @@ public class 元素行生成器
         return false;
     }
 
-    private void 添加元素(布局元素 元素)
+    private void 添加元素(行内元素 元素)
     {
         // 添加元素主要就两步：添加元素、更新当前行宽
 
@@ -214,7 +212,7 @@ public class 元素行生成器
         for (int index = 0; index < _当前元素列表.Count; index++)
         {
             // 累加空白元素宽度
-            布局元素 元素 = _当前元素列表[index];
+            行内元素 元素 = _当前元素列表[index];
             if (元素.IsSpace) 结果 += 元素.ActualWidth;
             // 遇到非空白元素时，退出循环
             else break;
@@ -222,9 +220,9 @@ public class 元素行生成器
         return 结果;
     }
 
-    private List<布局元素> 获取非头部元素列表()
+    private List<行内元素> 获取非头部元素列表()
     {
-        List<布局元素> 结果 = new List<布局元素>(_当前元素列表);
+        List<行内元素> 结果 = new List<行内元素>(_当前元素列表);
         // 移除头部空白元素
         while (结果.Count > 0)
         {
@@ -236,16 +234,10 @@ public class 元素行生成器
 
     private 元素行 生成元素行()
     {
-        元素行 result = new 元素行
-        {
-            行宽 = _行宽,
-            首行 = _首行,
-        };
-        foreach (var 元素 in _当前元素列表)
-        {
-            result.元素列表.Add(元素);
-            元素.ParentElement = result;
-        }
+        元素行 result = new 元素行();
+        result.Init();
+        result.元素列表.AddRange(_当前元素列表);
+        result.AddChildList(_当前元素列表.Cast<布局元素>().ToList());
         return result;
     }
 
@@ -264,7 +256,6 @@ public class 元素行生成器
     private double 当前行宽 = 0;
     private int _currentIndex = 0;
     private double _行宽;
-    private List<布局元素> _当前元素列表 = new List<布局元素>();
-    private bool _首行;
+    private List<行内元素> _当前元素列表 = new List<行内元素>();
     private double _最后一个元素右边距 = 0;
 }

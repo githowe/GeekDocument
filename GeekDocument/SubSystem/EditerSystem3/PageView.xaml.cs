@@ -1,0 +1,463 @@
+﻿using GeekDocument.SubSystem.ArchiveSystem2;
+using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.EditerSystem3.Layer;
+using GeekDocument.SubSystem.ImageSystem;
+using GeekDocument.SubSystem.LayoutEngine;
+using Newtonsoft.Json;
+using System.IO;
+using System.Security.Permissions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
+using XLogic.Wpf.Drawing;
+
+namespace GeekDocument.SubSystem.EditerSystem3
+{
+    public partial class PageView : UserControl
+    {
+        #region 构造方法
+
+        public PageView() => InitializeComponent();
+
+        #endregion
+
+        #region 属性
+
+        public Editer OwnerEditer { get; set; } = null!;
+
+        /// <summary>内边距</summary>
+        public Thickness PagePadding { get; set; } = new Thickness(0);
+
+        public double PageHeight { get; set; } = 0;
+
+        public 页面 页面 => _page;
+
+        #endregion
+
+        #region 公开方法
+
+        public void Init()
+        {
+            // 更新边距标记
+            double leftMargin = PagePadding.Left - _markSize;
+            double topMargin = PagePadding.Top - _markSize;
+            double rightMargin = PagePadding.Right - _markSize;
+            double bottomMargin = PagePadding.Bottom - _markSize;
+            Mark_01.Margin = new Thickness(leftMargin, topMargin, 0, 0);
+            Mark_02.Margin = new Thickness(0, topMargin, rightMargin, 0);
+            Mark_03.Margin = new Thickness(leftMargin, 0, 0, bottomMargin);
+            Mark_04.Margin = new Thickness(0, 0, rightMargin, bottomMargin);
+            // 添加页面中的图层
+            PageBox.Children.Add(_page.Layer);
+            // 设置图层坐标
+            Canvas.SetLeft(_page.Layer, PagePadding.Left);
+            Canvas.SetTop(_page.Layer, PagePadding.Top);
+            // 设置页面大小
+            _page.页宽 = Width - PagePadding.Left - PagePadding.Right;
+            // 构建示例页面
+            BuildDemoPage();
+
+            // 添加图层
+            _hoveredInfoLayer = AddLayer<HoveredInfoLayer>();
+            _hitedInfoLayer = AddLayer<HitedInfoLayer>(false);
+            _inputBoxLayer = AddLayer<InputBoxLayer>(false);
+            _caretLayer = AddLayer<CaretLayer>();
+            // 初始化编辑工具
+            _tool = new EditTool(this);
+            _tool.Init();
+
+            // 初始化光标定时器
+            _blinkTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _blinkTimer.Tick += BlinkTimer_Tick;
+
+            _editKeyDict.Add(Key.Up, EditKey.Up);
+            _editKeyDict.Add(Key.Down, EditKey.Down);
+            _editKeyDict.Add(Key.Left, EditKey.Left);
+            _editKeyDict.Add(Key.Right, EditKey.Right);
+            _editKeyDict.Add(Key.Home, EditKey.Home);
+            _editKeyDict.Add(Key.End, EditKey.End);
+            _editKeyDict.Add(Key.Back, EditKey.Backspace);
+            _editKeyDict.Add(Key.Delete, EditKey.Delete);
+            _editKeyDict.Add(Key.Enter, EditKey.Enter);
+            _ctrlEditKeyList.Add(Key.A);
+            _ctrlEditKeyList.Add(Key.X);
+            _ctrlEditKeyList.Add(Key.C);
+            _ctrlEditKeyList.Add(Key.V);
+            _ctrlEditKeyList.Add(Key.Z);
+            _ctrlEditKeyList.Add(Key.Y);
+            _ctrlEditKeyList.Add(Key.S);
+            _ctrlEditKeyList.Add(Key.Enter);
+        }
+
+        public void 更新页面()
+        {
+            _page.测量();
+            Paper.Height = _page.页高 + PagePadding.Top + PagePadding.Bottom;
+            _page.排列();
+            _page.渲染();
+        }
+
+        public void InitEditSystem()
+        {
+            // 监听页面事件
+            _page.高度变化 += 页面_高度变化;
+            _page.当前行变化 += 页面_当前行变化;
+            _page.光标移动 += 页面_光标移动;
+            // 移动光标至页面开始位置
+            _page.段落列表[0].移动光标至开头();
+            // 开始闪烁光标
+            StartBlinkIBeam();
+            // 监听交互图层的鼠标事件
+            InteractionLayer.MouseMove += InteractionLayer_MouseMove;
+            InteractionLayer.MouseDown += InteractionLayer_MouseDown;
+            InteractionLayer.MouseUp += InteractionLayer_MouseUp;
+            InteractionLayer.MouseWheel += InteractionLayer_MouseWheel;
+        }
+
+        public void UpdateHoveredElement(布局元素? 元素)
+        {
+            _hoveredInfoLayer.HoveredElement = 元素;
+            _hoveredInfoLayer.Update();
+        }
+
+        /// <summary>
+        /// 处理按键按下
+        /// </summary>
+        public void HandleKeyDown(KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.None)
+            {
+                if (_editKeyDict.TryGetValue(e.Key, out EditKey editKey))
+                {
+                    StopBlinkIBeam();
+                    _currentLine?.HandleEditKey(editKey);
+                    StartBlinkIBeam();
+                    e.Handled = true;
+                }
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (_ctrlEditKeyList.Contains(e.Key))
+                {
+                    StopBlinkIBeam();
+                    _currentLine?.HandleCtrlEditKey(e.Key);
+                    StartBlinkIBeam();
+                    e.Handled = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 处理文本输入
+        /// </summary>
+        public void HandleTextInput(string text)
+        {
+            StopBlinkIBeam();
+            _currentLine?.HandleTextInput(text);
+            StartBlinkIBeam();
+        }
+
+        public 文档数据 构建文档数据()
+        {
+            文档数据 result = new 文档数据();
+
+            页面数据 pageData = new 页面数据
+            {
+                页面宽度 = _page.页宽,
+                内边距 = new 边线
+                {
+                    Left = PagePadding.Left,
+                    Top = PagePadding.Top,
+                    Right = PagePadding.Right,
+                    Bottom = PagePadding.Bottom,
+                }
+            };
+            foreach (var item in _page.段落列表)
+                pageData.元素列表.Add(生成段落元素信息(item));
+            result.页面 = pageData;
+
+            return result;
+        }
+
+        private 元素信息 生成段落元素信息(段落 段落)
+        {
+            元素信息 result = new 元素信息
+            {
+                Type = "段落",
+                Version = "1.0",
+            };
+            段落元素属性 元素属性 = new 段落元素属性
+            {
+                文本 = 段落.文本,
+                水平对齐方式 = (int)段落.水平对齐,
+                垂直对齐方式 = (int)段落.垂直对齐,
+                段前距 = 段落.段前距,
+                段后距 = 段落.段后距,
+                左缩进 = 段落.左缩进,
+                右缩进 = 段落.右缩进,
+                首行缩进 = 段落.首行缩进,
+                行间距 = 段落.行间距,
+            };
+            段落元素 段落元素 = new 段落元素 { 属性 = 元素属性.ToString() };
+            foreach (var item in 段落.内嵌元素列表)
+            {
+                元素信息 行内元素信息 = 生成行内元素信息(item);
+                段落元素.内嵌元素列表.Add(行内元素信息);
+            }
+            result.Data = JsonConvert.SerializeObject(段落元素);
+
+            return result;
+        }
+
+        private 元素信息 生成行内元素信息(行内元素 元素)
+        {
+            if (元素 is 图片 图片) return 生成图片元素信息(图片);
+            else if (元素 is 表格 表格) return 生成表格元素信息(表格);
+            throw new Exception("生成行内元素信息失败");
+        }
+
+        private 元素信息 生成图片元素信息(图片 图片)
+        {
+            return new 元素信息();
+        }
+
+        private 元素信息 生成表格元素信息(表格 表格)
+        {
+            return new 元素信息();
+        }
+
+        #endregion
+
+        #region 工具方法
+
+        public string 获取命中区域()
+        {
+            Point point = GetMousePoint();
+            命中信息? info = _page.获取命中信息(point);
+            _hitedInfoLayer.HitedInfo = info;
+            _hitedInfoLayer.Update();
+            if (info == null) return "无命中";
+            return info.区域名称;
+        }
+
+        public void 点击页面()
+        {
+            Point point = GetMousePoint();
+            段落 段落 = _page.获取最近段落(point);
+            元素行 元素行 = 段落.获取最近元素行(point);
+            _currentLine = 元素行;
+            _inputBoxLayer.Line = 元素行;
+            _inputBoxLayer.Update();
+            光标信息 info = 元素行.移动光标(point);
+            _caretLayer.CaretX = info.X;
+            _caretLayer.CaretY = info.Y;
+            _caretLayer.CaretHeight = info.Height;
+            _caretLayer.Update();
+        }
+
+        /// <summary>
+        /// 开始闪烁光标
+        /// </summary>
+        public void StartBlinkIBeam()
+        {
+            _ibeamVisible = true;
+            _caretLayer.Update();
+            _blinkTimer.Start();
+        }
+
+        /// <summary>
+        /// 停止闪烁光标
+        /// </summary>
+        public void StopBlinkIBeam()
+        {
+            _blinkTimer.Stop();
+            _ibeamVisible = true;
+            _caretLayer.Update();
+        }
+
+        #endregion
+
+        #region 页面事件
+
+        private void 页面_高度变化(double height)
+        {
+            Paper.Height = _page.页高 + PagePadding.Top + PagePadding.Bottom;
+        }
+
+        private void 页面_当前行变化(元素行 line)
+        {
+            _currentLine = line;
+            _inputBoxLayer.Line = line;
+            _inputBoxLayer.Update();
+        }
+
+        private void 页面_光标移动(光标信息 info)
+        {
+            _caretLayer.CaretX = info.X;
+            _caretLayer.CaretY = info.Y;
+            _caretLayer.CaretHeight = info.Height;
+            _caretLayer.Update();
+        }
+
+        #endregion
+
+        #region 控件事件
+
+        private void InteractionLayer_MouseMove(object sender, MouseEventArgs e)
+        {
+            _tool.OnMouseMove();
+        }
+
+        private void InteractionLayer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _tool.OnMouseDown(e.ChangedButton);
+        }
+
+        private void InteractionLayer_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _tool.OnMouseUp(e.ChangedButton);
+        }
+
+        private void InteractionLayer_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            _tool.OnMouseWheel(e);
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        private T AddLayer<T>(bool enabled = true) where T : SingleBoard
+        {
+            T layer = Activator.CreateInstance<T>();
+            layer.Init();
+            layer.IsEnabled = enabled;
+            MarkBox.Children.Add(layer);
+            Canvas.SetLeft(layer, PagePadding.Left);
+            Canvas.SetTop(layer, PagePadding.Top);
+            return layer;
+        }
+
+        /// <summary>
+        /// 构建示例页面
+        /// </summary>
+        private void BuildDemoPage()
+        {
+            string[] lineArray = File.ReadAllLines("D:/示例文档3.txt");
+            foreach (var line in lineArray)
+            {
+                段落 段落 = new 段落
+                {
+                    OwnerPage = _page,
+                    // 水平对齐 = 水平对齐方式.Left,
+                    文本 = line,
+                    首行缩进 = 32,
+                };
+                段落.Init();
+                _page.段落列表.Add(段落);
+            }
+            string path = "C:/Users/12460/Desktop/一一五/像素艺术/01bd8c5e53ec3da801216518ea512d.png";
+            ImageFileData fileData = ImageManager.Instance.GetImageFileData(path);
+            string hash = LoadImage(fileData);
+            图片 图片 = new 图片
+            {
+                SourceHash = hash,
+                MaxWidth = 800,
+                MaxHeight = 100,
+                ImageWidth = 400,
+                PixelArt = true,
+                // Caption = Path.GetFileName(path),
+                CaptionWidthMode = 图注宽度模式.图片实际宽度,
+                CaptionMaxWidth = 600,
+                CaptionWidth = 500,
+                FontSize = 14,
+            };
+            图片.Init();
+
+            段落 图片段落 = new 段落
+            {
+                OwnerPage = _page,
+                水平对齐 = 水平对齐方式.Left,
+            };
+            图片段落.文本 = "<ele>";
+            图片段落.内嵌元素列表.Add(图片);
+            图片段落.Init();
+            _page.段落列表.Add(图片段落);
+
+            表格 表格 = new 表格
+            {
+                行数 = 2
+            };
+            表格.Init();
+            段落 表格段落 = new 段落
+            {
+                OwnerPage = _page,
+                水平对齐 = 水平对齐方式.Left,
+            };
+            表格段落.文本 = "<ele>";
+            表格段落.内嵌元素列表.Add(表格);
+            表格段落.Init();
+            _page.段落列表.Add(表格段落);
+        }
+
+        private Point GetMousePoint()
+        {
+            Point mousePoint = Mouse.GetPosition(InteractionLayer);
+            mousePoint.X -= PagePadding.Left;
+            mousePoint.Y -= PagePadding.Top;
+            return mousePoint;
+        }
+
+        private void BlinkTimer_Tick(object? sender, EventArgs e)
+        {
+            if (_ibeamVisible) _caretLayer.Clear();
+            else _caretLayer.Update();
+            _ibeamVisible = !_ibeamVisible;
+        }
+
+        /// <summary>
+        /// 加载图片
+        /// </summary>
+        private string LoadImage(ImageFileData fileData)
+        {
+            // 获取图片信息，获取成功则直接返回
+            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(fileData.Hash);
+            if (imageInfo != null) return fileData.Hash;
+            // 加载图片
+            imageInfo = ImageLoader.Instance.LoadImageFile(fileData.Data, fileData.Type);
+            // 加载失败时返回空
+            if (imageInfo == null) return "";
+            // 缓存文件数据和解码结果
+            ImageManager.Instance.AddFileData(fileData);
+            ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
+            // 返回图片哈希
+            return fileData.Hash;
+        }
+
+        #endregion
+
+        #region 字段
+
+        private readonly double _markSize = 24;
+
+        private readonly 页面 _page = new 页面();
+
+        private HoveredInfoLayer _hoveredInfoLayer;
+        private HitedInfoLayer _hitedInfoLayer;
+        private InputBoxLayer _inputBoxLayer;
+        private CaretLayer _caretLayer;
+        private EditTool _tool;
+
+        /// <summary>光标可见性，用于闪烁光标</summary>
+        private bool _ibeamVisible = true;
+        private readonly DispatcherTimer _blinkTimer = new DispatcherTimer();
+
+        private 元素行 _currentLine = null!;
+
+        private readonly Dictionary<Key, EditKey> _editKeyDict = new Dictionary<Key, EditKey>();
+        private readonly List<Key> _ctrlEditKeyList = new List<Key>();
+
+        #endregion
+    }
+}

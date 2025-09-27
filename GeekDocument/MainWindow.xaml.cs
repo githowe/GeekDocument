@@ -3,9 +3,8 @@ using GeekDocument.SubSystem.ArchiveSystem.Define;
 using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
-using GeekDocument.SubSystem.EditerSystemNew.Core;
-using GeekDocument.SubSystem.EditerSystemNew.Define;
 using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
+using GeekDocument.SubSystem.EditerSystem3;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.ResourceSystem;
@@ -106,7 +105,7 @@ namespace GeekDocument
                 return;
             }
             // 创建文档实例并加载存档
-            Document document = new Document();
+            /*Document document = new Document();
             try
             {
                 document.LoadArchive(archiveFile);
@@ -115,9 +114,10 @@ namespace GeekDocument
             {
                 WM.ShowErrorTip("加载存档失败");
                 return;
-            }
+            }*/
             // 打开文档
-            OpenDocument(document, Path.GetFileNameWithoutExtension(filePath), filePath);
+            // OpenDocument(document, Path.GetFileNameWithoutExtension(filePath), filePath);
+            OpenDocument(Path.GetFileNameWithoutExtension(filePath), filePath);
             // 添加打开记录
             CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
             CacheManager.Instance.SaveCache();
@@ -352,7 +352,7 @@ namespace GeekDocument
         private void NewDocument()
         {
             // 打开新建文档对话框
-            NewDocumentDialog dialog = new NewDocumentDialog { Owner = this };
+            /*NewDocumentDialog dialog = new NewDocumentDialog { Owner = this };
             if (dialog.ShowDialog() == true)
             {
                 // 新建文档实例
@@ -373,24 +373,24 @@ namespace GeekDocument
                     UseCustomFirstLineIndent = true,
                 };
                 title.UpdateViewData(document.PageWidth);
-                // document.BlockList.Add(title);
+                document.BlockList.Add(title);
                 // 在磁盘中新建文件
                 string filePath = $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc";
                 FileStream fileStream = File.Create(filePath);
                 // 刷新文档库
                 Panel_DocLib.RefreshDocumentLib();
                 // 保存文档数据至文件
-                /*byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(document);
+                byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(document);
                 fileStream.Write(archiveData, 0, archiveData.Length);
-                fileStream.Close();*/
+                fileStream.Close();
                 // 打开新建的文档
                 OpenDocument(document, dialog.DocumentName, filePath);
                 // 添加打开记录
                 CacheManager.Instance.Cache.DocumentManager.AddRecentDocument($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
                 CacheManager.Instance.SaveCache();
                 // 添加已打开的文档
-                // DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
-            }
+                DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
+            }*/
         }
 
         /// <summary>
@@ -415,14 +415,12 @@ namespace GeekDocument
         /// <summary>
         /// 打开文档
         /// </summary>
-        private void OpenDocument(Document document, string docName, string docPath)
+        private void OpenDocument(string docName, string docPath)
         {
             // 关闭主页并打开编辑器页
             if (Control_Home.Visibility == Visibility.Visible)
             {
-                // Control_Home.Visibility = Visibility.Collapsed;
-                EditerArea.Children.Remove(Control_Home);
-                GC.Collect();
+                Control_Home.Visibility = Visibility.Collapsed;
                 Grid_Editer.Visibility = Visibility.Visible;
             }
             // 新建一个选项卡用于承载编辑器
@@ -444,7 +442,7 @@ namespace GeekDocument
             // 选择选项卡
             editerItem.IsSelected = true;
             // 加载文档
-            editer.LoadDocument(document);
+            editer.LoadDocument();
             editer.SaveStateChanged += Editer_SaveStateChanged;
 
             _tabItemDict.Add(editer, tabItem);
