@@ -16,6 +16,20 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         #endregion
 
+        #region 文档元数据
+
+        public string 作者 { get; set; } = "";
+
+        public string 简介 { get; set; } = "";
+
+        public DateTime 创建日期 { get; set; } = DateTime.Now;
+
+        public string 备注 { get; set; } = "";
+
+        public List<string> 标签列表 { get; set; } = new List<string>();
+
+        #endregion
+
         #region 属性、事件
 
         /// <summary>文档名称</summary>
@@ -112,7 +126,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         private void Tool_Save_Click(object sender, RoutedEventArgs e)
         {
             // 构建一个文档数据
-            文档数据 文档 = _pageView.构建文档数据();
+            文档数据 文档 = 存档生成器.Instance.生成存档(_pageView.页面);
             // 序列化文档数据
             string jsonData = JsonConvert.SerializeObject(文档, Formatting.Indented);
             // 写入文件

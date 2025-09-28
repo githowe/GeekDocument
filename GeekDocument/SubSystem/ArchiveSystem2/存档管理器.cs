@@ -18,7 +18,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
 
         #region 公开方法
 
-        public byte[] 生成存档数据(文档 文档)
+        public byte[] 生成存档数据()
         {
             return Array.Empty<byte>();
         }

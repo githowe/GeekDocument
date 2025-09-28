@@ -5,11 +5,15 @@ namespace GeekDocument.SubSystem.LayoutEngine
 {
     public class 表格 : 行内元素
     {
+        #region 构造方法
+
         public 表格()
         {
             Name = "表格";
             Icon = "Table";
         }
+
+        #endregion
 
         #region 属性
 
@@ -30,6 +34,8 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public List<double> 全部行高 { get; set; } = new List<double>();
 
         public List<double> 全部列宽 { get; set; } = new List<double>();
+
+        public List<单元格> 单元格列表 { get; set; } = new List<单元格>();
 
         #endregion
 
@@ -374,7 +380,6 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         private List<表格行> 行列表 = new List<表格行>();
         private List<表格列> 列列表 = new List<表格列>();
-        private List<单元格> 单元格列表 = new List<单元格>();
 
         private readonly 绘图对象 _表格绘图对象 = new 绘图对象();
 

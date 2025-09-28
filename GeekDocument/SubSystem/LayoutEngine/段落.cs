@@ -319,6 +319,32 @@ public class 段落 : 布局元素
 
     #region 公开方法
 
+    public string 获取文本()
+    {
+        string result = "";
+        foreach (var 集 in 元素集列表)
+        {
+            if (集.InnerElement) result += _占位标记;
+            else
+            {
+                string text = 集.Text.Replace("<ele>", "\\<ele>");
+                result += text;
+            }
+        }
+        return result;
+    }
+
+    public List<行内元素> 获取内嵌元素()
+    {
+        List<行内元素> result = new List<行内元素>();
+        foreach (var 集 in 元素集列表)
+        {
+            if (!集.InnerElement) continue;
+            result.AddRange(集.行内元素列表);
+        }
+        return result;
+    }
+
     public void 移动光标至开头()
     {
         元素行列表[0].MoveInCaretToStart();

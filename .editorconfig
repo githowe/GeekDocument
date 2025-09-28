@@ -8,3 +8,7 @@ dotnet_diagnostic.IDE0306.severity = none
 dotnet_diagnostic.IDE0028.severity = none
 # IDE0090: 可简化 "new" 表达式
 dotnet_diagnostic.IDE0090.severity = none
+
+dotnet_diagnostic.IDE0301.severity = none
+
+dotnet_diagnostic.CA1822.severity = none

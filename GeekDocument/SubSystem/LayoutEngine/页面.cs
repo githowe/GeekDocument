@@ -9,11 +9,15 @@ public class 页面
 {
     public double 页宽 { get; set; } = 800;
 
+    public Thickness 内边距 { get; set; } = new Thickness(64);
+
     public double 页高 { get; private set; } = 0;
 
     public List<段落> 段落列表 { get; set; } = new List<段落>();
 
     public 绘图图层 Layer => _图层;
+
+    public double 首行缩进 { get; set; } = 32;
 
     public double 段落间距 { get; set; } = 16;
 

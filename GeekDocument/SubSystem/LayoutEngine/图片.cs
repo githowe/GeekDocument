@@ -33,8 +33,6 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         public int ImageHeight { get; set; } = -1;
 
-        public int MaxHeight { get; set; } = -1;
-
         /// <summary>是否为像素画</summary>
         public bool PixelArt { get; set; } = false;
 
@@ -66,6 +64,8 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         public int SourceHeight { get; set; } = 270;
 
+        public int MaxHeight { get; set; } = -1;
+
         /// <summary>帧列表</summary>
         public List<ImageFrame> FrameList { get; set; } = new List<ImageFrame>();
 
@@ -83,6 +83,8 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 return FrameList.Count / (Duration / 1000.0);
             }
         }
+
+        public 段落? 图注段落 => _图注;
 
         #endregion
 
