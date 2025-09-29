@@ -1,6 +1,6 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.CacheSystem.Define;
-using GeekDocument.SubSystem.EditerSystem.Define;
+using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.OptionSystem;
 using System.IO;
 
@@ -34,7 +34,7 @@ namespace GeekDocument.SubSystem.DocumentSystem
         /// <summary>
         /// 添加已打开的文档
         /// </summary>
-        public void AddOpenedDocument(Document document, string path)
+        public void AddOpenedDocument(文档 document, string path)
         {
             _documentList.Add(document);
             _documentPathList.Add(path);
@@ -53,7 +53,7 @@ namespace GeekDocument.SubSystem.DocumentSystem
 
         #region 字段
 
-        private readonly List<Document> _documentList = new List<Document>();
+        private readonly List<文档> _documentList = new List<文档>();
         private readonly List<string> _documentPathList = new List<string>();
 
         #endregion

@@ -1,11 +1,10 @@
-﻿using GeekDocument.SubSystem.ArchiveSystem;
-using GeekDocument.SubSystem.ArchiveSystem.Define;
+﻿using GeekDocument.SubSystem.ArchiveSystem2;
 using GeekDocument.SubSystem.CacheSystem;
 using GeekDocument.SubSystem.CacheSystem.Define;
 using GeekDocument.SubSystem.DocumentSystem;
-using GeekDocument.SubSystem.EditerSystem.Define.BlockDerive;
 using GeekDocument.SubSystem.EditerSystem3;
 using GeekDocument.SubSystem.FileSystem;
+using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.OptionSystem;
 using GeekDocument.SubSystem.ResourceSystem;
 using GeekDocument.SubSystem.WindowSystem;
@@ -93,36 +92,23 @@ namespace GeekDocument
         {
             // 读取文件内容
             byte[] fileData = File.ReadAllBytes(filePath);
-            // 创建存档文件并加载文件内容
-            ArchiveFile archiveFile = new ArchiveFile();
+            文档 document;
             try
             {
-                archiveFile.LoadArchive(fileData);
-            }
-            catch (Exception)
-            {
-                WM.ShowErrorTip("加载文件内容失败");
-                return;
-            }
-            // 创建文档实例并加载存档
-            /*Document document = new Document();
-            try
-            {
-                document.LoadArchive(archiveFile);
+                document = 存档管理器.Instance.加载存档数据(fileData);
             }
             catch (Exception)
             {
                 WM.ShowErrorTip("加载存档失败");
                 return;
-            }*/
+            }
             // 打开文档
-            // OpenDocument(document, Path.GetFileNameWithoutExtension(filePath), filePath);
-            OpenDocument(Path.GetFileNameWithoutExtension(filePath), filePath);
+            OpenDocument(document, Path.GetFileNameWithoutExtension(filePath), filePath);
             // 添加打开记录
             CacheManager.Instance.Cache.DocumentManager.AddRecentDocument(filePath);
             CacheManager.Instance.SaveCache();
             // 添加已打开的文档
-            // DocManager.Instance.AddOpenedDocument(document, filePath);
+            DocManager.Instance.AddOpenedDocument(document, filePath);
         }
 
         #endregion
@@ -352,45 +338,50 @@ namespace GeekDocument
         private void NewDocument()
         {
             // 打开新建文档对话框
-            /*NewDocumentDialog dialog = new NewDocumentDialog { Owner = this };
+            NewDocumentDialog dialog = new NewDocumentDialog { Owner = this };
             if (dialog.ShowDialog() == true)
             {
                 // 新建文档实例
-                Document document = new Document
+                PageThickness padding = Options.Instance.Page.PagePadding;
+                文档 文档 = new 文档
                 {
-                    PageWidth = Options.Instance.Page.PageWidth,
-                    Padding = Options.Instance.Page.PagePadding,
-                    FirstLineIndent = Options.Instance.Paragraph.FirstLineIndent,
-                    BlockInterval = Options.Instance.Paragraph.ParagraphInterval,
+                    页面 = new 页面
+                    {
+                        页宽 = Options.Instance.Page.PageWidth,
+                        内边距 = new Thickness(padding.Left, padding.Top, padding.Right, padding.Bottom),
+                        首行缩进 = Options.Instance.Paragraph.FirstLineIndent,
+                        段落间距 = Options.Instance.Paragraph.ParagraphInterval,
+                    }
                 };
-                // 添加标题块
-                BlockText title = new BlockText
+                // 添加标题段落
+                段落 title = new 段落
                 {
-                    Content = dialog.DocumentName,
-                    FontSize = 32,
-                    FirstLineIndent = document.FirstLineIndent,
-                    CustomFirstLineIndent = 0,
-                    UseCustomFirstLineIndent = true,
+                    OwnerPage = 文档.页面,
+                    文本 = dialog.DocumentName,
+                    字号 = 32,
+                    首行缩进 = 文档.页面.首行缩进,
+                    自定义首行缩进 = 0,
+                    使用自定义首行缩进 = true,
                 };
-                title.UpdateViewData(document.PageWidth);
-                document.BlockList.Add(title);
+                title.Init();
+                文档.添加段落(title);
                 // 在磁盘中新建文件
                 string filePath = $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc";
                 FileStream fileStream = File.Create(filePath);
                 // 刷新文档库
                 Panel_DocLib.RefreshDocumentLib();
                 // 保存文档数据至文件
-                byte[] archiveData = ArchiveManager.Instance.GenerateArchiveData(document);
-                fileStream.Write(archiveData, 0, archiveData.Length);
+                byte[] byteData = 存档管理器.Instance.生成存档数据(文档);
+                fileStream.Write(byteData, 0, byteData.Length);
                 fileStream.Close();
                 // 打开新建的文档
-                OpenDocument(document, dialog.DocumentName, filePath);
+                OpenDocument(文档, dialog.DocumentName, filePath);
                 // 添加打开记录
                 CacheManager.Instance.Cache.DocumentManager.AddRecentDocument($"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
                 CacheManager.Instance.SaveCache();
                 // 添加已打开的文档
-                DocManager.Instance.AddOpenedDocument(document, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
-            }*/
+                DocManager.Instance.AddOpenedDocument(文档, $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc");
+            }
         }
 
         /// <summary>
@@ -415,7 +406,7 @@ namespace GeekDocument
         /// <summary>
         /// 打开文档
         /// </summary>
-        private void OpenDocument(string docName, string docPath)
+        private void OpenDocument(文档 文档, string docName, string docPath)
         {
             // 关闭主页并打开编辑器页
             if (Control_Home.Visibility == Visibility.Visible)
@@ -442,7 +433,7 @@ namespace GeekDocument
             // 选择选项卡
             editerItem.IsSelected = true;
             // 加载文档
-            editer.LoadDocument();
+            editer.LoadDocument(文档);
             editer.SaveStateChanged += Editer_SaveStateChanged;
 
             _tabItemDict.Add(editer, tabItem);

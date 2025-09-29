@@ -37,7 +37,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public bool PixelArt { get; set; } = false;
 
         /// <summary>图注</summary>
-        public string? Caption { get; set; } = null;
+        // public string? Caption { get; set; } = null;
 
         public 图注宽度模式 CaptionWidthMode { get; set; } = 图注宽度模式.图片最大宽度;
 
@@ -84,7 +84,11 @@ namespace GeekDocument.SubSystem.LayoutEngine
             }
         }
 
-        public 段落? 图注段落 => _图注;
+        public 段落? 图注段落
+        {
+            get => _图注;
+            set => _图注 = value;
+        }
 
         #endregion
 
@@ -149,7 +153,12 @@ namespace GeekDocument.SubSystem.LayoutEngine
         {
             if (SourceHash == "") throw new Exception("图片源哈希值不能为空");
             LoadImage();
-            if (Caption != null)
+            if (_图注 != null)
+            {
+                _图注.Init();
+                AddChild(_图注);
+            }
+            /*if (Caption != null)
             {
                 CanInput = true;
                 _图注 = new 段落
@@ -163,7 +172,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 };
                 _图注.Init();
                 AddChild(_图注);
-            }
+            }*/
         }
 
         public override void 测量()

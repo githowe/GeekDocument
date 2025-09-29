@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem3
 {
@@ -13,20 +14,6 @@ namespace GeekDocument.SubSystem.EditerSystem3
         #region 构造方法
 
         public Editer() => InitializeComponent();
-
-        #endregion
-
-        #region 文档元数据
-
-        public string 作者 { get; set; } = "";
-
-        public string 简介 { get; set; } = "";
-
-        public DateTime 创建日期 { get; set; } = DateTime.Now;
-
-        public string 备注 { get; set; } = "";
-
-        public List<string> 标签列表 { get; set; } = new List<string>();
 
         #endregion
 
@@ -65,18 +52,20 @@ namespace GeekDocument.SubSystem.EditerSystem3
             Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
         }
 
-        public void LoadDocument()
+        public void LoadDocument(文档 文档)
         {
+            _doc = 文档;
+            页面 page = _doc.页面;
             _pageView = new PageView { OwnerEditer = this };
             PaperBox.Children.Add(_pageView);
             // 页面宽度 = 内容宽度 + 左边距 + 右边距
-            _pageView.Width = 800 + 64 + 64;
-            _pageView.PagePadding = new Thickness(64);
-            _pageView.Init();
+            _pageView.Width = page.页宽 + page.内边距.Left + page.内边距.Right;
+            _pageView.PagePadding = page.内边距;
+            _pageView.Init(page);
             _pageView.更新页面();
             _pageView.InitEditSystem();
             // 加载元素结构
-            Panel_LayoutTree.LoadLayoutTree(_pageView.页面);
+            Panel_LayoutTree.LoadLayoutTree(page);
         }
 
         /// <summary>
@@ -125,12 +114,22 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         private void Tool_Save_Click(object sender, RoutedEventArgs e)
         {
-            // 构建一个文档数据
-            文档数据 文档 = 存档生成器.Instance.生成存档(_pageView.页面);
-            // 序列化文档数据
-            string jsonData = JsonConvert.SerializeObject(文档, Formatting.Indented);
-            // 写入文件
-            // File.WriteAllText("D:/示例存档.json", jsonData);
+            // 先备份文件
+            string backPath = BackupFile(DocumentPath);
+            try
+            {
+                byte[] byteData = 存档管理器.Instance.生成存档数据(_doc);
+                // 打开文件
+                FileStream fileStream = new FileStream(DocumentPath, FileMode.Create);
+                // 写入存档数据并关闭
+                fileStream.Write(byteData, 0, byteData.Length);
+                fileStream.Close();
+            }
+            catch (Exception)
+            {
+                // 出现异常时，恢复文件
+                File.Copy(backPath, DocumentPath, true);
+            }
         }
 
         private void Tool_SaveAs_Click(object sender, RoutedEventArgs e)
@@ -141,8 +140,30 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         #endregion
 
+        #region 私有方法
+
+        /// <summary>
+        /// 备份文件
+        /// </summary>
+        private string BackupFile(string filePath)
+        {
+            // 获取系统临时文件夹路径
+            string tempPath = Path.GetTempPath();
+            // 随机一个文件名
+            string guid = Guid.NewGuid().ToString();
+            // 备份路径
+            string backupPath = Path.Combine(tempPath, guid + ".gdocbak");
+            // 复制文件
+            File.Copy(filePath, backupPath, true);
+            // 返回备份路径
+            return backupPath;
+        }
+
+        #endregion
+
         #region 字段
 
+        private 文档 _doc = null!;
         private PageView _pageView = null!;
         private bool _saved = true;
 

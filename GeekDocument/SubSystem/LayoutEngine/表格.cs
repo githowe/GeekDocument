@@ -229,7 +229,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         #region 私有方法
 
-        public void 设置单元格内容(int 行, int 列, 段落 段落)
+        private void 设置单元格内容(int 行, int 列, 段落 段落)
         {
             if (行 < 0 || 行 >= 行数) return;
             if (列 < 0 || 列 >= 列数) return;
@@ -258,7 +258,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             AddChild(cell);
         }
 
-        public (double x, double y) 计算单元格坐标(int 行, int 列)
+        private (double x, double y) 计算单元格坐标(int 行, int 列)
         {
             double x = Left + 边框粗细;
             double y = Top + 边框粗细;

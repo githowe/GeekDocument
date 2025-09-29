@@ -1,11 +1,8 @@
-﻿using GeekDocument.SubSystem.ArchiveSystem2;
-using GeekDocument.SubSystem.EditerSystem.Define;
+﻿using GeekDocument.SubSystem.EditerSystem.Define;
 using GeekDocument.SubSystem.EditerSystem3.Layer;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
-using Newtonsoft.Json;
 using System.IO;
-using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,14 +28,13 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         public double PageHeight { get; set; } = 0;
 
-        public 页面 页面 => _page;
-
         #endregion
 
         #region 公开方法
 
-        public void Init()
+        public void Init(页面 page)
         {
+            _page = page;
             // 更新边距标记
             double leftMargin = PagePadding.Left - _markSize;
             double topMargin = PagePadding.Top - _markSize;
@@ -53,10 +49,8 @@ namespace GeekDocument.SubSystem.EditerSystem3
             // 设置图层坐标
             Canvas.SetLeft(_page.Layer, PagePadding.Left);
             Canvas.SetTop(_page.Layer, PagePadding.Top);
-            // 设置页面大小
-            _page.页宽 = Width - PagePadding.Left - PagePadding.Right;
             // 构建示例页面
-            BuildDemoPage();
+            // BuildDemoPage();
 
             // 添加图层
             _hoveredInfoLayer = AddLayer<HoveredInfoLayer>();
@@ -288,6 +282,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
                 段落.Init();
                 _page.段落列表.Add(段落);
             }
+
             string path = "C:/Users/12460/Desktop/一一五/像素艺术/01bd8c5e53ec3da801216518ea512d.png";
             ImageFileData fileData = ImageManager.Instance.GetImageFileData(path);
             string hash = LoadImage(fileData);
@@ -372,7 +367,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         private readonly double _markSize = 24;
 
-        private readonly 页面 _page = new 页面();
+        private 页面 _page = new 页面();
 
         private HoveredInfoLayer _hoveredInfoLayer;
         private HitedInfoLayer _hitedInfoLayer;

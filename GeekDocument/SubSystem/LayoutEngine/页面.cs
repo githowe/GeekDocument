@@ -7,6 +7,8 @@ namespace GeekDocument.SubSystem.LayoutEngine;
 /// </summary>
 public class 页面
 {
+    public 页面() { }
+
     public double 页宽 { get; set; } = 800;
 
     public Thickness 内边距 { get; set; } = new Thickness(64);

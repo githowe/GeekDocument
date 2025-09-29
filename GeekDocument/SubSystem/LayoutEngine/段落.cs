@@ -43,7 +43,15 @@ public class 段落 : 布局元素
 
     public int 字号 { get; set; } = 16;
 
+    public double 自定义段间距 { get; set; } = 4;
+
+    public bool 使用自定义段间距 { get; set; } = false;
+
     public double 首行缩进 { get; set; } = 32;
+
+    public double 自定义首行缩进 { get; set; } = 0;
+
+    public bool 使用自定义首行缩进 { get; set; } = false;
 
     public double 行间距 { get; set; } = 4;
 

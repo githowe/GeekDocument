@@ -15,6 +15,14 @@ public class 边线
         Bottom = double.Parse(array[3]);
     }
 
+    public 边线(double left, double top, double right, double bottom)
+    {
+        Left = left;
+        Top = top;
+        Right = right;
+        Bottom = bottom;
+    }
+
     public double Left { get; set; } = 0;
 
     public double Top { get; set; } = 0;
@@ -76,7 +84,30 @@ public class 文本样式
 
 public class 段落元素属性
 {
+    public 段落元素属性() { }
+
+    public 段落元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        文本 = list[0];
+        字体 = list[1];
+        字号 = int.Parse(list[2]);
+        水平对齐方式 = int.Parse(list[3]);
+        垂直对齐方式 = int.Parse(list[4]);
+        段前距 = double.Parse(list[5]);
+        段后距 = double.Parse(list[6]);
+        左缩进 = double.Parse(list[7]);
+        右缩进 = double.Parse(list[8]);
+        首行缩进 = double.Parse(list[9]);
+        行间距 = double.Parse(list[10]);
+    }
+
     public string 文本 { get; set; } = "";
+
+    public string 字体 { get; set; } = "霞鹜文楷";
+
+    public int 字号 { get; set; } = 16;
 
     public int 水平对齐方式 { get; set; } = 0;
 
@@ -99,6 +130,8 @@ public class 段落元素属性
         List<string> list = new List<string>
         {
             文本,
+            字体,
+            字号.ToString(),
             水平对齐方式.ToString(),
             垂直对齐方式.ToString(),
             段前距.ToString(),
@@ -123,6 +156,22 @@ public class 段落元素
 
 public class 图片元素属性
 {
+    public 图片元素属性() { } 
+
+    public 图片元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        图片源 = list[0];
+        宽度 = int.Parse(list[1]);
+        高度 = int.Parse(list[2]);
+        像素画 = bool.Parse(list[3]);
+        图注宽度模式 = int.Parse(list[4]);
+        图注最大宽度 = double.Parse(list[5]);
+        图注固定宽度 = double.Parse(list[6]);
+        图注顶边距 = double.Parse(list[7]);
+    }
+
     public string 图片源 { get; set; } = "";
 
     public int 宽度 { get; set; } = -1;
@@ -165,6 +214,17 @@ public class 图片元素
 
 public class 表格元素属性
 {
+    public 表格元素属性() { }
+
+    public 表格元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        行数 = int.Parse(list[0]);
+        列数 = int.Parse(list[1]);
+        边框粗细 = double.Parse(list[2]);
+    }
+
     public int 行数 { get; set; } = 0;
 
     public int 列数 { get; set; } = 0;
@@ -192,6 +252,22 @@ public class 表格元素
 
 public class 单元格元素属性
 {
+    public 单元格元素属性() { }
+
+    public 单元格元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        行号 = int.Parse(list[0]);
+        列号 = int.Parse(list[1]);
+        宽度 = double.Parse(list[2]);
+        最小高度 = double.Parse(list[3]);
+        内边距 = new 边线(list[4]);
+        水平对齐方式 = int.Parse(list[5]);
+        垂直对齐方式 = int.Parse(list[6]);
+        段间距 = double.Parse(list[7]);
+    }
+
     public int 行号 { get; set; } = 0;
 
     public int 列号 { get; set; } = 0;
