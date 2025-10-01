@@ -18,7 +18,8 @@ namespace GeekDocument.SubSystem.EditerSystem3
             switch (_host.获取命中区域())
             {
                 case "图片":
-                    Invoke("点击图片");
+                    // Invoke("点击图片");
+                    Invoke("点击页面");
                     break;
                 case "选中文本":
                     Invoke("点击选中文本");

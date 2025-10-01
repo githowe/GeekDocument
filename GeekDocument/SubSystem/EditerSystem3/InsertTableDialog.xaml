@@ -1,0 +1,45 @@
+﻿<xw:XDialog x:Class="GeekDocument.SubSystem.EditerSystem3.InsertTableDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem3"
+        xmlns:xw="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
+        xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
+        FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/NewFile"
+        Title="插入表格" SizeToContent="Height" Width="350">
+    <Grid>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <wc:FrameLabel Text="行数" Width="160" Height="21"/>
+                    <wc:FrameLabel Text="列数" Width="160" Height="21" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBox x:Name="Input_RowCount" Width="160" Height="25"/>
+                    <TextBox x:Name="Input_ColCount" Width="160" Height="25" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <wc:FrameLabel Text="单元格宽度" Width="160" Height="21"/>
+                    <wc:FrameLabel Text="单元格高度" Width="160" Height="21" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBox x:Name="Input_CellWidth" Width="160" Height="25"/>
+                    <TextBox x:Name="Input_CellHeight" Width="160" Height="25" Margin="10,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <Grid Grid.Row="2" Background="#20FFFFFF"/>
+            <Button x:Name="OK" Style="{StaticResource ConfirmButton}" IsDefault="True" Content="确定" Width="160" HorizontalAlignment="Left" Grid.Row="4"/>
+            <Button x:Name="Cancel" Style="{StaticResource CancelButton}" IsCancel="True" Content="取消" Width="160" HorizontalAlignment="Right" Grid.Row="4"/>
+        </Grid>
+    </Grid>
+</xw:XDialog>

@@ -152,6 +152,16 @@ namespace GeekDocument.SubSystem.EditerSystem3
             StartBlinkIBeam();
         }
 
+        public void 插入图片(List<图片> list)
+        {
+            _currentLine.插入图片(list);
+        }
+
+        public void 插入表格(表格 table)
+        {
+            _currentLine.插入表格(table);
+        }
+
         #endregion
 
         #region 工具方法

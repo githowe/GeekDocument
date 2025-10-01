@@ -1,4 +1,6 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem2;
+using GeekDocument.SubSystem.FileSystem;
+using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
 using Newtonsoft.Json;
 using System.IO;
@@ -138,6 +140,45 @@ namespace GeekDocument.SubSystem.EditerSystem3
             // 文档数据 文档 = JsonConvert.DeserializeObject<文档数据>(jsonData)!;
         }
 
+        private void Tool_Image_Click(object sender, RoutedEventArgs e)
+        {
+            // 选择图片
+            List<string> pathList = FM.Instance.OpenReadImageDialog("插入图片");
+            if (pathList.Count == 0) return;
+            // 遍历选择的图片列表
+            List<图片> 图片列表 = new List<图片>();
+            foreach (var imagePath in pathList)
+            {
+                // 获取图片文件数据
+                ImageFileData fileData = ImageManager.Instance.GetImageFileData(imagePath);
+                // 加载图片
+                string hash = LoadImage(fileData);
+                // 创建图片元素
+                图片 图片 = new 图片 { SourceHash = hash };
+                图片.Init();
+                图片列表.Add(图片);
+            }
+            // 插入图片
+            _pageView.插入图片(图片列表);
+        }
+
+        private void Tool_Table_Click(object sender, RoutedEventArgs e)
+        {
+            InsertTableDialog dialog = new InsertTableDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                表格 表格 = new 表格
+                {
+                    行数 = dialog.行数,
+                    列数 = dialog.列数,
+                    单元格宽度 = dialog.单元格宽度,
+                    单元格高度 = dialog.单元格高度
+                };
+                表格.Init();
+                _pageView.插入表格(表格);
+            }
+        }
+
         #endregion
 
         #region 私有方法
@@ -157,6 +198,25 @@ namespace GeekDocument.SubSystem.EditerSystem3
             File.Copy(filePath, backupPath, true);
             // 返回备份路径
             return backupPath;
+        }
+
+        /// <summary>
+        /// 加载图片
+        /// </summary>
+        private string LoadImage(ImageFileData fileData)
+        {
+            // 获取图片信息，获取成功则直接返回
+            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(fileData.Hash);
+            if (imageInfo != null) return fileData.Hash;
+            // 加载图片
+            imageInfo = ImageLoader.Instance.LoadImageFile(fileData.Data, fileData.Type);
+            // 加载失败时返回空
+            if (imageInfo == null) return "";
+            // 缓存文件数据和解码结果
+            ImageManager.Instance.AddFileData(fileData);
+            ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
+            // 返回图片哈希
+            return fileData.Hash;
         }
 
         #endregion

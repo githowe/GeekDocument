@@ -571,6 +571,8 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         #endregion
 
+        #region 公开方法
+
         public void HandleEditKey(EditKey key) => _keyHandler.HandleEditKey(key);
 
         public void HandleCtrlEditKey(Key key)
@@ -619,6 +621,20 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
             ((段落)Parent).输入文本(text, this);
         }
+
+        public void 插入图片(List<图片> list)
+        {
+            ((段落)Parent).插入图片(list, this);
+        }
+
+        public void 插入表格(表格 表格)
+        {
+            ((段落)Parent).插入表格(表格, this);
+        }
+
+        #endregion
+
+        #region 私有方法
 
         private void 更新元素横坐标()
         {
@@ -1010,9 +1026,15 @@ namespace GeekDocument.SubSystem.LayoutEngine
             return 命中元素;
         }
 
+        #endregion
+
+        #region 字段
+
         private 绘图对象 _绘图对象 = new 绘图对象();
         private readonly Pen _rowLinePen = new Pen(new SolidColorBrush(Color.FromArgb(32, 255, 255, 255)), 1);
 
         private readonly STElementLine _keyHandler;
+
+        #endregion
     }
 }

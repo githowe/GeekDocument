@@ -576,43 +576,36 @@ public class 段落 : 布局元素
         }
     }
 
-    private int 获取段落光标索引(元素行 sender)
+    public void 插入图片(List<图片> list, 元素行 sender)
     {
-        int result = 0;
-        foreach (var 元素行 in 元素行列表)
-        {
-            if (元素行 == sender)
-            {
-                result += sender.光标索引;
-                break;
-            }
-            result += 元素行.元素列表.Count;
-        }
-        return result;
+        // 获取光标索引，然后插入元素
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.InsertRange(_光标索引, list);
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(_全部行内元素);
+        // 重新初始化
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引 += list.Count;
+        移动光标至(_光标索引);
     }
 
-    private void 处理元素更新()
+    public void 插入表格(表格 表格, 元素行 sender)
     {
-        // 更新全部行内元素列表
-        _全部行内元素 = 获取全部行内元素();
-        // 当前尺寸
-        double oldWidth = ActualWidth;
-        double oldHeight = ActualHeight;
-        // 重新测量
-        测量();
-        // 尺寸没有变化，则只需重新排列自身并渲染即可
-        if (ActualWidth == oldWidth && ActualHeight == oldHeight)
-        {
-            排列();
-            渲染(null);
-        }
-        else
-        {
-            // 通知页面重新测量
-            if (OwnerPage != null) OwnerPage.重新测量(this);
-            // 通知父元素重新测量与排列
-            else Parent?.重新测量();
-        }
+        // 获取光标索引，然后插入元素
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.Insert(_光标索引, 表格);
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(_全部行内元素);
+        // 重新初始化
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引++;
+        移动光标至(_光标索引);
     }
 
     #endregion
@@ -688,6 +681,45 @@ public class 段落 : 布局元素
         foreach (var 集 in 元素集列表)
             result.AddRange(集.行内元素列表);
         return result;
+    }
+
+    private int 获取段落光标索引(元素行 sender)
+    {
+        int result = 0;
+        foreach (var 元素行 in 元素行列表)
+        {
+            if (元素行 == sender)
+            {
+                result += sender.光标索引;
+                break;
+            }
+            result += 元素行.元素列表.Count;
+        }
+        return result;
+    }
+
+    private void 处理元素更新()
+    {
+        // 更新全部行内元素列表
+        _全部行内元素 = 获取全部行内元素();
+        // 当前尺寸
+        double oldWidth = ActualWidth;
+        double oldHeight = ActualHeight;
+        // 重新测量
+        测量();
+        // 尺寸没有变化，则只需重新排列自身并渲染即可
+        if (ActualWidth == oldWidth && ActualHeight == oldHeight)
+        {
+            排列();
+            渲染(null);
+        }
+        else
+        {
+            // 通知页面重新测量
+            if (OwnerPage != null) OwnerPage.重新测量(this);
+            // 通知父元素重新测量与排列
+            else Parent?.重新测量();
+        }
     }
 
     #endregion
