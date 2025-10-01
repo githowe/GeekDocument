@@ -45,7 +45,7 @@ public class 单元格 : 布局元素, IComparable<单元格>
 
     public 垂直对齐方式 垂直对齐 { get; set; } = 垂直对齐方式.Bottom;
 
-    public double 段间距 { get; set; } = 16;
+    public double 段间距 { get; set; } = 4;
 
     public double 水平内边距 => Padding.Left + Padding.Right;
 

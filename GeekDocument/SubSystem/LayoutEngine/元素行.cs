@@ -257,14 +257,14 @@ namespace GeekDocument.SubSystem.LayoutEngine
         /// </summary>
         public void MoveCaretToStart(ElementSide side)
         {
-            页面? page = this.获取根段落().OwnerPage;
-
             // 当前行没有元素
             if (元素列表.Count == 0)
             {
                 EmptyLineMoveCaret();
                 return;
             }
+
+            页面? page = this.获取根段落().OwnerPage;
             // 获取第一个元素
             行内元素 first = 元素列表[0];
             // 移动至第一个元素左侧
@@ -294,14 +294,14 @@ namespace GeekDocument.SubSystem.LayoutEngine
         /// </summary>
         public void MoveCaretToEnd(ElementSide side)
         {
-            页面? page = this.获取根段落().OwnerPage;
-
             // 当前行没有元素
             if (元素列表.Count == 0)
             {
                 EmptyLineMoveCaret();
                 return;
             }
+
+            页面? page = this.获取根段落().OwnerPage;
             // 获取最后一个元素
             行内元素 last = 元素列表.Last();
             // 移动至最后一个元素右侧
@@ -328,8 +328,18 @@ namespace GeekDocument.SubSystem.LayoutEngine
             last.移入光标至末尾();
         }
 
+        /// <summary>
+        /// 移动光标至指定索引
+        /// </summary>
         public void MoveCaretTo(int index)
         {
+            // 没有元素
+            if (元素列表.Count == 0)
+            {
+                EmptyLineMoveCaret();
+                return;
+            }
+
             光标索引 = index;
             页面? page = this.获取根段落().OwnerPage;
             page?.更新当前元素行(this);
@@ -525,6 +535,38 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public void 调用所属段落的右移光标()
         {
             if (Parent is 段落 段落) 段落.右移光标(this);
+        }
+
+        public bool 光标前为字元素() => 元素列表[光标索引 - 1] is 字;
+
+        public void 删除前字符()
+        {
+            ((段落)Parent).删除前字符(this);
+        }
+
+        public bool 前元素未高亮()
+        {
+            return false;
+        }
+
+        public void 高亮前元素()
+        {
+
+        }
+
+        public void 删除前元素()
+        {
+
+        }
+
+        public void 调用所属段落的退格()
+        {
+            ((段落)Parent).处理退格(this);
+        }
+
+        public void 处理回车()
+        {
+            ((段落)Parent).处理回车(this);
         }
 
         #endregion

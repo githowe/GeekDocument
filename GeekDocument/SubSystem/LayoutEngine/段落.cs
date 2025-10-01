@@ -65,6 +65,10 @@ public class 段落 : 布局元素
 
     public List<元素行> 元素行列表 { get; set; } = new List<元素行>();
 
+    public int 光标索引 => _光标索引;
+
+    public List<行内元素> 全部行内元素 => _全部行内元素;
+
     #endregion
 
     #region 布局元素方法
@@ -154,6 +158,7 @@ public class 段落 : 布局元素
 
     public override void Init()
     {
+        元素集列表.Clear();
         // 将文本分割成多个元素集
         foreach (var part in 文本.Split(_占位标记))
         {
@@ -353,6 +358,40 @@ public class 段落 : 布局元素
         return result;
     }
 
+    /// <summary>
+    /// 从指定处分割元素，然后返回分割出来的元素列表
+    /// </summary>
+    public List<行内元素> 分割元素(int index)
+    {
+        List<行内元素> left = _全部行内元素.Take(index).ToList();
+        List<行内元素> right = _全部行内元素.Skip(index).ToList();
+        _全部行内元素 = left;
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(left);
+        // 返回分割出来的元素列表
+        return right;
+    }
+
+    public void 更新文本与内嵌元素(List<行内元素> newList)
+    {
+        文本 = "";
+        内嵌元素列表.Clear();
+        foreach (var item in newList)
+        {
+            if (item is 字 字) 文本 += 字.字符;
+            else
+            {
+                // 先用零宽字符占位，避免和文本中的 <ele> 冲突
+                文本 += '\u002b';
+                内嵌元素列表.Add(item);
+            }
+        }
+        // 将文本中的 <ele> 转义
+        文本 = 文本.Replace(_占位标记, $"\\{_占位标记}");
+        // 再将零宽字符替换为 <ele>
+        文本 = 文本.Replace("\u002b", _占位标记);
+    }
+
     public void 移动光标至开头()
     {
         元素行列表[0].MoveInCaretToStart();
@@ -398,19 +437,37 @@ public class 段落 : 布局元素
         }
     }
 
+    public void 移动光标至(int index)
+    {
+        元素行? 目标元素行 = null;
+        int charIndex = 0;
+        int indexInLine = 0;
+        foreach (var 元素行 in 元素行列表)
+        {
+            int startIndex = charIndex;
+            int endIndex = charIndex + 元素行.元素列表.Count;
+            if (startIndex <= index && index <= endIndex)
+            {
+                目标元素行 = 元素行;
+                indexInLine = index - startIndex;
+                // 光标在末尾，且有下一个元素行
+                if (index == endIndex && 元素行 != 元素行列表.Last())
+                {
+                    int lineIndex = 元素行列表.IndexOf(元素行);
+                    目标元素行 = 元素行列表[lineIndex + 1];
+                    indexInLine = 0;
+                }
+                break;
+            }
+            charIndex += 元素行.元素列表.Count;
+        }
+        目标元素行?.MoveCaretTo(indexInLine);
+    }
+
     public void 输入文本(string text, 元素行 sender)
     {
         // 计算相对于段落的光标索引
-        int indexInParagraph = 0;
-        foreach (var 元素行 in 元素行列表)
-        {
-            if (元素行 == sender)
-            {
-                indexInParagraph += sender.光标索引;
-                break;
-            }
-            indexInParagraph += 元素行.元素列表.Count;
-        }
+        int indexInParagraph = 获取段落光标索引(sender);
         // 找到当前索引所在的子元素集，并插入文本
         行内元素集? 集 = null;
         int index = 0;
@@ -437,6 +494,105 @@ public class 段落 : 布局元素
         // 重新生成元素集的字元素
         集.行内元素列表.Clear();
         生成字元素(集);
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        indexInParagraph += text.Length;
+        移动光标至(indexInParagraph);
+    }
+
+    public void 删除前字符(元素行 sender)
+    {
+        _光标索引 = 获取段落光标索引(sender);
+        // 找到当前索引所在的子元素集，并删除字符
+        行内元素集? 集 = null;
+        int index = 0;
+        foreach (var 元素集 in 元素集列表)
+        {
+            // 跳过内嵌元素
+            if (元素集.InnerElement)
+            {
+                index++;
+                continue;
+            }
+            // 计算当前元素的索引范围
+            int startIndex = index;
+            int endIndex = startIndex + 元素集.Length;
+            // 判断索引是否在此元素集内
+            if (startIndex <= _光标索引 && _光标索引 <= endIndex)
+            {
+                集 = 元素集;
+                集.Text = 集.Text.Remove(_光标索引 - startIndex - 1, 1);
+                break;
+            }
+            index += 元素集.Length;
+        }
+        // 重新生成元素集的字元素
+        集.行内元素列表.Clear();
+        生成字元素(集);
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引--;
+        移动光标至(_光标索引);
+    }
+
+    public void 处理退格(元素行 sender)
+    {
+        _光标索引 = 获取段落光标索引(sender);
+        if (_光标索引 == 0)
+        {
+            if (OwnerPage != null) OwnerPage.合并段落(this);
+            else if (Parent is 单元格 单元格)
+            {
+
+            }
+            return;
+        }
+        删除前字符(sender);
+    }
+
+    public void 处理回车(元素行 sender)
+    {
+        // 处理逻辑
+        //     光标在段首：在当前段落后插入新段落，然后移动元素和光标至新段落
+        //     光标在段中：从光标处分割段落，然后移动光标至分割出来的段落开头
+        //     光标在段尾：在当前段落后插入空段落，并移动光标至空段落
+
+        _光标索引 = 获取段落光标索引(sender);
+        // 因为段落列表是在父级管理的，所以为方便操作，将回车处理移交给父级
+        if (OwnerPage != null)
+        {
+            OwnerPage.处理回车(this);
+        }
+        else if (Parent is 单元格 单元格)
+        {
+
+        }
+        else if (Parent is 图片 图片)
+        {
+            // 父级为图片，表示此段落是图注，而图注只允许单个段落
+            return;
+        }
+    }
+
+    private int 获取段落光标索引(元素行 sender)
+    {
+        int result = 0;
+        foreach (var 元素行 in 元素行列表)
+        {
+            if (元素行 == sender)
+            {
+                result += sender.光标索引;
+                break;
+            }
+            result += 元素行.元素列表.Count;
+        }
+        return result;
+    }
+
+    private void 处理元素更新()
+    {
         // 更新全部行内元素列表
         _全部行内元素 = 获取全部行内元素();
         // 当前尺寸
@@ -457,9 +613,6 @@ public class 段落 : 布局元素
             // 通知父元素重新测量与排列
             else Parent?.重新测量();
         }
-        // 更新光标位置
-        indexInParagraph += text.Length;
-        移动光标至指定索引(indexInParagraph);
     }
 
     #endregion
@@ -537,33 +690,6 @@ public class 段落 : 布局元素
         return result;
     }
 
-    private void 移动光标至指定索引(int index)
-    {
-        元素行? 目标元素行 = null;
-        int charIndex = 0;
-        int indexInLine = 0;
-        foreach (var 元素行 in 元素行列表)
-        {
-            int startIndex = charIndex;
-            int endIndex = charIndex + 元素行.元素列表.Count;
-            if (startIndex <= index && index <= endIndex)
-            {
-                目标元素行 = 元素行;
-                indexInLine = index - startIndex;
-                // 光标在末尾，且有下一个元素行
-                if (index == endIndex && 元素行 != 元素行列表.Last())
-                {
-                    int lineIndex = 元素行列表.IndexOf(元素行);
-                    目标元素行 = 元素行列表[lineIndex + 1];
-                    indexInLine = 0;
-                }
-                break;
-            }
-            charIndex += 元素行.元素列表.Count;
-        }
-        目标元素行?.MoveCaretTo(indexInLine);
-    }
-
     #endregion
 
     #region 字段
@@ -571,6 +697,8 @@ public class 段落 : 布局元素
     private readonly string _占位标记 = "<ele>";
 
     private List<行内元素> _全部行内元素 = new List<行内元素>();
+
+    private int _光标索引 = 0;
 
     #endregion
 }

@@ -13,6 +13,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Tool
         {
             Init_Left();
             Init_Right();
+
+            Init_Backspace();
+            Init_Enter();
         }
 
         public void HandleEditKey(EditKey key)
@@ -73,6 +76,28 @@ namespace GeekDocument.SubSystem.LayoutEngine.Tool
             _right.NewNode("当前元素支持输入", Line.当前元素支持输入, Line.移入光标至当前元素开头, 光标后有元素);
             _right.NewNode("当前元素不支持输入", () => !Line.当前元素支持输入(), Line.后移光标, 光标后有元素);
             _right.NewNode("光标后无元素", () => !Line.光标后有元素(), Line.调用所属段落的右移光标);
+        }
+
+        private void Init_Backspace()
+        {
+            // 光标前有元素
+            //     字元素：删除前元素
+            //     非字元素
+            //         未高亮：高亮元素
+            //         已高亮：删除元素
+            // 光标前无元素：调用所属段落的退格
+            StateNode 光标前有元素 = _backspace.NewNode("光标前有元素", Line.光标前有元素, null);
+            _backspace.NewNode("字元素", Line.光标前为字元素, Line.删除前字符, 光标前有元素);
+            StateNode 非字元素 = _backspace.NewNode("非字元素", () => !Line.光标前为字元素(), null, 光标前有元素);
+            _backspace.NewNode("未高亮", Line.前元素未高亮, Line.高亮前元素, 非字元素);
+            _backspace.NewNode("已高亮", () => !Line.前元素未高亮(), Line.删除前元素, 非字元素);
+            _backspace.NewNode("光标前无元素", () => !Line.光标前有元素(), Line.调用所属段落的退格);
+        }
+
+        private void Init_Enter()
+        {
+            // 元素行无法判断处于段落的什么位置，直接调用段落的处理回车
+            _enter.NewNode("光标在任意处", () => true, Line.处理回车);
         }
 
         private void 无操作() => Console.WriteLine("无操作");
