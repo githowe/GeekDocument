@@ -537,6 +537,19 @@ public class 段落 : 布局元素
         移动光标至(_光标索引);
     }
 
+    public void 删除前元素(元素行 sender)
+    {
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.RemoveAt(_光标索引 - 1);
+        更新文本与内嵌元素(_全部行内元素);
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引--;
+        移动光标至(_光标索引);
+    }
+
     public void 处理退格(元素行 sender)
     {
         _光标索引 = 获取段落光标索引(sender);
@@ -549,7 +562,40 @@ public class 段落 : 布局元素
             }
             return;
         }
-        删除前字符(sender);
+        行内元素 前元素 = _全部行内元素[_光标索引 - 1];
+        if (前元素 is 字) 删除前字符(sender);
+        else
+        {
+            // 获取高亮元素
+            行内元素? 高亮 = 获取高亮元素();
+            if (高亮 == 前元素)
+            {
+                更新高亮元素(null);
+                删除前元素(sender);
+            }
+            else
+            {
+                更新高亮元素(前元素);
+                int lineIndex = 元素行列表.IndexOf(sender);
+                元素行 上一行 = 元素行列表[lineIndex - 1];
+                if (OwnerPage != null) OwnerPage.更新当前元素行(上一行);
+                else this.获取根段落().OwnerPage.更新当前元素行(上一行);
+                上一行.UpdateCaretIndex(前元素, ElementSide.Right);
+            }
+        }
+    }
+
+    public bool 前元素已高亮(行内元素 前元素)
+    {
+        行内元素? 高亮 = 获取高亮元素();
+        if (高亮 == null) return false;
+        return 高亮 == 前元素;
+    }
+
+    public void 更新高亮元素(行内元素? 元素)
+    {
+        if (OwnerPage != null) OwnerPage.更新高亮元素(元素);
+        else this.获取根段落().OwnerPage.更新高亮元素(元素);
     }
 
     public void 处理回车(元素行 sender)
@@ -720,6 +766,12 @@ public class 段落 : 布局元素
             // 通知父元素重新测量与排列
             else Parent?.重新测量();
         }
+    }
+
+    private 行内元素? 获取高亮元素()
+    {
+        if (OwnerPage != null) return OwnerPage.获取高亮元素();
+        return this.获取根段落().OwnerPage.获取高亮元素();
     }
 
     #endregion

@@ -23,11 +23,15 @@ public class 页面
 
     public double 段落间距 { get; set; } = 16;
 
+    public 行内元素? 高亮元素 => _高亮元素;
+
     public event Action<double>? 高度变化;
 
     public event Action<光标信息>? 光标移动;
 
     public event Action<元素行>? 当前行变化;
+
+    public event Action<行内元素?>? 高亮元素变化;
 
     public void 更新绘图对象(string reason)
     {
@@ -186,6 +190,19 @@ public class 页面
         当前行变化?.Invoke(currentLine);
     }
 
+    public void 更新高亮元素(行内元素? 元素)
+    {
+        _高亮元素 = 元素;
+        高亮元素变化?.Invoke(元素);
+    }
+
+    public 行内元素? 获取高亮元素() => _高亮元素;
+
+    public void 清除高亮元素()
+    {
+        _高亮元素 = null;
+    }
+
     public void 合并段落(段落 sender)
     {
         int 段落索引 = 段落列表.IndexOf(sender);
@@ -334,4 +351,6 @@ public class 页面
     }
 
     private readonly 绘图图层 _图层 = new 绘图图层();
+
+    private 行内元素? _高亮元素 = null;
 }

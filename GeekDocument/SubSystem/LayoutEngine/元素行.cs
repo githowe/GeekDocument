@@ -359,6 +359,13 @@ namespace GeekDocument.SubSystem.LayoutEngine
             }
         }
 
+        public void UpdateCaretIndex(行内元素 元素, ElementSide side)
+        {
+            int index = 元素列表.IndexOf(元素);
+            if (index < 0) throw new Exception("更新光标索引失败，元素不在当前行内");
+            光标索引 = side == ElementSide.Left ? index : index + 1;
+        }
+
         /// <summary>
         /// 空行移动光标：直接移动至行首
         /// </summary>
@@ -493,6 +500,22 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         #region 按键处理器接口
 
+        public bool 有高亮元素()
+        {
+            页面? page = this.获取根段落().OwnerPage;
+            return page.获取高亮元素() != null;
+        }
+
+        public void 移动光标至高亮元素左侧()
+        {
+            页面? page = this.获取根段落().OwnerPage;
+            行内元素 高亮 = page.获取高亮元素();
+            page.更新高亮元素(null);
+            光标索引 = 元素列表.IndexOf(高亮);
+            光标信息 info = 移动光标至元素左侧(高亮);
+            page.移动光标(info.X, info.Y, info.Height);
+        }
+
         public bool 光标前有元素() => 光标索引 > 0;
 
         public bool 前元素支持输入() => 元素列表[光标索引 - 1].CanInput;
@@ -513,6 +536,16 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public void 调用所属段落的左移光标()
         {
             if (Parent is 段落 段落) 段落.左移光标(this);
+        }
+
+        public void 移动光标至高亮元素右侧()
+        {
+            页面? page = this.获取根段落().OwnerPage;
+            行内元素 高亮 = page.获取高亮元素();
+            page.更新高亮元素(null);
+            光标索引 = 元素列表.IndexOf(高亮) + 1;
+            光标信息 info = 移动光标至元素右侧(高亮);
+            page.移动光标(info.X, info.Y, info.Height);
         }
 
         public bool 光标后有元素() => 光标索引 < 元素列表.Count;
@@ -544,19 +577,20 @@ namespace GeekDocument.SubSystem.LayoutEngine
             ((段落)Parent).删除前字符(this);
         }
 
-        public bool 前元素未高亮()
+        public bool 前元素已高亮()
         {
-            return false;
+            return ((段落)Parent).前元素已高亮(元素列表[光标索引 - 1]);
         }
 
         public void 高亮前元素()
         {
-
+            ((段落)Parent).更新高亮元素(元素列表[光标索引 - 1]);
         }
 
         public void 删除前元素()
         {
-
+            ((段落)Parent).更新高亮元素(null);
+            ((段落)Parent).删除前元素(this);
         }
 
         public void 调用所属段落的退格()

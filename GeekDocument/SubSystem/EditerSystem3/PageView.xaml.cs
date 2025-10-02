@@ -56,6 +56,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _hoveredInfoLayer = AddLayer<HoveredInfoLayer>();
             _hitedInfoLayer = AddLayer<HitedInfoLayer>(false);
             _inputBoxLayer = AddLayer<InputBoxLayer>(false);
+            _highlightLayer = AddLayer<HighlightLayer>();
             _caretLayer = AddLayer<CaretLayer>();
             // 初始化编辑工具
             _tool = new EditTool(this);
@@ -98,6 +99,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _page.高度变化 += 页面_高度变化;
             _page.当前行变化 += 页面_当前行变化;
             _page.光标移动 += 页面_光标移动;
+            _page.高亮元素变化 += 页面_高亮元素变化;
             // 移动光标至页面开始位置
             _page.段落列表[0].移动光标至开头();
             // 开始闪烁光标
@@ -148,6 +150,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         public void HandleTextInput(string text)
         {
             StopBlinkIBeam();
+            ClearHighlight();
             _currentLine?.HandleTextInput(text);
             StartBlinkIBeam();
         }
@@ -211,6 +214,16 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _caretLayer.Update();
         }
 
+        public void ClearHighlight()
+        {
+            if (_page.高亮元素 == null) return;
+
+            _page.清除高亮元素();
+            _highlightLayer.HighlightElement = null;
+            _highlightLayer.Clear();
+            _caretLayer.Visibility = Visibility.Visible;
+        }
+
         #endregion
 
         #region 页面事件
@@ -233,6 +246,22 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _caretLayer.CaretY = info.Y;
             _caretLayer.CaretHeight = info.Height;
             _caretLayer.Update();
+        }
+
+        private void 页面_高亮元素变化(行内元素? 元素)
+        {
+            if (元素 != null)
+            {
+                StopBlinkIBeam();
+                _caretLayer.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                _caretLayer.Visibility = Visibility.Visible;
+                StartBlinkIBeam();
+            }
+            _highlightLayer.HighlightElement = 元素;
+            _highlightLayer.Update();
         }
 
         #endregion
@@ -382,6 +411,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         private HoveredInfoLayer _hoveredInfoLayer;
         private HitedInfoLayer _hitedInfoLayer;
         private InputBoxLayer _inputBoxLayer;
+        private HighlightLayer _highlightLayer;
         private CaretLayer _caretLayer;
         private EditTool _tool;
 

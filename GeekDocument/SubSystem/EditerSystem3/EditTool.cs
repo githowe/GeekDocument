@@ -69,6 +69,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             BehaviorNode leftDown = NewTree("点击页面", (_) =>
             {
                 _host.StopBlinkIBeam();
+                _host.ClearHighlight();
                 _host.点击页面();
             });
             NewNode(Behaviors.LeftUp, (_) =>
