@@ -1,13 +1,12 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem2;
+using GeekDocument.SubSystem.EditerSystem3.PropertyPanel;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
-using Newtonsoft.Json;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using XLogic.Base.Ex;
 
 namespace GeekDocument.SubSystem.EditerSystem3
 {
@@ -51,6 +50,8 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
             Tool_OpenLeft.Click += Tool_OpenLeft_Click;
             Tool_CloseLeft.Click += Tool_CloseLeft_Click;
+            Tool_OpenRight.Click += Tool_OpenRight_Click;
+            Tool_CloseRight.Click += Tool_CloseRight_Click;
             Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
         }
 
@@ -60,6 +61,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             页面 page = _doc.页面;
             _pageView = new PageView { OwnerEditer = this };
             PaperBox.Children.Add(_pageView);
+            _pageView.当前段落变化 = 当前段落变化;
             // 页面宽度 = 内容宽度 + 左边距 + 右边距
             _pageView.Width = page.页宽 + page.内边距.Left + page.内边距.Right;
             _pageView.PagePadding = page.内边距;
@@ -107,6 +109,20 @@ namespace GeekDocument.SubSystem.EditerSystem3
             LeftArea.Width = new GridLength(0);
             Tool_OpenLeft.Visibility = Visibility.Visible;
             Tool_CloseLeft.Visibility = Visibility.Collapsed;
+        }
+
+        private void Tool_OpenRight_Click(object sender, RoutedEventArgs e)
+        {
+            RightArea.Width = new GridLength(320);
+            Tool_OpenRight.Visibility = Visibility.Collapsed;
+            Tool_CloseRight.Visibility = Visibility.Visible;
+        }
+
+        private void Tool_CloseRight_Click(object sender, RoutedEventArgs e)
+        {
+            RightArea.Width = new GridLength(0);
+            Tool_OpenRight.Visibility = Visibility.Visible;
+            Tool_CloseRight.Visibility = Visibility.Collapsed;
         }
 
         private void Panel_LayoutTree_HoverElementChanged(布局元素? 元素)
@@ -177,6 +193,14 @@ namespace GeekDocument.SubSystem.EditerSystem3
                 表格.Init();
                 _pageView.插入表格(表格);
             }
+        }
+
+        private void 当前段落变化(段落 段落)
+        {
+            PropertyPanelBox.Children.Clear();
+            ParagraphPropertyPanel panel = new ParagraphPropertyPanel { 段落 = 段落 };
+            PropertyPanelBox.Children.Add(panel);
+            panel.Init();
         }
 
         #endregion

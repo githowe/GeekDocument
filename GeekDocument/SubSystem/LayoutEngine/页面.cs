@@ -29,6 +29,8 @@ public class 页面
 
     public event Action<光标信息>? 光标移动;
 
+    public event Action<段落>? 当前段落变化;
+
     public event Action<元素行>? 当前行变化;
 
     public event Action<行内元素?>? 高亮元素变化;
@@ -185,8 +187,18 @@ public class 页面
         光标移动?.Invoke(info);
     }
 
+    public void 更新当前段落(段落 currentParagraph)
+    {
+        if (_当前段落 != currentParagraph)
+        {
+            _当前段落 = currentParagraph;
+            当前段落变化?.Invoke(currentParagraph);
+        }
+    }
+
     public void 更新当前元素行(元素行 currentLine)
     {
+        更新当前段落((段落)currentLine.Parent);
         当前行变化?.Invoke(currentLine);
     }
 
@@ -352,5 +364,6 @@ public class 页面
 
     private readonly 绘图图层 _图层 = new 绘图图层();
 
+    private 段落? _当前段落 = null;
     private 行内元素? _高亮元素 = null;
 }

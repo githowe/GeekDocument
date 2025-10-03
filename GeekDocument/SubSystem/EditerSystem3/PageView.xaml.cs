@@ -30,6 +30,12 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         #endregion
 
+        #region 事件
+
+        public Action<段落>? 当前段落变化 { get; set; } = null;
+
+        #endregion
+
         #region 公开方法
 
         public void Init(页面 page)
@@ -97,6 +103,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         {
             // 监听页面事件
             _page.高度变化 += 页面_高度变化;
+            _page.当前段落变化 += 页面_当前段落变化;
             _page.当前行变化 += 页面_当前行变化;
             _page.光标移动 += 页面_光标移动;
             _page.高亮元素变化 += 页面_高亮元素变化;
@@ -185,6 +192,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             段落 段落 = _page.获取最近段落(point);
             元素行 元素行 = 段落.获取最近元素行(point);
             _currentLine = 元素行;
+            当前段落变化?.Invoke((段落)元素行.Parent);
             _inputBoxLayer.Line = 元素行;
             _inputBoxLayer.Update();
             光标信息 info = 元素行.移动光标(point);
@@ -227,6 +235,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
         #endregion
 
         #region 页面事件
+
+        private void 页面_当前段落变化(段落 段落)
+        {
+            当前段落变化?.Invoke(段落);
+        }
 
         private void 页面_高度变化(double height)
         {

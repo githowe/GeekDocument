@@ -1,0 +1,46 @@
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace GeekDocument.SubSystem.EditerSystem3.PropertyBar
+{
+    public partial class TextInput : PropertyBarBase
+    {
+        public TextInput()
+        {
+            InitializeComponent();
+            Input_Value.TextChanged += OnTextChanged;
+        }
+
+        public string Text { get; set; } = "";
+
+        public bool ReadOnly { get; set; } = false;
+
+        public event Action<string> TextChanged;
+
+        /// <summary>
+        /// 加载属性
+        /// </summary>
+        public void LoadProperty(string text)
+        {
+            Block_Title.Text = Title;
+            Input_Value.Text = text;
+            if (ReadOnly) Input_Value.IsReadOnly = true;
+        }
+
+        private void MainGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Block_Title.Foreground = _hovered;
+        }
+
+        private void MainGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Block_Title.Foreground = _default;
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextChanged?.Invoke(Input_Value.Text);
+            Text = Input_Value.Text;
+        }
+    }
+}

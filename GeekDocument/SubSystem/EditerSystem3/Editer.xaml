@@ -156,6 +156,27 @@
                 <Canvas x:Name="TipBox"/>
             </Grid>
             <!-- 属性面板 -->
+            <Grid Background="#262626" Grid.Column="2">
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.5" To="1" Storyboard.TargetName="PropertyScrollBar" Storyboard.TargetProperty="Opacity"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetName="PropertyScrollBar" Storyboard.TargetProperty="Opacity" BeginTime="0:0:2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+                <Grid x:Name="PropertyPanelBox"/>
+                <ScrollBar x:Name="PropertyScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0" Grid.Row="1"
+                           SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>
+            </Grid>
         </Grid>
         <!-- 状态栏 -->
         <Grid Grid.Row="2" Background="#1E1E1E">

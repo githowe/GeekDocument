@@ -13,9 +13,12 @@
   <ItemGroup>
     <None Remove="Assets\AppIcon.png" />
     <None Remove="Assets\Font\simsun.ttc" />
+    <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
+    <None Remove="Assets\Icon15\AlignCenter2.png" />
     <None Remove="Assets\Icon15\AlignLeft.png" />
     <None Remove="Assets\Icon15\AlignRight.png" />
+    <None Remove="Assets\Icon15\AlignTop.png" />
     <None Remove="Assets\Icon15\Bold.png" />
     <None Remove="Assets\Icon15\Book.png" />
     <None Remove="Assets\Icon15\Document.png" />
@@ -141,6 +144,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Icon15\AlignBottom.png" />
+    <Resource Include="Assets\Icon15\AlignCenter2.png" />
+    <Resource Include="Assets\Icon15\AlignTop.png" />
     <Resource Include="Assets\Icon15\Element\AnimateImage.png" />
   </ItemGroup>
 

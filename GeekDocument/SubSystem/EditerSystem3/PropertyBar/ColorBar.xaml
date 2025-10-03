@@ -1,0 +1,18 @@
+﻿<local:PropertyBarBase x:Class="GeekDocument.SubSystem.EditerSystem3.PropertyBar.ColorBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem3.PropertyBar"
+             mc:Ignorable="d" 
+             d:DesignWidth="360" Height="25">
+    <Grid x:Name="MainGrid" Background="Transparent" MouseEnter="MainGrid_MouseEnter" MouseLeave="MainGrid_MouseLeave">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Block_Title" Text="标题" Foreground="#8C8C8C" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBox x:Name="Input_Code" Grid.Column="1" Width="80" HorizontalAlignment="Left" TextChanged="Input_Code_TextChanged"/>
+        <Grid x:Name="Grid_Color" Background="White" Grid.Column="1" Cursor="Hand" Margin="90,0,0,0" MouseLeftButtonDown="Grid_Color_MouseLeftButtonDown"/>
+    </Grid>
+</local:PropertyBarBase>
