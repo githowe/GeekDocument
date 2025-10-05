@@ -37,10 +37,16 @@
                 <StackPanel Orientation="Vertical" Margin="10">
                     <pb:RadioButtonBar x:Name="Bar_AlignH" Title="水平对齐方式"/>
                     <pb:RadioButtonBar x:Name="Bar_AlignV" Title="垂直对齐方式" Margin="0,10,0,0"/>
+                    
                     <pb:OnOff x:Name="Bar_CustonIndent" Title="自定义首行缩进" Margin="0,10,0,0"/>
-                    <pb:TextInput x:Name="Bar_Indent" Title="首行缩进" Margin="0,10,0,0"/>
+                    <pb:TextInput x:Name="Bar_Indent" Title="自定义首行缩进" Margin="0,10,0,0"/>
+                    
                     <pb:TextInput x:Name="Bar_LeftIndent" Title="左缩进" Margin="0,10,0,0"/>
                     <pb:TextInput x:Name="Bar_RightIndent" Title="右缩进" Margin="0,10,0,0"/>
+
+                    <pb:OnOff x:Name="Bar_CustonParagraphSpace" Title="自定义段间距" Margin="0,10,0,0"/>
+                    <pb:TextInput x:Name="Bar_ParagraphSpace" Title="自定义段间距" Margin="0,10,0,0"/>
+
                     <pb:TextInput x:Name="Bar_LineSpace" Title="行间距" Margin="0,10,0,0"/>
                     <pb:TextInput x:Name="Bar_MarginTop" Title="段前距" Margin="0,10,0,0"/>
                     <pb:TextInput x:Name="Bar_MarginBottom" Title="段后距" Margin="0,10,0,0"/>

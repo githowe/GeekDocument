@@ -1,0 +1,30 @@
+﻿<xw:XDialog x:Class="GeekDocument.SubSystem.EditerSystem3.InsertFormulaDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem3"
+        xmlns:xw="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
+        xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
+        FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/Sqrt"
+        Title="插入公式" SizeToContent="Height" Width="500">
+    <Grid>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="10"/>
+
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            
+            <wc:FrameLabel Text="公式"/>
+            <TextBox x:Name="Input_Latex" Grid.Row="2"/>
+            
+            <Button x:Name="OK" Grid.Row="4" Style="{StaticResource ConfirmButton}" IsDefault="True" Content="确定"/>
+        </Grid>
+    </Grid>
+</xw:XDialog>

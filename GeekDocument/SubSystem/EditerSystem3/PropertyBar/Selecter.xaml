@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem3.PropertyBar"
              mc:Ignorable="d"
-             d:DesignWidth="360" Height="25">
+             d:DesignWidth="320" Height="25">
     <Grid x:Name="MainGrid" Background="Transparent" MouseEnter="MainGrid_MouseEnter" MouseLeave="MainGrid_MouseLeave">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />

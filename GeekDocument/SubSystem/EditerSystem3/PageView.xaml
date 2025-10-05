@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GeekDocument.SubSystem.EditerSystem3"
              mc:Ignorable="d" VerticalAlignment="Top" UseLayoutRounding="True"
+             Focusable="True" FocusVisualStyle="{x:Null}" PreviewMouseLeftButtonDown="UserControl_PreviewMouseLeftButtonDown"
              d:DesignWidth="800">
     <StackPanel x:Name="PaperPanel" Orientation="Vertical" VerticalAlignment="Top">
         <!-- 纸张 -->

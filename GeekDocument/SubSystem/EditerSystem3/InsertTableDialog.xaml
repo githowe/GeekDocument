@@ -8,7 +8,7 @@
         xmlns:wc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner"
         Style="{StaticResource NormalDialog}" ShowInTaskbar="False"
-        FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/NewFile"
+        FontFamily="../../Assets/Font/#新宋体" CustomIcon="WindowIcon/Table"
         Title="插入表格" SizeToContent="Height" Width="350">
     <Grid>
         <Grid Margin="10">

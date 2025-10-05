@@ -83,10 +83,10 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             元素信息 result = new 元素信息
             {
                 Type = "段落",
-                Version = "1.0",
+                Version = "1.1",
             };
 
-            段落元素属性 元素属性 = new 段落元素属性
+            段落元素属性2 元素属性 = new 段落元素属性2
             {
                 文本 = 段落.获取文本(),
                 字体 = 段落.字体,
@@ -97,8 +97,11 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 段后距 = 段落.段后距,
                 左缩进 = 段落.左缩进,
                 右缩进 = 段落.右缩进,
-                首行缩进 = 段落.首行缩进,
+                使用自定义首行缩进 = 段落.使用自定义首行缩进,
+                自定义首行缩进 = 段落.自定义首行缩进,
                 行间距 = 段落.行间距,
+                使用自定义段间距 = 段落.使用自定义段间距,
+                自定义段间距 = 段落.自定义段间距,
             };
             段落元素 段落元素 = new 段落元素 { 属性 = 元素属性.ToString() };
             foreach (var item in 段落.获取内嵌元素())
@@ -115,6 +118,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
         {
             if (元素 is 图片 图片) return 生成图片元素信息(图片);
             else if (元素 is 表格 表格) return 生成表格元素信息(表格);
+            else if (元素 is 公式 公式) return 生成公式元素信息(公式);
             throw new Exception("生成行内元素信息失败");
         }
 
@@ -198,6 +202,26 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             foreach (var item in 单元格.段落列表)
                 单元格元素.段落列表.Add(生成段落元素信息(item));
             result.Data = 单元格元素.序列化并压缩();
+
+            return result;
+        }
+
+        private 元素信息 生成公式元素信息(公式 公式)
+        {
+            元素信息 result = new 元素信息
+            {
+                Type = "公式",
+                Version = "1.0",
+            };
+
+            公式元素属性 属性 = new 公式元素属性
+            {
+                Latex = 公式.Latex,
+                Size = 公式.Size,
+                Color = 公式.Color,
+            };
+            公式元素 公式元素 = new 公式元素 { 属性 = 属性.ToString() };
+            result.Data = 公式元素.序列化并压缩();
 
             return result;
         }
@@ -305,21 +329,50 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             段落元素? 段落元素 = 段落元素信息.Data.解压并反序列化<段落元素>();
             if (段落元素 == null) throw new Exception("加载段落数据失败");
 
-            段落元素属性 属性 = new 段落元素属性(段落元素.属性);
-            段落 result = new 段落
+            段落? result = null;
+            // 1.0
+            if (段落元素信息.Version == "1.0")
             {
-                文本 = 属性.文本,
-                字体 = 属性.字体,
-                字号 = 属性.字号,
-                水平对齐 = (水平对齐方式)属性.水平对齐方式,
-                垂直对齐 = (垂直对齐方式)属性.垂直对齐方式,
-                段前距 = 属性.段前距,
-                段后距 = 属性.段后距,
-                左缩进 = 属性.左缩进,
-                右缩进 = 属性.右缩进,
-                首行缩进 = 属性.首行缩进,
-                行间距 = 属性.行间距,
-            };
+                段落元素属性 属性 = new 段落元素属性(段落元素.属性);
+                result = new 段落
+                {
+                    文本 = 属性.文本,
+                    字体 = 属性.字体,
+                    字号 = 属性.字号,
+                    水平对齐 = (水平对齐方式)属性.水平对齐方式,
+                    垂直对齐 = (垂直对齐方式)属性.垂直对齐方式,
+                    段前距 = 属性.段前距,
+                    段后距 = 属性.段后距,
+                    左缩进 = 属性.左缩进,
+                    右缩进 = 属性.右缩进,
+                    首行缩进 = 属性.首行缩进,
+                    行间距 = 属性.行间距,
+                };
+            }
+            // 1.1
+            else if (段落元素信息.Version == "1.1")
+            {
+                段落元素属性2 属性 = new 段落元素属性2(段落元素.属性);
+                result = new 段落
+                {
+                    文本 = 属性.文本,
+                    字体 = 属性.字体,
+                    字号 = 属性.字号,
+                    水平对齐 = (水平对齐方式)属性.水平对齐方式,
+                    垂直对齐 = (垂直对齐方式)属性.垂直对齐方式,
+                    段前距 = 属性.段前距,
+                    段后距 = 属性.段后距,
+                    左缩进 = 属性.左缩进,
+                    右缩进 = 属性.右缩进,
+                    使用自定义首行缩进 = 属性.使用自定义首行缩进,
+                    自定义首行缩进 = 属性.自定义首行缩进,
+                    行间距 = 属性.行间距,
+                    使用自定义段间距 = 属性.使用自定义段间距,
+                    自定义段间距 = 属性.自定义段间距,
+                };
+            }
+            if (result == null) throw new Exception("加载段落数据失败");
+
             foreach (var 内嵌元素信息 in 段落元素.内嵌元素列表)
             {
                 switch (内嵌元素信息.Type)
@@ -329,6 +382,9 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                         break;
                     case "表格":
                         result.内嵌元素列表.Add(加载表格数据(内嵌元素信息));
+                        break;
+                    case "公式":
+                        result.内嵌元素列表.Add(加载公式数据(内嵌元素信息));
                         break;
                 }
             }
@@ -401,6 +457,22 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             };
             foreach (var 段落信息 in 单元格元素.段落列表)
                 result.段落列表.Add(加载段落数据(段落信息));
+            return result;
+        }
+
+        private 公式 加载公式数据(元素信息 公式元素信息)
+        {
+            公式元素? 公式元素 = 公式元素信息.Data.解压并反序列化<公式元素>();
+            if (公式元素 == null) throw new Exception("加载公式数据失败");
+
+            公式元素属性 属性 = new 公式元素属性(公式元素.属性);
+            公式 result = new 公式
+            {
+                Latex = 属性.Latex,
+                Size = 属性.Size,
+                Color = 属性.Color,
+            };
+            result.Init();
             return result;
         }
 

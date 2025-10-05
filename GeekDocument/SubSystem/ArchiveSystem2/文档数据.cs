@@ -145,6 +145,81 @@ public class 段落元素属性
     }
 }
 
+public class 段落元素属性2
+{
+    public 段落元素属性2() { }
+
+    public 段落元素属性2(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        文本 = list[0];
+        字体 = list[1];
+        字号 = int.Parse(list[2]);
+        水平对齐方式 = int.Parse(list[3]);
+        垂直对齐方式 = int.Parse(list[4]);
+        段前距 = double.Parse(list[5]);
+        段后距 = double.Parse(list[6]);
+        左缩进 = double.Parse(list[7]);
+        右缩进 = double.Parse(list[8]);
+        使用自定义首行缩进 = bool.Parse(list[9]);
+        自定义首行缩进 = double.Parse(list[10]);
+        行间距 = double.Parse(list[11]);
+        使用自定义段间距 = bool.Parse(list[12]);
+        自定义段间距 = double.Parse(list[13]);
+    }
+
+    public string 文本 { get; set; } = "";
+
+    public string 字体 { get; set; } = "霞鹜文楷";
+
+    public int 字号 { get; set; } = 16;
+
+    public int 水平对齐方式 { get; set; } = 0;
+
+    public int 垂直对齐方式 { get; set; } = 0;
+
+    public double 段前距 { get; set; } = 0;
+
+    public double 段后距 { get; set; } = 0;
+
+    public double 左缩进 { get; set; } = 0;
+
+    public double 右缩进 { get; set; } = 0;
+
+    public bool 使用自定义首行缩进 { get; set; } = false;
+
+    public double 自定义首行缩进 { get; set; } = 0;
+
+    public double 行间距 { get; set; } = 0;
+
+    public bool 使用自定义段间距 { get; set; } = false;
+
+    public double 自定义段间距 { get; set; } = 0;
+
+    public override string ToString()
+    {
+        List<string> list = new List<string>
+        {
+            文本,
+            字体,
+            字号.ToString(),
+            水平对齐方式.ToString(),
+            垂直对齐方式.ToString(),
+            段前距.ToString(),
+            段后距.ToString(),
+            左缩进.ToString(),
+            右缩进.ToString(),
+            使用自定义首行缩进.ToString(),
+            自定义首行缩进.ToString(),
+            行间距.ToString(),
+            使用自定义段间距.ToString(),
+            自定义段间距.ToString(),
+        };
+        return list.序列化并压缩();
+    }
+}
+
 public class 段落元素
 {
     public string 属性 { get; set; } = "";
@@ -306,4 +381,40 @@ public class 单元格元素
     public string 属性 { get; set; } = "";
 
     public List<元素信息> 段落列表 { get; set; } = new List<元素信息>();
+}
+
+public class 公式元素属性
+{
+    public 公式元素属性() { }
+
+    public 公式元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        Latex = list[0];
+        Size = int.Parse(list[1]);
+        Color = list[2];
+    }
+
+    public string Latex { get; set; } = "";
+
+    public int Size { get; set; } = 24;
+
+    public string Color { get; set; } = "FFFFFF";
+
+    public override string ToString()
+    {
+        List<string> list = new List<string>
+        {
+            Latex,
+            Size.ToString(),
+            Color,
+        };
+        return list.序列化并压缩();
+    }
+}
+
+public class 公式元素
+{
+    public string 属性 { get; set; } = "";
 }

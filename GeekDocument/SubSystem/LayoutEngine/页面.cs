@@ -123,8 +123,8 @@ public class 页面
         }
         if (info != null)
         {
-            Console.WriteLine("命中坐标：" + info.坐标);
-            Console.WriteLine("命中区域：" + info.区域名称);
+            // Console.WriteLine("命中坐标：" + info.坐标);
+            // Console.WriteLine("命中区域：" + info.区域名称);
         }
         return info;
     }

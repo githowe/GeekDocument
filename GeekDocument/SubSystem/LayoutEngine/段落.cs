@@ -1,15 +1,58 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
 public class 段落 : 布局元素
 {
+    #region 构造方法
+
     public 段落()
     {
         Name = "段落";
         Icon = "Paragraph";
     }
+
+    #endregion
+
+    #region 属性
+
+    public string 文本 { get; set; } = "";
+
+    public List<行内元素> 内嵌元素列表 { get; set; } = new List<行内元素>();
+
+    public string 字体 { get; set; } = "霞鹜文楷";
+
+    public int 字号 { get; set; } = 16;
+
+    public 水平对齐方式 水平对齐 { get; set; } = 水平对齐方式.Justify;
+
+    public 垂直对齐方式 垂直对齐 { get; set; } = 垂直对齐方式.Bottom;
+
+    public double 首行缩进 { get; set; } = 32;
+
+    public double 自定义首行缩进 { get; set; } = 0;
+
+    public bool 使用自定义首行缩进 { get; set; } = false;
+
+    public double 左缩进 { get; set; } = 0;
+
+    public double 右缩进 { get; set; } = 0;
+
+    public double 自定义段间距 { get; set; } = 4;
+
+    public bool 使用自定义段间距 { get; set; } = false;
+
+    public double 行间距 { get; set; } = 4;
+
+    public double 段前距 { get; set; } = 0;
+
+    public double 段后距 { get; set; } = 0;
+
+    #endregion
+
+    #region 运行时属性
 
     public 页面? OwnerPage { get; set; } = null;
 
@@ -24,40 +67,6 @@ public class 段落 : 布局元素
     public double ActualWidth { get; set; } = double.NaN;
 
     public double ActualHeight { get; set; } = double.NaN;
-
-    public 水平对齐方式 水平对齐 { get; set; } = 水平对齐方式.Justify;
-
-    public 垂直对齐方式 垂直对齐 { get; set; } = 垂直对齐方式.Bottom;
-
-    public double 段前距 { get; set; } = 0;
-
-    public double 段后距 { get; set; } = 0;
-
-    public double 左缩进 { get; set; } = 0;
-
-    public double 右缩进 { get; set; } = 0;
-
-    public string 文本 { get; set; } = "";
-
-    public string 字体 { get; set; } = "霞鹜文楷";
-
-    public int 字号 { get; set; } = 16;
-
-    public double 自定义段间距 { get; set; } = 4;
-
-    public bool 使用自定义段间距 { get; set; } = false;
-
-    public double 首行缩进 { get; set; } = 32;
-
-    public double 自定义首行缩进 { get; set; } = 0;
-
-    public bool 使用自定义首行缩进 { get; set; } = false;
-
-    public double 行间距 { get; set; } = 4;
-
-    public List<行内元素> 内嵌元素列表 { get; set; } = new List<行内元素>();
-
-    #region 运行时属性
 
     public bool 纯文本模式 { get; set; } = false;
 
@@ -124,8 +133,7 @@ public class 段落 : 布局元素
         for (int index = 元素行列表.Count - 1; index >= 0; index--)
         {
             元素行 元素行 = 元素行列表[index];
-            Rect rect = new Rect(元素行.Left, 元素行.Top, 元素行.ActualWidth, 元素行.ActualHeight);
-            if (rect.Top <= point.Y && point.Y < rect.Bottom)
+            if (元素行.Top <= point.Y && point.Y < 元素行.Top + 元素行.ActualHeight)
             {
                 命中行 = 元素行;
                 break;
@@ -138,8 +146,7 @@ public class 段落 : 布局元素
             double 最小距离 = double.MaxValue;
             foreach (var 元素行 in 元素行列表)
             {
-                Rect rect = new Rect(元素行.Left, 元素行.Top, 元素行.ActualWidth, 元素行.ActualHeight);
-                double distance = Math.Min(Math.Abs(point.Y - rect.Top), Math.Abs(point.Y - rect.Bottom));
+                double distance = Math.Min(Math.Abs(point.Y - 元素行.Top), Math.Abs(point.Y - (元素行.Top + 元素行.ActualHeight)));
                 if (distance < 最小距离)
                 {
                     最小距离 = distance;
@@ -208,7 +215,7 @@ public class 段落 : 布局元素
             if (元素行 != null)
             {
                 元素行.首行 = 元素行列表.Count == 0;
-                元素行.首行缩进 = 首行缩进;
+                元素行.首行缩进 = 获取首行缩进();
                 元素行.字号 = 字号;
                 元素行列表.Add(元素行);
                 AddChild(元素行);
@@ -221,7 +228,7 @@ public class 段落 : 布局元素
             元素行 空行 = new 元素行
             {
                 首行 = true,
-                首行缩进 = 首行缩进,
+                首行缩进 = 获取首行缩进(),
                 字号 = 字号,
             };
             空行.Init();
@@ -392,6 +399,12 @@ public class 段落 : 布局元素
         文本 = 文本.Replace("\u002b", _占位标记);
     }
 
+    public void 更新光标索引(元素行 line)
+    {
+        _光标索引 = 获取段落光标索引(line);
+        // Console.WriteLine("光标索引：" + _光标索引);
+    }
+
     public void 移动光标至开头()
     {
         元素行列表[0].MoveInCaretToStart();
@@ -499,6 +512,8 @@ public class 段落 : 布局元素
         // 更新光标位置
         indexInParagraph += text.Length;
         移动光标至(indexInParagraph);
+        // 更新文本
+        更新文本与内嵌元素(_全部行内元素);
     }
 
     public void 删除前字符(元素行 sender)
@@ -654,6 +669,82 @@ public class 段落 : 布局元素
         移动光标至(_光标索引);
     }
 
+    public void 插入公式(公式 公式, 元素行 sender)
+    {
+        // 获取光标索引，然后插入元素
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.Insert(_光标索引, 公式);
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(_全部行内元素);
+        // 重新初始化
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引++;
+        移动光标至(_光标索引);
+    }
+
+    #endregion
+
+    #region 更新属性
+
+    public void 更新字体(string font)
+    {
+
+    }
+
+    public void 更新字号(int size)
+    {
+        字号 = size;
+        更新文本与内嵌元素(_全部行内元素);
+        Init();
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新水平对齐方式(水平对齐方式 水平对齐)
+    {
+        this.水平对齐 = 水平对齐;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新垂直对齐方式(垂直对齐方式 垂直对齐)
+    {
+        this.垂直对齐 = 垂直对齐;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新使用自定义首行缩进(bool use)
+    {
+        使用自定义首行缩进 = use;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新自定义首行缩进(double indent)
+    {
+        自定义首行缩进 = indent;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新左缩进(double indent)
+    {
+        左缩进 = indent;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
+    public void 更新右缩进(double indent)
+    {
+        右缩进 = indent;
+        处理元素更新();
+        移动光标至(_光标索引);
+    }
+
     #endregion
 
     #region 私有方法
@@ -664,14 +755,14 @@ public class 段落 : 布局元素
         if (!double.IsNaN(Width))
         {
             foreach (var 行内元素 in _全部行内元素)
-                if (double.IsNaN(行内元素.MaxWidth)) 行内元素.MaxWidth = Width;
+                行内元素.MaxWidth = Width - 左缩进 - 右缩进;
             return;
         }
         // 设置了最大宽度，也给全部行内元素设置最大宽度
         if (!double.IsNaN(MaxWidth))
         {
             foreach (var 行内元素 in _全部行内元素)
-                if (double.IsNaN(行内元素.MaxWidth)) 行内元素.MaxWidth = MaxWidth;
+                行内元素.MaxWidth = MaxWidth - 左缩进 - 右缩进;
             return;
         }
         throw new Exception("段落必须设置一个宽度");
@@ -716,9 +807,17 @@ public class 段落 : 布局元素
         if (double.IsNaN(宽度)) throw new Exception("未设置段落宽度");
         // 减去左右缩进
         宽度 -= 左缩进 + 右缩进;
-        // 如果是首行，则减去首行缩进
-        if (元素行列表.Count == 0) 宽度 -= 首行缩进;
+        // 如果是首行
+        if (元素行列表.Count == 0) 宽度 -= 获取首行缩进();
         return 宽度;
+    }
+
+    private double 获取首行缩进()
+    {
+        // 返回自定义首行缩进
+        if (使用自定义首行缩进) return 自定义首行缩进;
+        // 返回页面首行缩进
+        return 首行缩进;
     }
 
     private List<行内元素> 获取全部行内元素()

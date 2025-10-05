@@ -3,6 +3,7 @@ using GeekDocument.SubSystem.EditerSystem3.PropertyPanel;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -180,7 +181,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         private void Tool_Table_Click(object sender, RoutedEventArgs e)
         {
-            InsertTableDialog dialog = new InsertTableDialog();
+            InsertTableDialog dialog = new InsertTableDialog { Owner = WM.Main };
             if (dialog.ShowDialog() == true)
             {
                 表格 表格 = new 表格
@@ -192,6 +193,17 @@ namespace GeekDocument.SubSystem.EditerSystem3
                 };
                 表格.Init();
                 _pageView.插入表格(表格);
+            }
+        }
+
+        private void Tool_Latex_Click(object sender, RoutedEventArgs e)
+        {
+            InsertFormulaDialog dialog = new InsertFormulaDialog() { Owner = WM.Main };
+            if (dialog.ShowDialog() == true)
+            {
+                公式 公式 = new 公式 { Latex = dialog.Latex };
+                公式.Init();
+                _pageView.插入公式(公式);
             }
         }
 

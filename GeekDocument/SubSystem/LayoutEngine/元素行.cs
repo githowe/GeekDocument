@@ -75,6 +75,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 result = item.获取命中信息(point);
                 if (result != null) return result;
             }
+            if (ActualWidth < 0 || ActualHeight < 0) return null;
             // 获取自身的可命中区域
             Rect rect = new Rect(Left, Top, ActualWidth, ActualHeight);
             if (rect.Contains(point))
@@ -238,6 +239,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             光标索引 = 元素列表.IndexOf(行内元素);
             光标信息 info = 移动光标至元素左侧(行内元素);
             page?.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         public override void 从末尾移出光标(布局元素 元素)
@@ -250,6 +252,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             光标索引 = 元素列表.IndexOf(行内元素) + 1;
             光标信息 info = 移动光标至元素右侧(行内元素);
             page?.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         /// <summary>
@@ -274,6 +277,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 page?.更新当前元素行(this);
                 光标信息 info = 移动光标至元素左侧(first);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
                 return;
             }
             // 第一个元素不支持输入
@@ -283,6 +287,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 page?.更新当前元素行(this);
                 光标信息 info = 移动光标至元素右侧(first);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
                 return;
             }
             // 支持输入，移入光标至元素开头
@@ -312,6 +317,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 page?.更新当前元素行(this);
                 光标信息 info = 移动光标至元素右侧(last);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
                 return;
             }
             // 最后一个元素不支持输入
@@ -322,6 +328,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 page?.更新当前元素行(this);
                 光标信息 info = 移动光标至元素左侧(last);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
                 return;
             }
             // 支持输入，移入光标至元素末尾
@@ -349,6 +356,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 行内元素 target = 元素列表[光标索引];
                 光标信息 info = 移动光标至元素左侧(target);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
             }
             // 光标在行尾
             else if (光标索引 == 元素列表.Count)
@@ -356,6 +364,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 行内元素 target = 元素列表[光标索引 - 1];
                 光标信息 info = 移动光标至元素右侧(target);
                 page?.移动光标(info.X, info.Y, info.Height);
+                ((段落)Parent).更新光标索引(this);
             }
         }
 
@@ -378,6 +387,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             // 移动光标
             光标信息 info = 获取空行光标信息();
             page?.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         private 光标信息 获取空行光标信息()
@@ -486,12 +496,11 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         private double 计算光标纵坐标()
         {
-            Rect lineRect = new Rect(Left, Top, ActualWidth, ActualHeight);
             return 垂直对齐 switch
             {
-                垂直对齐方式.Top => lineRect.Top,
-                垂直对齐方式.Center => lineRect.Top + (ActualHeight - 字号) / 2,
-                垂直对齐方式.Bottom => lineRect.Bottom - 字号,
+                垂直对齐方式.Top => Top,
+                垂直对齐方式.Center => Top + (ActualHeight - 字号) / 2,
+                垂直对齐方式.Bottom => Top + ActualHeight - 字号,
                 _ => 0,
             };
         }
@@ -514,6 +523,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             光标索引 = 元素列表.IndexOf(高亮);
             光标信息 info = 移动光标至元素左侧(高亮);
             page.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         public bool 光标前有元素() => 光标索引 > 0;
@@ -531,6 +541,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             光标信息 info = 移动光标至元素左侧(元素列表[光标索引]);
             页面? page = this.获取根段落().OwnerPage;
             page?.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         public void 调用所属段落的左移光标()
@@ -546,6 +557,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             光标索引 = 元素列表.IndexOf(高亮) + 1;
             光标信息 info = 移动光标至元素右侧(高亮);
             page.移动光标(info.X, info.Y, info.Height);
+            ((段落)Parent).更新光标索引(this);
         }
 
         public bool 光标后有元素() => 光标索引 < 元素列表.Count;
@@ -563,6 +575,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
             页面? page = this.获取根段落().OwnerPage;
             page?.移动光标(info.X, info.Y, info.Height);
             光标索引++;
+            ((段落)Parent).更新光标索引(this);
         }
 
         public void 调用所属段落的右移光标()
@@ -664,6 +677,11 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public void 插入表格(表格 表格)
         {
             ((段落)Parent).插入表格(表格, this);
+        }
+
+        public void 插入公式(公式 公式)
+        {
+            ((段落)Parent).插入公式(公式, this);
         }
 
         #endregion

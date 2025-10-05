@@ -172,6 +172,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _currentLine.插入表格(table);
         }
 
+        public void 插入公式(公式 公式)
+        {
+            _currentLine.插入公式(公式);
+        }
+
         #endregion
 
         #region 工具方法
@@ -192,10 +197,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
             段落 段落 = _page.获取最近段落(point);
             元素行 元素行 = 段落.获取最近元素行(point);
             _currentLine = 元素行;
-            当前段落变化?.Invoke((段落)元素行.Parent);
+            _page.更新当前段落((段落)元素行.Parent);
             _inputBoxLayer.Line = 元素行;
             _inputBoxLayer.Update();
             光标信息 info = 元素行.移动光标(point);
+            ((段落)元素行.Parent).更新光标索引(元素行);
             _caretLayer.CaretX = info.X;
             _caretLayer.CaretY = info.Y;
             _caretLayer.CaretHeight = info.Height;
@@ -281,6 +287,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         #region 控件事件
 
+        private void UserControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Focus();
+        }
+
         private void InteractionLayer_MouseMove(object sender, MouseEventArgs e)
         {
             _tool.OnMouseMove();
@@ -316,69 +327,6 @@ namespace GeekDocument.SubSystem.EditerSystem3
             return layer;
         }
 
-        /// <summary>
-        /// 构建示例页面
-        /// </summary>
-        private void BuildDemoPage()
-        {
-            string[] lineArray = File.ReadAllLines("D:/示例文档3.txt");
-            foreach (var line in lineArray)
-            {
-                段落 段落 = new 段落
-                {
-                    OwnerPage = _page,
-                    // 水平对齐 = 水平对齐方式.Left,
-                    文本 = line,
-                    首行缩进 = 32,
-                };
-                段落.Init();
-                _page.段落列表.Add(段落);
-            }
-
-            string path = "C:/Users/12460/Desktop/一一五/像素艺术/01bd8c5e53ec3da801216518ea512d.png";
-            ImageFileData fileData = ImageManager.Instance.GetImageFileData(path);
-            string hash = LoadImage(fileData);
-            图片 图片 = new 图片
-            {
-                SourceHash = hash,
-                MaxWidth = 800,
-                MaxHeight = 100,
-                ImageWidth = 400,
-                PixelArt = true,
-                // Caption = Path.GetFileName(path),
-                CaptionWidthMode = 图注宽度模式.图片实际宽度,
-                CaptionMaxWidth = 600,
-                CaptionWidth = 500,
-                FontSize = 14,
-            };
-            图片.Init();
-
-            段落 图片段落 = new 段落
-            {
-                OwnerPage = _page,
-                水平对齐 = 水平对齐方式.Left,
-            };
-            图片段落.文本 = "<ele>";
-            图片段落.内嵌元素列表.Add(图片);
-            图片段落.Init();
-            _page.段落列表.Add(图片段落);
-
-            表格 表格 = new 表格
-            {
-                行数 = 2
-            };
-            表格.Init();
-            段落 表格段落 = new 段落
-            {
-                OwnerPage = _page,
-                水平对齐 = 水平对齐方式.Left,
-            };
-            表格段落.文本 = "<ele>";
-            表格段落.内嵌元素列表.Add(表格);
-            表格段落.Init();
-            _page.段落列表.Add(表格段落);
-        }
-
         private Point GetMousePoint()
         {
             Point mousePoint = Mouse.GetPosition(InteractionLayer);
@@ -392,25 +340,6 @@ namespace GeekDocument.SubSystem.EditerSystem3
             if (_ibeamVisible) _caretLayer.Clear();
             else _caretLayer.Update();
             _ibeamVisible = !_ibeamVisible;
-        }
-
-        /// <summary>
-        /// 加载图片
-        /// </summary>
-        private string LoadImage(ImageFileData fileData)
-        {
-            // 获取图片信息，获取成功则直接返回
-            ImageInfo? imageInfo = ImageManager.Instance.FindImageInfo(fileData.Hash);
-            if (imageInfo != null) return fileData.Hash;
-            // 加载图片
-            imageInfo = ImageLoader.Instance.LoadImageFile(fileData.Data, fileData.Type);
-            // 加载失败时返回空
-            if (imageInfo == null) return "";
-            // 缓存文件数据和解码结果
-            ImageManager.Instance.AddFileData(fileData);
-            ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
-            // 返回图片哈希
-            return fileData.Hash;
         }
 
         #endregion
