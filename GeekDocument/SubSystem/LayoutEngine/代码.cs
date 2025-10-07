@@ -248,6 +248,14 @@ namespace GeekDocument.SubSystem.LayoutEngine
             新段落.移动光标至开头();
         }
 
+        public void 更新源代码()
+        {
+            _源码行列表.Clear();
+            foreach (var item in _段落列表)
+                _源码行列表.Add(item.获取文本());
+            源码 = string.Join("\n", _源码行列表);
+        }
+
         #endregion
 
         #region 私有方法

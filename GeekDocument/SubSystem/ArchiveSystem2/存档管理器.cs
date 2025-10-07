@@ -235,6 +235,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 Version = "1.0",
             };
 
+            代码.更新源代码();
             代码元素属性 属性 = new 代码元素属性
             {
                 源码 = 代码.源码,
