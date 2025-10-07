@@ -119,6 +119,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             if (元素 is 图片 图片) return 生成图片元素信息(图片);
             else if (元素 is 表格 表格) return 生成表格元素信息(表格);
             else if (元素 is 公式 公式) return 生成公式元素信息(公式);
+            else if (元素 is 代码 代码) return 生成代码元素信息(代码);
             throw new Exception("生成行内元素信息失败");
         }
 
@@ -222,6 +223,31 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             };
             公式元素 公式元素 = new 公式元素 { 属性 = 属性.ToString() };
             result.Data = 公式元素.序列化并压缩();
+
+            return result;
+        }
+
+        private 元素信息 生成代码元素信息(代码 代码)
+        {
+            元素信息 result = new 元素信息
+            {
+                Type = "代码",
+                Version = "1.0",
+            };
+
+            代码元素属性 属性 = new 代码元素属性
+            {
+                源码 = 代码.源码,
+                语言 = 代码.语言,
+                字体 = 代码.字体,
+                字号 = 代码.字号,
+                行间距 = 代码.行间距,
+                自动换行 = 代码.自动换行,
+                显示行号 = 代码.显示行号,
+                显示语言 = 代码.显示语言,
+            };
+            代码元素 代码元素 = new 代码元素 { 属性 = 属性.ToString() };
+            result.Data = 代码元素.序列化并压缩();
 
             return result;
         }
@@ -386,6 +412,9 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                     case "公式":
                         result.内嵌元素列表.Add(加载公式数据(内嵌元素信息));
                         break;
+                    case "代码":
+                        result.内嵌元素列表.Add(加载代码数据(内嵌元素信息));
+                        break;
                 }
             }
             result.Init();
@@ -471,6 +500,26 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 Latex = 属性.Latex,
                 Size = 属性.Size,
                 Color = 属性.Color,
+            };
+            result.Init();
+            return result;
+        }
+
+        private 代码 加载代码数据(元素信息 代码元素信息)
+        {
+            代码元素? 代码元素 = 代码元素信息.Data.解压并反序列化<代码元素>();
+            if (代码元素 == null) throw new Exception("加载代码数据失败");
+            代码元素属性 属性 = new 代码元素属性(代码元素.属性);
+            代码 result = new 代码
+            {
+                源码 = 属性.源码,
+                语言 = 属性.语言,
+                字体 = 属性.字体,
+                字号 = 属性.字号,
+                行间距 = 属性.行间距,
+                自动换行 = 属性.自动换行,
+                显示行号 = 属性.显示行号,
+                显示语言 = 属性.显示语言,
             };
             result.Init();
             return result;

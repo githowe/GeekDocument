@@ -26,13 +26,15 @@ namespace GeekDocument.SubSystem.EditerSystem3
         /// <summary>内边距</summary>
         public Thickness PagePadding { get; set; } = new Thickness(0);
 
-        public double PageHeight { get; set; } = 0;
+        public double PageHeight => Paper.Height + 32;
 
         #endregion
 
         #region 事件
 
         public Action<段落>? 当前段落变化 { get; set; } = null;
+
+        public Action? 高度变化 { get; set; } = null;
 
         #endregion
 
@@ -167,6 +169,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _currentLine.插入图片(list);
         }
 
+        public void 插入代码(代码 代码)
+        {
+            _currentLine.插入代码(代码);
+        }
+
         public void 插入表格(表格 table)
         {
             _currentLine.插入表格(table);
@@ -250,6 +257,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         private void 页面_高度变化(double height)
         {
             Paper.Height = _page.页高 + PagePadding.Top + PagePadding.Bottom;
+            高度变化?.Invoke();
         }
 
         private void 页面_当前行变化(元素行 line)

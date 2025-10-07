@@ -145,7 +145,11 @@ namespace GeekDocument.SubSystem.LayoutEngine
                 if (item.ActualHeight > ActualHeight) ActualHeight = item.ActualHeight;
         }
 
-        public override void 重新测量() => Parent?.重新测量();
+        public override void 重新测量()
+        {
+            // 因为子元素大小变化后，会重新生成段落内的全部元素行，所以这里将控制权交给父元素即段落
+            Parent?.重新测量();
+        }
 
         public override void 排列()
         {
@@ -672,6 +676,11 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public void 插入图片(List<图片> list)
         {
             ((段落)Parent).插入图片(list, this);
+        }
+
+        public void 插入代码(代码 代码)
+        {
+            ((段落)Parent).插入代码(代码, this);
         }
 
         public void 插入表格(表格 表格)

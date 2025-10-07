@@ -8,10 +8,16 @@ namespace GeekDocument.SubSystem.EditerSystem3
         public InsertFormulaDialog()
         {
             InitializeComponent();
+            Loaded += InsertFormulaDialog_Loaded;
             OK.Click += OK_Click;
         }
 
         public string Latex { get; set; } = "";
+
+        private void InsertFormulaDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            Input_Latex.Focus();
+        }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {

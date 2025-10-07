@@ -74,7 +74,7 @@ namespace GeekDocument.SubSystem.EditerSystem3.PropertyPanel
         /// </summary>
         private void Font_SelectionChanged(string text)
         {
-
+            段落.更新字体(text);
         }
 
         /// <summary>

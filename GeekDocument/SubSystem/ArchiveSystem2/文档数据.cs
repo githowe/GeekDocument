@@ -173,7 +173,7 @@ public class 段落元素属性2
 
     public string 字体 { get; set; } = "霞鹜文楷";
 
-    public int 字号 { get; set; } = 16;
+    public double 字号 { get; set; } = 16;
 
     public int 水平对齐方式 { get; set; } = 0;
 
@@ -415,6 +415,62 @@ public class 公式元素属性
 }
 
 public class 公式元素
+{
+    public string 属性 { get; set; } = "";
+}
+
+public class 代码元素属性
+{
+    public 代码元素属性() { }
+
+    public 代码元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        源码 = list[0];
+        语言 = list[1];
+        字体 = list[2];
+        字号 = double.Parse(list[3]);
+        行间距 = int.Parse(list[4]);
+        自动换行 = bool.Parse(list[5]);
+        显示行号 = bool.Parse(list[6]);
+        显示语言 = bool.Parse(list[7]);
+    }
+
+    public string 源码 { get; set; } = "";
+
+    public string 语言 { get; set; } = "C#";
+
+    public string 字体 { get; set; } = "霞鹜文楷等宽";
+
+    public double 字号 { get; set; } = 16;
+
+    public int 行间距 { get; set; } = 2;
+
+    public bool 自动换行 { get; set; } = false;
+
+    public bool 显示行号 { get; set; } = true;
+
+    public bool 显示语言 { get; set; } = false;
+
+    public override string ToString()
+    {
+        List<string> list = new List<string>
+        {
+            源码,
+            语言,
+            字体,
+            字号.ToString(),
+            行间距.ToString(),
+            自动换行.ToString(),
+            显示行号.ToString(),
+            显示语言.ToString(),
+        };
+        return list.序列化并压缩();
+    }
+}
+
+public class 代码元素
 {
     public string 属性 { get; set; } = "";
 }

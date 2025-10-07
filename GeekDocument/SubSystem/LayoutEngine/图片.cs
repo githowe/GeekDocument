@@ -18,11 +18,15 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
     public class 图片 : 行内元素, ITimerHandler
     {
+        #region 构造方法
+
         public 图片()
         {
             Name = "图片";
             Icon = "Image";
         }
+
+        #endregion
 
         #region 属性
 

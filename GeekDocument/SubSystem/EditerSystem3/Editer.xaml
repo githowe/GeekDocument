@@ -72,7 +72,7 @@
                     <Image Source="Image/Image.png" Height="16" Width="16"/>
                 </Button.Content>
             </Button>
-            <Button x:Name="Tool_Code" Style="{StaticResource ToolBarButton}" ToolTip="插入代码" Width="30" Height="30">
+            <Button x:Name="Tool_Code" Style="{StaticResource ToolBarButton}" ToolTip="插入代码" Width="30" Height="30" Click="Tool_Code_Click">
                 <Button.Content>
                     <Image Source="Image/Code.png" Height="16" Width="16"/>
                 </Button.Content>
@@ -151,7 +151,7 @@
                 <Image Source="Image/Shadow.png" Height="10" VerticalAlignment="Top" Stretch="Fill" Grid.Row="1" IsHitTestVisible="False"/>
                 <!-- 文档滚动条 -->
                 <ScrollBar x:Name="PageScrollBar" Orientation="Vertical" HorizontalAlignment="Right" Tag="0" Width="10" Opacity="0" Grid.Row="1"
-                       SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>
+                           SmallChange="1" ViewportSize="10" Minimum="0" Maximum="0"/>
                 <!-- 提示框 -->
                 <Canvas x:Name="TipBox"/>
             </Grid>

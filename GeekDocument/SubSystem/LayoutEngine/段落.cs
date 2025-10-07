@@ -24,7 +24,7 @@ public class 段落 : 布局元素
 
     public string 字体 { get; set; } = "霞鹜文楷";
 
-    public int 字号 { get; set; } = 16;
+    public double 字号 { get; set; } = 16;
 
     public 水平对齐方式 水平对齐 { get; set; } = 水平对齐方式.Justify;
 
@@ -35,6 +35,8 @@ public class 段落 : 布局元素
     public double 自定义首行缩进 { get; set; } = 0;
 
     public bool 使用自定义首行缩进 { get; set; } = false;
+
+    public bool 禁用缩进 { get; set; } = false;
 
     public double 左缩进 { get; set; } = 0;
 
@@ -575,6 +577,10 @@ public class 段落 : 布局元素
             {
 
             }
+            else if (Parent is 代码 代码)
+            {
+                代码.合并段落(this);
+            }
             return;
         }
         行内元素 前元素 = _全部行内元素[_光标索引 - 1];
@@ -635,6 +641,10 @@ public class 段落 : 布局元素
             // 父级为图片，表示此段落是图注，而图注只允许单个段落
             return;
         }
+        else if (Parent is 代码 代码)
+        {
+            代码.处理回车(this);
+        }
     }
 
     public void 插入图片(List<图片> list, 元素行 sender)
@@ -650,6 +660,22 @@ public class 段落 : 布局元素
         处理元素更新();
         // 更新光标位置
         _光标索引 += list.Count;
+        移动光标至(_光标索引);
+    }
+
+    public void 插入代码(代码 代码, 元素行 sender)
+    {
+        // 获取光标索引，然后插入元素
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.Insert(_光标索引, 代码);
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(_全部行内元素);
+        // 重新初始化
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引++;
         移动光标至(_光标索引);
     }
 
@@ -691,12 +717,17 @@ public class 段落 : 布局元素
 
     public void 更新字体(string font)
     {
-
+        字体 = font;
+        更新文本与内嵌元素(_全部行内元素);
+        Init();
+        处理元素更新();
+        移动光标至(_光标索引);
     }
 
     public void 更新字号(int size)
     {
         字号 = size;
+        // 因为初始化后会清空内嵌元素列表，所以重新初始化前需要恢复内嵌元素列表
         更新文本与内嵌元素(_全部行内元素);
         Init();
         处理元素更新();
@@ -814,6 +845,8 @@ public class 段落 : 布局元素
 
     private double 获取首行缩进()
     {
+        if (禁用缩进) return 0;
+
         // 返回自定义首行缩进
         if (使用自定义首行缩进) return 自定义首行缩进;
         // 返回页面首行缩进

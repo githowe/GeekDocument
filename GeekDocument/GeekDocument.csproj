@@ -24,6 +24,7 @@
     <None Remove="Assets\Icon15\Document.png" />
     <None Remove="Assets\Icon15\Element\AnimateImage.png" />
     <None Remove="Assets\Icon15\Element\Cell.png" />
+    <None Remove="Assets\Icon15\Element\Code.png" />
     <None Remove="Assets\Icon15\Element\Element.png" />
     <None Remove="Assets\Icon15\Element\Image.png" />
     <None Remove="Assets\Icon15\Element\Line.png" />
@@ -178,6 +179,7 @@
     <Resource Include="Assets\Icon15\Book.png" />
     <Resource Include="Assets\Icon15\Document.png" />
     <Resource Include="Assets\Icon15\Element\Cell.png" />
+    <Resource Include="Assets\Icon15\Element\Code.png" />
     <Resource Include="Assets\Icon15\Element\Element.png" />
     <Resource Include="Assets\Icon15\Element\Image.png" />
     <Resource Include="Assets\Icon15\Element\Line.png" />

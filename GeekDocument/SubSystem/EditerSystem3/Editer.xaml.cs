@@ -7,6 +7,7 @@ using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace GeekDocument.SubSystem.EditerSystem3
@@ -69,8 +70,13 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _pageView.Init(page);
             _pageView.更新页面();
             _pageView.InitEditSystem();
+            UpdateScrollBar();
             // 加载元素结构
             Panel_LayoutTree.LoadLayoutTree(page);
+            _pageView.高度变化 = 页面高度变化;
+
+            PageScrollBar.ValueChanged += PageScrollBar_ValueChanged;
+            DocBox.MouseWheel += DocBox_MouseWheel;
         }
 
         /// <summary>
@@ -179,6 +185,13 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _pageView.插入图片(图片列表);
         }
 
+        private void Tool_Code_Click(object sender, RoutedEventArgs e)
+        {
+            代码 代码 = new 代码();
+            代码.Init();
+            _pageView.插入代码(代码);
+        }
+
         private void Tool_Table_Click(object sender, RoutedEventArgs e)
         {
             InsertTableDialog dialog = new InsertTableDialog { Owner = WM.Main };
@@ -213,6 +226,18 @@ namespace GeekDocument.SubSystem.EditerSystem3
             ParagraphPropertyPanel panel = new ParagraphPropertyPanel { 段落 = 段落 };
             PropertyPanelBox.Children.Add(panel);
             panel.Init();
+        }
+
+        private void 页面高度变化() => UpdateScrollBar();
+
+        private void PageScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _pageView.Margin = new Thickness(0, -e.NewValue, 0, 0);
+        }
+
+        private void DocBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            PageScrollBar.Value -= e.Delta / 120 * 64;
         }
 
         #endregion
@@ -253,6 +278,15 @@ namespace GeekDocument.SubSystem.EditerSystem3
             ImageManager.Instance.AddImageInfo(fileData.Hash, imageInfo);
             // 返回图片哈希
             return fileData.Hash;
+        }
+
+        /// <summary>
+        /// 更新滚动条
+        /// </summary>
+        private void UpdateScrollBar()
+        {
+            PageScrollBar.ViewportSize = _pageView.PageHeight;
+            PageScrollBar.Maximum = _pageView.PageHeight - DocBox.ActualHeight;
         }
 
         #endregion
