@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace GeekDocument.SubSystem.LayoutEngine
+namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 字 : 行内元素
     {

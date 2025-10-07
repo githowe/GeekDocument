@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 using WpfMath;
 using WpfMath.Parsers;
 
-namespace GeekDocument.SubSystem.LayoutEngine
+namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 公式 : 行内元素
     {

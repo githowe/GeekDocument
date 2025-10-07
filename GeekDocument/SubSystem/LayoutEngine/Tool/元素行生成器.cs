@@ -1,4 +1,6 @@
-﻿namespace GeekDocument.SubSystem.LayoutEngine.Tool;
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+
+namespace GeekDocument.SubSystem.LayoutEngine.Tool;
 
 public class 元素行生成器
 {

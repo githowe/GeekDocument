@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace GeekDocument.SubSystem.LayoutEngine
+namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 元素行 : 布局元素
     {

@@ -1,5 +1,6 @@
 ﻿using GeekDocument.AppTool;
 using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.WindowSystem;
 using System.Windows.Media;
 

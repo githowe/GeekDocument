@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace GeekDocument.SubSystem.LayoutEngine
+namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public class 表格 : 行内元素
     {

@@ -1,6 +1,7 @@
 ﻿using GeekDocument.AppTool.Ex;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using Newtonsoft.Json;
 using System.Text;
 using System.Windows;

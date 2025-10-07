@@ -2,6 +2,7 @@
 using GeekDocument.SubSystem.EditerSystem3.Layer;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;

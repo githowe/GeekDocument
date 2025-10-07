@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Shapes;
 
-namespace GeekDocument.SubSystem.LayoutEngine;
+namespace GeekDocument.SubSystem.LayoutEngine.Element;
 
 public class 段落 : 布局元素
 {

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace GeekDocument.SubSystem.LayoutEngine;
+namespace GeekDocument.SubSystem.LayoutEngine.Element;
 
 public class 单元格 : 布局元素, IComparable<单元格>
 {

@@ -1,4 +1,6 @@
-﻿namespace GeekDocument.SubSystem.LayoutEngine
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+
+namespace GeekDocument.SubSystem.LayoutEngine
 {
     public static class 布局元素扩展
     {

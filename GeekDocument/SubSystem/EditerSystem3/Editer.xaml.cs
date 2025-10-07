@@ -3,6 +3,7 @@ using GeekDocument.SubSystem.EditerSystem3.PropertyPanel;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
+using GeekDocument.SubSystem.LayoutEngine.Element;
 using GeekDocument.SubSystem.WindowSystem;
 using System.IO;
 using System.Windows;

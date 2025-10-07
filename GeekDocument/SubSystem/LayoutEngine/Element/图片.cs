@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using XLogic.Wpf;
 
-namespace GeekDocument.SubSystem.LayoutEngine
+namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
     public enum 图注宽度模式
     {

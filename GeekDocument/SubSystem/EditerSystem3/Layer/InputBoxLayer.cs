@@ -1,4 +1,4 @@
-﻿using GeekDocument.SubSystem.LayoutEngine;
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
 using System.Windows;
 using System.Windows.Media;
 using XLogic.Wpf.Drawing;
