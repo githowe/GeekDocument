@@ -133,7 +133,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             Tool_CloseRight.Visibility = Visibility.Collapsed;
         }
 
-        private void Panel_LayoutTree_HoverElementChanged(布局元素? 元素)
+        private void Panel_LayoutTree_HoverElementChanged(IDocElement? 元素)
         {
             _pageView.UpdateHoveredElement(元素);
         }

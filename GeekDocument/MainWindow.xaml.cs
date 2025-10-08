@@ -258,7 +258,7 @@ namespace GeekDocument
                     OpenDocument();
                     break;
                 case "SaveAll":
-
+                    Console.Clear();
                     break;
                 case "Setting":
                     WM.ShowAppOptionDialog();

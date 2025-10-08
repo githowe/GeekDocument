@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
-public abstract class 布局元素
+public abstract class 布局元素 : IDocElement
 {
     public virtual string Name { get; set; } = "未命名布局元素";
 
@@ -14,32 +14,47 @@ public abstract class 布局元素
 
     public List<布局元素> Children { get; set; } = new List<布局元素>();
 
-    public virtual void AddChild(布局元素 child)
+    public virtual List<IDocElement> ChildrenElement => Children.Cast<IDocElement>().ToList();
+
+    public Action<IDocElement>? ChildrenChanged { get; set; } = null;
+
+    public Action<IDocElement>? Removed { get; set; } = null;
+
+    public void AddChild(布局元素 child)
     {
         child.Parent = this;
         Children.Add(child);
         更新绘图对象("添加子元素");
+        ChildrenChanged?.Invoke(this);
     }
 
-    public virtual void AddChildList(List<布局元素> childList)
+    public void AddChildList(List<布局元素> childList)
     {
         foreach (var child in childList) child.Parent = this;
         Children.AddRange(childList);
         更新绘图对象("添加子元素列表");
+        ChildrenChanged?.Invoke(this);
     }
 
-    public virtual void RemoveChild(布局元素 child)
+    public void RemoveChild(布局元素 child)
     {
         child.Parent = null;
         Children.Remove(child);
         更新绘图对象("移除子元素");
+        ChildrenChanged?.Invoke(this);
+        child.Removed?.Invoke(child);
     }
 
-    public virtual void ClearChildren()
+    public void ClearChildren()
     {
-        foreach (var child in Children) child.Parent = null;
+        foreach (var child in Children)
+        {
+            child.Parent = null;
+            child.Removed?.Invoke(child);
+        }
         Children.Clear();
         更新绘图对象("清空子元素");
+        ChildrenChanged?.Invoke(this);
     }
 
     public string GetPath()

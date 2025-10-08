@@ -6,9 +6,15 @@ namespace GeekDocument.SubSystem.LayoutEngine;
 /// <summary>
 /// 页面不包括内外边距，仅表示内容渲染区域
 /// </summary>
-public class 页面
+public class 页面 : IDocElement
 {
+    #region 构造方法
+
     public 页面() { }
+
+    #endregion
+
+    #region 属性
 
     public double 页宽 { get; set; } = 800;
 
@@ -26,6 +32,10 @@ public class 页面
 
     public 行内元素? 高亮元素 => _高亮元素;
 
+    #endregion
+
+    #region 事件
+
     public event Action<double>? 高度变化;
 
     public event Action<光标信息>? 光标移动;
@@ -35,6 +45,26 @@ public class 页面
     public event Action<元素行>? 当前行变化;
 
     public event Action<行内元素?>? 高亮元素变化;
+
+    #endregion
+
+    #region IDocElement 接口
+
+    public string Name => "页面";
+
+    public string Icon => "Page";
+
+    public List<IDocElement> ChildrenElement => 段落列表.Cast<IDocElement>().ToList();
+
+    public Action<IDocElement>? ChildrenChanged { get; set; } = null;
+
+    public Action<IDocElement>? Removed { get; set; } = null;
+
+    public Rect GetViewRect() => new Rect(0, 0, 页宽, 页高);
+
+    #endregion
+
+    #region 公开方法
 
     public void 更新绘图对象(string reason)
     {
@@ -226,6 +256,7 @@ public class 页面
         if (前段落.全部行内元素.Count == 0)
         {
             段落列表.Remove(前段落);
+            ChildrenChanged?.Invoke(this);
             // 更新绘图对象
             更新绘图对象("删除空段落");
             // 更新页面高度
@@ -248,6 +279,7 @@ public class 页面
             前段落.Init();
             // 删除当前段落
             段落列表.Remove(sender);
+            ChildrenChanged?.Invoke(this);
             // 测量前段落
             前段落.测量();
             // 更新绘图对象
@@ -297,6 +329,7 @@ public class 页面
             新段落.Init();
             // 插入新段落
             段落列表.Insert(段落索引 + 1, 新段落);
+            ChildrenChanged?.Invoke(this);
             // 测量旧段落与新段落
             sender.测量();
             新段落.测量();
@@ -320,6 +353,7 @@ public class 页面
             新段落.Init();
             // 插入新段落
             段落列表.Insert(段落索引 + 1, 新段落);
+            ChildrenChanged?.Invoke(this);
             // 测量旧段落与新段落
             sender.测量();
             新段落.测量();
@@ -337,6 +371,7 @@ public class 页面
             新段落.Init();
             // 插入新段落
             段落列表.Insert(段落索引 + 1, 新段落);
+            ChildrenChanged?.Invoke(this);
             新段落.测量();
             // 更新绘图对象
             更新绘图对象("创建新段落");
@@ -351,6 +386,10 @@ public class 页面
         新段落.移动光标至开头();
     }
 
+    #endregion
+
+    #region 私有方法
+
     private double 测量页面高度()
     {
         double height = 0;
@@ -364,8 +403,14 @@ public class 页面
         return height;
     }
 
+    #endregion
+
+    #region 字段
+
     private readonly 绘图图层 _图层 = new 绘图图层();
 
     private 段落? _当前段落 = null;
     private 行内元素? _高亮元素 = null;
+
+    #endregion
 }

@@ -121,7 +121,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             InteractionLayer.MouseWheel += InteractionLayer_MouseWheel;
         }
 
-        public void UpdateHoveredElement(布局元素? 元素)
+        public void UpdateHoveredElement(IDocElement? 元素)
         {
             _hoveredInfoLayer.HoveredElement = 元素;
             _hoveredInfoLayer.Update();

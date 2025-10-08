@@ -6,7 +6,7 @@ namespace GeekDocument.SubSystem.EditerSystem3.Layer
 {
     public class HoveredInfoLayer : SingleBoard
     {
-        public 布局元素? HoveredElement { get; set; } = null;
+        public IDocElement? HoveredElement { get; set; } = null;
 
         public override void Init()
         {
