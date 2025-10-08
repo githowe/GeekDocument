@@ -17,18 +17,7 @@
         <!-- 工具栏背景 -->
         <Grid Background="#1E1E1E"/>
         <!-- 工具栏 -->
-        <StackPanel x:Name="CenterToolBar" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button x:Name="Tool_OpenLeft" Style="{StaticResource ToolBarButton}" ToolTip="打开元素结构" Width="30" Height="30">
-                <Button.Content>
-                    <Image Source="Image/Left_Closed.png" Height="16" Width="16"/>
-                </Button.Content>
-            </Button>
-            <Button x:Name="Tool_CloseLeft" Style="{StaticResource ToolBarButton}" ToolTip="关闭元素结构" Width="30" Height="30" Visibility="Collapsed">
-                <Button.Content>
-                    <Image Source="Image/Left_Opened.png" Height="16" Width="16"/>
-                </Button.Content>
-            </Button>
-            <wc:ToolSplitBar/>
+        <StackPanel x:Name="LeftToolBar" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button x:Name="Tool_Save" Style="{StaticResource ToolBarButton}" ToolTip="保存" Width="30" Height="30" Click="Tool_Save_Click">
                 <Button.Content>
                     <Image Source="Image/Save.png" Height="16" Width="16"/>
@@ -62,7 +51,7 @@
                 </Button.Content>
             </Button>
             <wc:ToolSplitBar/>
-            <Button x:Name="Tool_List" Style="{StaticResource ToolBarButton}" ToolTip="插入列表" Width="30" Height="30">
+            <Button x:Name="Tool_List" Style="{StaticResource ToolBarButton}" ToolTip="插入列表" Width="30" Height="30" Click="Tool_List_Click">
                 <Button.Content>
                     <Image Source="Image/List.png" Height="16" Width="16"/>
                 </Button.Content>
@@ -103,6 +92,28 @@
                 </Button.Content>
             </Button>
             <wc:ToolSplitBar/>
+            <Button x:Name="Tool_ToLeft" Style="{StaticResource ToolBarButton}" ToolTip="减少缩进" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/ToLeft.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_ToRight" Style="{StaticResource ToolBarButton}" ToolTip="增加缩进" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/ToRight.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        <StackPanel x:Name="RightToolBar" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="Tool_OpenLeft" Style="{StaticResource ToolBarButton}" ToolTip="打开元素结构" Width="30" Height="30">
+                <Button.Content>
+                    <Image Source="Image/Left_Closed.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
+            <Button x:Name="Tool_CloseLeft" Style="{StaticResource ToolBarButton}" ToolTip="关闭元素结构" Width="30" Height="30" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="Image/Left_Opened.png" Height="16" Width="16"/>
+                </Button.Content>
+            </Button>
             <Button x:Name="Tool_OpenRight" Style="{StaticResource ToolBarButton}" ToolTip="打开属性面板" Width="30" Height="30">
                 <Button.Content>
                     <Image Source="Image/Right_Closed.png" Height="16" Width="16"/>

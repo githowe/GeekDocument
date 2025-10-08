@@ -165,6 +165,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
             StartBlinkIBeam();
         }
 
+        public void 插入列表(列表 列表)
+        {
+            _currentLine.插入列表(列表);
+        }
+
         public void 插入图片(List<图片> list)
         {
             _currentLine.插入图片(list);

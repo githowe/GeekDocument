@@ -28,6 +28,8 @@
     <None Remove="Assets\Icon15\Element\Element.png" />
     <None Remove="Assets\Icon15\Element\Image.png" />
     <None Remove="Assets\Icon15\Element\Line.png" />
+    <None Remove="Assets\Icon15\Element\List.png" />
+    <None Remove="Assets\Icon15\Element\ListItem.png" />
     <None Remove="Assets\Icon15\Element\Paragraph.png" />
     <None Remove="Assets\Icon15\Element\Sqrt.png" />
     <None Remove="Assets\Icon15\Element\Table.png" />
@@ -95,6 +97,8 @@
     <None Remove="SubSystem\EditerSystem3\Image\SplitLine.png" />
     <None Remove="SubSystem\EditerSystem3\Image\Sqrt.png" />
     <None Remove="SubSystem\EditerSystem3\Image\Table.png" />
+    <None Remove="SubSystem\EditerSystem3\Image\ToLeft.png" />
+    <None Remove="SubSystem\EditerSystem3\Image\ToRight.png" />
     <None Remove="SubSystem\EditerSystem3\Image\Undo.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\AlignBoth.png" />
     <None Remove="SubSystem\EditerSystem\Core\Image\AlignCenter.png" />
@@ -183,6 +187,8 @@
     <Resource Include="Assets\Icon15\Element\Element.png" />
     <Resource Include="Assets\Icon15\Element\Image.png" />
     <Resource Include="Assets\Icon15\Element\Line.png" />
+    <Resource Include="Assets\Icon15\Element\List.png" />
+    <Resource Include="Assets\Icon15\Element\ListItem.png" />
     <Resource Include="Assets\Icon15\Element\Paragraph.png" />
     <Resource Include="Assets\Icon15\Element\Sqrt.png" />
     <Resource Include="Assets\Icon15\Element\Table.png" />
@@ -250,6 +256,8 @@
     <Resource Include="SubSystem\EditerSystem3\Image\SplitLine.png" />
     <Resource Include="SubSystem\EditerSystem3\Image\Sqrt.png" />
     <Resource Include="SubSystem\EditerSystem3\Image\Table.png" />
+    <Resource Include="SubSystem\EditerSystem3\Image\ToLeft.png" />
+    <Resource Include="SubSystem\EditerSystem3\Image\ToRight.png" />
     <Resource Include="SubSystem\EditerSystem3\Image\Undo.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\AlignBoth.png" />
     <Resource Include="SubSystem\EditerSystem\Core\Image\AlignCenter.png" />

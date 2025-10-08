@@ -121,6 +121,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             else if (元素 is 表格 表格) return 生成表格元素信息(表格);
             else if (元素 is 公式 公式) return 生成公式元素信息(公式);
             else if (元素 is 代码 代码) return 生成代码元素信息(代码);
+            else if (元素 is 列表 列表) return 生成列表元素信息(列表);
             throw new Exception("生成行内元素信息失败");
         }
 
@@ -254,6 +255,36 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
             return result;
         }
 
+        private 元素信息 生成列表元素信息(列表 列表)
+        {
+            元素信息 result = new 元素信息
+            {
+                Type = "列表",
+                Version = "1.0",
+            };
+
+            列表元素属性 属性 = new 列表元素属性
+            {
+                行间距 = 列表.行间距,
+                缩进 = 列表.缩进,
+                MarkSize = 列表.MarkSize,
+            };
+            列表元素 列表元素 = new 列表元素 { 属性 = 属性.ToString() };
+            列表.更新项信息列表();
+            foreach (var item in 列表.项信息列表)
+            {
+                项数据 info = new 项数据
+                {
+                    Deep = item.Deep,
+                    段落信息 = 生成段落元素信息(item.段落),
+                };
+                列表元素.项数据列表.Add(info);
+            }
+            result.Data = 列表元素.序列化并压缩();
+
+            return result;
+        }
+
         #endregion
 
         #region 提取资源文件
@@ -282,35 +313,18 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
         {
             List<资源文件> result = new List<资源文件>();
 
-            foreach (var 内嵌元素 in 段落.获取内嵌元素())
+            foreach (var 图片 in 段落.提取图片元素())
             {
-                if (内嵌元素 is 图片 图片)
+                ImageFileData? fileData = ImageManager.Instance.FindFileData(图片.SourceHash);
+                if (fileData == null) throw new Exception("查找图片文件数据失败");
+                资源文件 图片资源 = new 资源文件
                 {
-                    ImageFileData? fileData = ImageManager.Instance.FindFileData(图片.SourceHash);
-                    if (fileData == null) throw new Exception("查找图片文件数据失败");
-                    资源文件 图片资源 = new 资源文件
-                    {
-                        哈希值 = 图片.SourceHash,
-                        类型 = fileData.Type,
-                        数据 = fileData.Data,
-                    };
-                    result.Add(图片资源);
-                    continue;
-                }
-                if (内嵌元素 is 表格 表格)
-                    result.AddRange(提取资源文件(表格));
+                    哈希值 = 图片.SourceHash,
+                    类型 = fileData.Type,
+                    数据 = fileData.Data,
+                };
+                result.Add(图片资源);
             }
-
-            return result;
-        }
-
-        private List<资源文件> 提取资源文件(表格 表格)
-        {
-            List<资源文件> result = new List<资源文件>();
-
-            foreach (var 单元格 in 表格.单元格列表)
-                foreach (var 段落 in 单元格.段落列表)
-                    result.AddRange(提取资源文件(段落));
 
             return result;
         }
@@ -416,6 +430,9 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                         break;
                     case "代码":
                         result.内嵌元素列表.Add(加载代码数据(内嵌元素信息));
+                        break;
+                    case "列表":
+                        result.内嵌元素列表.Add(加载列表数据(内嵌元素信息));
                         break;
                 }
             }
@@ -523,6 +540,31 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 显示行号 = 属性.显示行号,
                 显示语言 = 属性.显示语言,
             };
+            result.Init();
+            return result;
+        }
+
+        private 列表 加载列表数据(元素信息 列表元素信息)
+        {
+            列表元素? 列表元素 = 列表元素信息.Data.解压并反序列化<列表元素>();
+            if (列表元素 == null) throw new Exception("加载列表数据失败");
+
+            列表元素属性 属性 = new 列表元素属性(列表元素.属性);
+            列表 result = new 列表
+            {
+                行间距 = 属性.行间距,
+                缩进 = 属性.缩进,
+                MarkSize = 属性.MarkSize,
+            };
+            foreach (var data in 列表元素.项数据列表)
+            {
+                项信息 info = new 项信息
+                {
+                    Deep = data.Deep,
+                    段落 = 加载段落数据(data.段落信息),
+                };
+                result.项信息列表.Add(info);
+            }
             result.Init();
             return result;
         }

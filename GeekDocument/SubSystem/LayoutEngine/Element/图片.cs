@@ -249,6 +249,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #endregion
 
+        #region 行内元素方法
+
+        public override List<图片> 提取图片元素() => new List<图片> { this };
+
+        #endregion
+
         #region ITimerHandler 方法
 
         public void Tick()

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+using System.Windows;
 
 namespace GeekDocument.SubSystem.LayoutEngine
 {
@@ -66,5 +67,7 @@ namespace GeekDocument.SubSystem.LayoutEngine
         public virtual void 移入光标至开头() { }
 
         public virtual void 移入光标至末尾() { }
+
+        public virtual List<图片> 提取图片元素() { return new List<图片>(); }
     }
 }

@@ -673,6 +673,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             ((段落)Parent).输入文本(text, this);
         }
 
+        public void 插入列表(列表 列表)
+        {
+            ((段落)Parent).插入列表(列表, this);
+        }
+
         public void 插入图片(List<图片> list)
         {
             ((段落)Parent).插入图片(list, this);

@@ -291,6 +291,7 @@ public class 页面
             新段落.文本 = sender.获取文本();
             新段落.内嵌元素列表 = sender.获取内嵌元素();
             sender.文本 = "";
+            sender.内嵌元素列表.Clear();
             // 初始化段落，旧段落因为更新了文本与内嵌元素，需要重新初始化
             sender.Init();
             新段落.Init();

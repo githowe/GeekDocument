@@ -474,3 +474,48 @@ public class 代码元素
 {
     public string 属性 { get; set; } = "";
 }
+
+public class 列表元素属性
+{
+    public 列表元素属性() { }
+
+    public 列表元素属性(string data)
+    {
+        List<string>? list = data.解压并反序列化<List<string>>();
+        if (list == null) return;
+        行间距 = double.Parse(list[0]);
+        缩进 = double.Parse(list[1]);
+        MarkSize = double.Parse(list[2]);
+    }
+
+    public double 行间距 { get; set; } = 8;
+
+    public double 缩进 { get; set; } = 32;
+
+    public double MarkSize { get; set; } = 4;
+
+    public override string ToString()
+    {
+        List<string> list = new List<string>
+        {
+            行间距.ToString(),
+            缩进.ToString(),
+            MarkSize.ToString(),
+        };
+        return list.序列化并压缩();
+    }
+}
+
+public class 项数据
+{
+    public int Deep { get; set; } = 0;
+
+    public 元素信息 段落信息 { get; set; } = null!;
+}
+
+public class 列表元素
+{
+    public string 属性 { get; set; } = "";
+
+    public List<项数据> 项数据列表 { get; set; } = new List<项数据>();
+}

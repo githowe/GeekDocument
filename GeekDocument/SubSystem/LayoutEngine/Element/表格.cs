@@ -227,6 +227,19 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #endregion
 
+        #region 行内元素方法
+
+        public override List<图片> 提取图片元素()
+        {
+            List<图片> result = new List<图片>();
+            foreach (var 单元格 in 单元格列表)
+                foreach (var 段落 in 单元格.段落列表)
+                    result.AddRange(段落.提取图片元素());
+            return result;
+        }
+
+        #endregion
+
         #region 私有方法
 
         private void 设置单元格内容(int 行, int 列, 段落 段落)

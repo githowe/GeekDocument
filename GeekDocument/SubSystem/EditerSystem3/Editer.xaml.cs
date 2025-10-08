@@ -160,8 +160,15 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         private void Tool_SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            // string jsonData = File.ReadAllText("D:/示例存档.json");
-            // 文档数据 文档 = JsonConvert.DeserializeObject<文档数据>(jsonData)!;
+        }
+
+        private void Tool_List_Click(object sender, RoutedEventArgs e)
+        {
+            列表 列表 = new 列表();
+            列表.项信息列表.Add(new 项信息(1, new 段落("")));
+            列表.Init();
+            _pageView.插入列表(列表);
+            列表.移入光标至开头();
         }
 
         private void Tool_Image_Click(object sender, RoutedEventArgs e)

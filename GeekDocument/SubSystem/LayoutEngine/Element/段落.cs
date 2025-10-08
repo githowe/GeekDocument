@@ -14,6 +14,13 @@ public class 段落 : 布局元素
         Icon = "Paragraph";
     }
 
+    public 段落(string text)
+    {
+        Name = "段落";
+        Icon = "Paragraph";
+        文本 = text;
+    }
+
     #endregion
 
     #region 属性
@@ -367,6 +374,14 @@ public class 段落 : 布局元素
         return result;
     }
 
+    public List<图片> 提取图片元素()
+    {
+        List<图片> result = new List<图片>();
+        foreach (var item in _全部行内元素)
+            result.AddRange(item.提取图片元素());
+        return result;
+    }
+
     /// <summary>
     /// 从指定处分割元素，然后返回分割出来的元素列表
     /// </summary>
@@ -577,10 +592,8 @@ public class 段落 : 布局元素
             {
 
             }
-            else if (Parent is 代码 代码)
-            {
-                代码.合并段落(this);
-            }
+            else if (Parent is 代码 代码) 代码.合并段落(this);
+            else if (Parent is 列表项 列表项) 列表项.处理退格();
             return;
         }
         行内元素 前元素 = _全部行内元素[_光标索引 - 1];
@@ -641,10 +654,24 @@ public class 段落 : 布局元素
             // 父级为图片，表示此段落是图注，而图注只允许单个段落
             return;
         }
-        else if (Parent is 代码 代码)
-        {
-            代码.处理回车(this);
-        }
+        else if (Parent is 代码 代码) 代码.处理回车(this);
+        else if (Parent is 列表项 列表项) 列表项.处理回车();
+    }
+
+    public void 插入列表(列表 列表, 元素行 sender)
+    {
+        // 获取光标索引，然后插入元素
+        _光标索引 = 获取段落光标索引(sender);
+        _全部行内元素.Insert(_光标索引, 列表);
+        // 更新文本与内嵌元素列表
+        更新文本与内嵌元素(_全部行内元素);
+        // 重新初始化
+        Init();
+        // 处理元素更新
+        处理元素更新();
+        // 更新光标位置
+        _光标索引++;
+        移动光标至(_光标索引);
     }
 
     public void 插入图片(List<图片> list, 元素行 sender)
