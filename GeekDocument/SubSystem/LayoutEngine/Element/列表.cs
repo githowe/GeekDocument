@@ -20,8 +20,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override string ToString()
         {
-            int length = Math.Min(段落.文本.Length, 20);
-            return $"{Deep} - {段落.文本.Substring(0, length)}";
+            string text = 段落.获取文本().Replace("\u002b", "");
+            int length = Math.Min(text.Length, 20);
+            return $"{Deep} - {text.Substring(0, length)}";
         }
     }
 
@@ -243,11 +244,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (sender.段落.光标索引 == 0)
             {
                 // 移动元素
-                新段落.文本 = sender.段落.获取文本();
+                新段落.文本列表 = sender.段落.获取文本().Split("\u002b").ToList();
                 新段落.内嵌元素列表 = sender.段落.获取内嵌元素();
                 新段落.Init();
                 // 置空旧项内容
-                sender.段落.文本 = "";
+                sender.段落.文本列表 = new List<string> { "" };
                 sender.段落.内嵌元素列表.Clear();
                 sender.段落.Init();
                 // 创建新项并初始化

@@ -1,5 +1,7 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Element;
+using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
@@ -45,6 +47,8 @@ public class 页面 : IDocElement
     public event Action<元素行>? 当前行变化;
 
     public event Action<行内元素?>? 高亮元素变化;
+
+    public event Action<Cursor?>? 光标变化;
 
     #endregion
 
@@ -262,6 +266,126 @@ public class 页面 : IDocElement
         _高亮元素 = null;
     }
 
+    public void 输入多行文本(string text, 段落 sender)
+    {
+        List<string> lineList = text.Split('\n').ToList();
+        int 段落索引 = 段落列表.IndexOf(sender);
+
+        if (sender.光标索引 == 0)
+        {
+            // 获取当前段落内容
+            string 当前段落文本 = sender.获取文本();
+            List<行内元素> 当前段落内嵌元素 = sender.获取内嵌元素();
+            // 当前段落内容更新为第一行文本
+            sender.文本列表 = new List<string> { lineList[0] };
+            sender.内嵌元素列表.Clear();
+            // 重新初始化当前段落
+            sender.Init();
+            // 添加中间行
+            List<段落> 新段落列表 = new List<段落>();
+            for (int index = 1; index < lineList.Count - 1; index++)
+            {
+                段落 新段落 = 克隆段落(sender);
+                新段落.文本列表 = new List<string> { lineList[index] };
+                新段落.Init();
+                新段落列表.Add(新段落);
+            }
+            // 添加最后一行
+            段落 尾段落 = 克隆段落(sender);
+            尾段落.文本列表 = (lineList.Last() + 当前段落文本).Split("\u002b").ToList();
+            尾段落.内嵌元素列表 = 当前段落内嵌元素;
+            尾段落.Init();
+            新段落列表.Add(尾段落);
+            // 插入新段落
+            段落列表.InsertRange(段落索引 + 1, 新段落列表);
+            ChildrenChanged?.Invoke(this);
+            // 测量旧段落与新段落
+            sender.测量();
+            foreach (var item in 新段落列表) item.测量();
+            // 更新绘图对象
+            更新绘图对象("输入多行文本");
+            // 更新页面高度
+            页高 = 测量页面高度();
+            高度变化?.Invoke(页高);
+            // 从发送段落开始重排
+            重新排列(sender);
+            尾段落.移动光标至(lineList.Last().Length);
+        }
+        else if (sender.光标索引 < sender.全部行内元素.Count)
+        {
+            // 获取当前段落全部元素
+            List<行内元素> 当前段落全部元素 = new List<行内元素>(sender.全部行内元素);
+            // 从光标索引处分割元素列表
+            List<行内元素> left = 当前段落全部元素.Take(sender.光标索引).ToList();
+            List<行内元素> right = 当前段落全部元素.Skip(sender.光标索引).ToList();
+            // 更新当前段落的文本与内嵌元素
+            sender.更新文本与内嵌元素(left);
+            sender.Init();
+            // 获取当前段落内容
+            string 当前段落文本 = sender.获取文本();
+            // 当前段落内容为当前内容加上第一行文本
+            sender.文本列表 = (当前段落文本 + lineList[0]).Split("\u002b").ToList();
+            // 重新初始化当前段落
+            sender.Init();
+            // 添加中间行
+            List<段落> 新段落列表 = new List<段落>();
+            for (int index = 1; index < lineList.Count - 1; index++)
+            {
+                段落 新段落 = 克隆段落(sender);
+                新段落.文本列表 = new List<string> { lineList[index] };
+                新段落.Init();
+                新段落列表.Add(新段落);
+            }
+            // 添加最后一行
+            段落 尾段落 = 克隆段落(sender);
+            尾段落.更新文本与内嵌元素(right);
+            尾段落.Init();
+            string 尾段落文本 = 尾段落.获取文本();
+            尾段落.文本列表 = (lineList.Last() + 尾段落文本).Split("\u002b").ToList();
+            尾段落.Init();
+            新段落列表.Add(尾段落);
+            // 插入新段落
+            段落列表.InsertRange(段落索引 + 1, 新段落列表);
+            ChildrenChanged?.Invoke(this);
+            // 测量旧段落与新段落
+            sender.测量();
+            foreach (var item in 新段落列表) item.测量();
+            // 更新绘图对象
+            更新绘图对象("输入多行文本");
+            // 更新页面高度
+            页高 = 测量页面高度();
+            高度变化?.Invoke(页高);
+            // 从发送段落开始重排
+            重新排列(sender);
+            尾段落.移动光标至(lineList.Last().Length);
+        }
+        else
+        {
+            // 每行创建一个新段落
+            List<段落> 新段落列表 = new List<段落>();
+            foreach (var line in lineList)
+            {
+                段落 新段落 = 克隆段落(sender);
+                新段落.文本列表 = new List<string> { line };
+                新段落.Init();
+                新段落列表.Add(新段落);
+            }
+            // 插入新段落
+            段落列表.InsertRange(段落索引 + 1, 新段落列表);
+            ChildrenChanged?.Invoke(this);
+            // 测量新段落
+            foreach (var item in 新段落列表) item.测量();
+            // 更新绘图对象
+            更新绘图对象("输入多行文本");
+            // 更新页面高度
+            页高 = 测量页面高度();
+            高度变化?.Invoke(页高);
+            // 从新段落开始重排
+            重新排列(新段落列表[0]);
+            新段落列表.Last().移动光标至(lineList.Last().Length);
+        }
+    }
+
     public void 合并段落(段落 sender)
     {
         int 段落索引 = 段落列表.IndexOf(sender);
@@ -315,30 +439,15 @@ public class 页面 : IDocElement
         // 获取当前段落索引
         int 段落索引 = 段落列表.IndexOf(sender);
         // 克隆段落
-        段落 新段落 = new 段落
-        {
-            OwnerPage = this,
-            Left = 0,
-            Width = 页宽,
-            水平对齐 = sender.水平对齐,
-            垂直对齐 = sender.垂直对齐,
-            左缩进 = sender.左缩进,
-            右缩进 = sender.右缩进,
-            字体 = sender.字体,
-            字号 = sender.字号,
-            首行缩进 = sender.首行缩进,
-            自定义首行缩进 = sender.自定义首行缩进,
-            使用自定义首行缩进 = sender.使用自定义首行缩进,
-            行间距 = sender.行间距
-        };
+        段落 新段落 = 克隆段落(sender);
 
         // 光标处于行首时，新建一个段落，然后将当前段落的全部元素移动至新段落
         if (sender.光标索引 == 0)
         {
             // 移动元素
-            新段落.文本 = sender.获取文本();
+            新段落.文本列表 = sender.获取文本().Split("\u002b").ToList();
             新段落.内嵌元素列表 = sender.获取内嵌元素();
-            sender.文本 = "";
+            sender.文本列表 = new List<string> { "" };
             sender.内嵌元素列表.Clear();
             // 初始化段落，旧段落因为更新了文本与内嵌元素，需要重新初始化
             sender.Init();
@@ -402,6 +511,11 @@ public class 页面 : IDocElement
         新段落.移动光标至开头();
     }
 
+    public void 更新光标(Cursor? cursor)
+    {
+        光标变化?.Invoke(cursor);
+    }
+
     #endregion
 
     #region 私有方法
@@ -417,6 +531,27 @@ public class 页面 : IDocElement
         }
         height += 段落间距 * (段落列表.Count - 1);
         return height;
+    }
+
+    private 段落 克隆段落(段落 sender)
+    {
+        段落 新段落 = new 段落
+        {
+            OwnerPage = this,
+            Left = 0,
+            Width = 页宽,
+            水平对齐 = sender.水平对齐,
+            垂直对齐 = sender.垂直对齐,
+            左缩进 = sender.左缩进,
+            右缩进 = sender.右缩进,
+            字体 = sender.字体,
+            字号 = sender.字号,
+            首行缩进 = sender.首行缩进,
+            自定义首行缩进 = sender.自定义首行缩进,
+            使用自定义首行缩进 = sender.使用自定义首行缩进,
+            行间距 = sender.行间距
+        };
+        return 新段落;
     }
 
     #endregion

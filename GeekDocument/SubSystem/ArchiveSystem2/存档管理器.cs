@@ -378,7 +378,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 段落元素属性 属性 = new 段落元素属性(段落元素.属性);
                 result = new 段落
                 {
-                    文本 = 属性.文本,
+                    文本列表 = 属性.文本.Split("\u002b").ToList(),
                     字体 = 属性.字体,
                     字号 = 属性.字号,
                     水平对齐 = (水平对齐方式)属性.水平对齐方式,
@@ -397,7 +397,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 段落元素属性2 属性 = new 段落元素属性2(段落元素.属性);
                 result = new 段落
                 {
-                    文本 = 属性.文本,
+                    文本列表 = 属性.文本.Split("\u002b").ToList(),
                     字体 = 属性.字体,
                     字号 = 属性.字号,
                     水平对齐 = (水平对齐方式)属性.水平对齐方式,

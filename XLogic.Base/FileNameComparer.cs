@@ -33,7 +33,6 @@ namespace XLogic.Base
             // 拆分数字与非数字部分
             List<string> xParts = xStr.SplitNumber();
             List<string> yParts = yStr.SplitNumber();
-            int xIndex = 0, yIndex = 0;
 
             int count = Math.Min(xParts.Count, yParts.Count);
             for (int index = 0; index < count; index++)
@@ -49,7 +48,8 @@ namespace XLogic.Base
                 // 否则，比较字符串
                 else
                 {
-                    int result = string.Compare(xPart, yPart, StringComparison.Ordinal);
+                    // int result = string.Compare(xPart, yPart, StringComparison.Ordinal);
+                    int result = shlwapiInterop.NaturalCompare(xPart, yPart);
                     if (result != 0) return result;
                 }
             }

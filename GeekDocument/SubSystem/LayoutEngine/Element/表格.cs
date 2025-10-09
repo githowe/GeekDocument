@@ -13,7 +13,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             Name = "表格";
             Icon = "Table";
-            _insertHead = ImageResManager.Instance.GetElementTool("Table_Add");
+            _insertMark = ImageResManager.Instance.GetElementTool("InsertMark");
+            _dragMark = ImageResManager.Instance.GetElementTool("DragMark");
             _insertLine.Freeze();
         }
 
@@ -142,7 +143,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             Rect 表格上方 = new Rect(Left, Top - 16, ActualWidth + 16, 16);
             Rect 表格左侧 = new Rect(Left - 16, Top, 16, ActualHeight + 16);
             Rect 表格右侧 = new Rect(Left + ActualWidth, Top, 16, ActualHeight + 16);
-            Rect 表格下方 = new Rect(Left, Top+ ActualHeight, ActualWidth + 16, 16);
+            Rect 表格下方 = new Rect(Left, Top + ActualHeight, ActualWidth + 16, 16);
             Rect 表格区域 = new Rect(Left, Top, ActualWidth, ActualHeight);
 
             if (拖动手柄区域.Contains(point))
@@ -271,7 +272,14 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             switch (info.区域名称)
             {
                 case "拖动手柄区域":
-                    _标记图层.RenderOpen().Close();
+                    {
+                        this.获取根段落().OwnerPage.更新光标(CursorManager.Instance.SelectAndMove);
+                        double imageLeft = Left - 16;
+                        double imageTop = Top - 16;
+                        DrawingContext dc = _标记图层.RenderOpen();
+                        dc.DrawImage(_dragMark, new Rect(imageLeft, imageTop, 16, 16));
+                        dc.Close();
+                    }
                     break;
                 case "表格上方":
                     {
@@ -287,17 +295,25 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                         }
                         if (range != null)
                         {
+                            this.获取根段落().OwnerPage.更新光标(CursorManager.Instance.Select);
                             DrawingContext dc = _标记图层.RenderOpen();
                             // 绘制插入图标
                             double center = range.Start + 20;
                             double imageLeft = center - 7;
-                            double iamgeTop = Top - 16;
-                            dc.DrawImage(_insertHead, new Rect(imageLeft, iamgeTop, 15, 15));
+                            double imageTop = Top - 16;
+                            dc.DrawImage(_insertMark, new Rect(imageLeft, imageTop, 15, 15));
                             // 绘制竖线
                             dc.DrawLine(_insertLine, new Point(center + 0.5, Top - 1), new Point(center + 0.5, Top + ActualHeight));
                             dc.Close();
                         }
-                        else _标记图层.RenderOpen().Close();
+                        else
+                        {
+                            _标记图层.RenderOpen().Close();
+                            if (args.Point.X >= Left && args.Point.X < Left + ActualWidth)
+                                this.获取根段落().OwnerPage.更新光标(CursorManager.Instance.SelectCol);
+                            else
+                                this.获取根段落().OwnerPage.更新光标(null);
+                        }
                     }
                     break;
                 case "表格左侧":
@@ -314,20 +330,29 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                         }
                         if (range != null)
                         {
+                            this.获取根段落().OwnerPage.更新光标(CursorManager.Instance.Select);
                             DrawingContext dc = _标记图层.RenderOpen();
                             // 绘制插入图标
-                            double center = range.Start + 20;
+                            double center = range.Start + 7;
                             double imageLeft = Left - 16;
                             double iamgeTop = center - 7;
-                            dc.DrawImage(_insertHead, new Rect(imageLeft, iamgeTop, 15, 15));
+                            dc.DrawImage(_insertMark, new Rect(imageLeft, iamgeTop, 15, 15));
                             // 绘制横线
                             dc.DrawLine(_insertLine, new Point(Left - 1, center + 0.5), new Point(Left + ActualWidth, center + 0.5));
                             dc.Close();
                         }
-                        else _标记图层.RenderOpen().Close();
+                        else
+                        {
+                            _标记图层.RenderOpen().Close();
+                            if (args.Point.Y >= Top && args.Point.Y < Top + ActualHeight)
+                                this.获取根段落().OwnerPage.更新光标(CursorManager.Instance.SelectRow);
+                            else
+                                this.获取根段落().OwnerPage.更新光标(null);
+                        }
                     }
                     break;
                 default:
+                    this.获取根段落().OwnerPage.更新光标(null);
                     _标记图层.RenderOpen().Close();
                     break;
             }
@@ -337,6 +362,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void MouseLeave()
         {
+            this.获取根段落().OwnerPage.更新光标(null);
             _背景图层.RenderOpen().Close();
             _标记图层.RenderOpen().Close();
         }
@@ -520,8 +546,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             double y = Top;
             result.Add(new DoubleRange
             {
-                Start = y - 20,
-                End = y + 21,
+                Start = y - 7,
+                End = y + 8,
             });
             foreach (var item in 全部行高)
             {
@@ -529,8 +555,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 y += item;
                 result.Add(new DoubleRange
                 {
-                    Start = y - 20,
-                    End = y + 21,
+                    Start = y - 7,
+                    End = y + 8,
                 });
             }
             return result;
@@ -561,7 +587,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private Brush _borderBrush = new SolidColorBrush(Color.FromRgb(100, 100, 100));
         private Pen _borderPen = new Pen(new SolidColorBrush(Color.FromRgb(100, 100, 100)), 1);
 
-        private readonly BitmapImage _insertHead = null!;
+        private readonly BitmapImage _insertMark = null!;
+        private readonly BitmapImage _dragMark = null!;
         private readonly Pen _insertLine = new Pen(new SolidColorBrush(Color.FromRgb(126, 190, 103)), 1);
 
         #endregion

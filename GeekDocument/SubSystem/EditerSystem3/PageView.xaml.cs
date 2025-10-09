@@ -110,6 +110,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             _page.当前行变化 += 页面_当前行变化;
             _page.光标移动 += 页面_光标移动;
             _page.高亮元素变化 += 页面_高亮元素变化;
+            _page.光标变化 += 页面_光标变化;
             // 移动光标至页面开始位置
             _page.段落列表[0].移动光标至开头();
             // 开始闪烁光标
@@ -300,6 +301,12 @@ namespace GeekDocument.SubSystem.EditerSystem3
             }
             _highlightLayer.HighlightElement = 元素;
             _highlightLayer.Update();
+        }
+
+        private void 页面_光标变化(Cursor? cursor)
+        {
+            if (cursor != null) InteractionLayer.Cursor = cursor;
+            else InteractionLayer.Cursor = Cursors.IBeam;
         }
 
         #endregion

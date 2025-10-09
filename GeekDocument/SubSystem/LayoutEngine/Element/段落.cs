@@ -1,6 +1,5 @@
 ﻿using GeekDocument.SubSystem.LayoutEngine.Tool;
 using System.Windows;
-using System.Windows.Shapes;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element;
 
@@ -18,14 +17,16 @@ public class 段落 : 布局元素
     {
         Name = "段落";
         Icon = "Paragraph";
-        文本 = text;
+        文本列表 = new List<string> { text };
     }
 
     #endregion
 
     #region 属性
 
-    public string 文本 { get; set; } = "";
+    // public string 文本 { get; set; } = "";
+
+    public List<string> 文本列表 { get; set; } = new List<string> { "" };
 
     public List<行内元素> 内嵌元素列表 { get; set; } = new List<行内元素>();
 
@@ -175,10 +176,10 @@ public class 段落 : 布局元素
     public override void Init()
     {
         元素集列表.Clear();
-        // 将文本分割成多个元素集
-        foreach (var part in 文本.Split(_占位标记))
+        // 每段文本创建一个元素集
+        foreach (var text in 文本列表)
         {
-            行内元素集 元素集 = new 行内元素集 { Text = part };
+            行内元素集 元素集 = new 行内元素集 { Text = text };
             生成字元素(元素集);
             元素集列表.Add(元素集);
         }
@@ -353,12 +354,10 @@ public class 段落 : 布局元素
         string result = "";
         foreach (var 集 in 元素集列表)
         {
-            if (集.InnerElement) result += _占位标记;
-            else
-            {
-                string text = 集.Text.Replace("<ele>", "\\<ele>");
-                result += text;
-            }
+            // 非字元素集，添加零宽字符
+            if (集.InnerElement) result += "\u002b";
+            // 字元素集，添加文本
+            else result += 集.Text;
         }
         return result;
     }
@@ -398,22 +397,20 @@ public class 段落 : 布局元素
 
     public void 更新文本与内嵌元素(List<行内元素> newList)
     {
-        文本 = "";
+       string 文本 = "";
         内嵌元素列表.Clear();
         foreach (var item in newList)
         {
+            // 字元素直接添加
             if (item is 字 字) 文本 += 字.字符;
+            // 非字元素，添加零宽字符
             else
             {
-                // 先用零宽字符占位，避免和文本中的 <ele> 冲突
                 文本 += '\u002b';
                 内嵌元素列表.Add(item);
             }
         }
-        // 将文本中的 <ele> 转义
-        文本 = 文本.Replace(_占位标记, $"\\{_占位标记}");
-        // 再将零宽字符替换为 <ele>
-        文本 = 文本.Replace("\u002b", _占位标记);
+        文本列表 = 文本.Split("\u002b").ToList();
     }
 
     public void 更新光标索引(元素行 line)
@@ -496,6 +493,13 @@ public class 段落 : 布局元素
 
     public void 输入文本(string text, 元素行 sender)
     {
+        // 存在换行符，交给段落容器处理
+        if (text.Contains('\n'))
+        {
+            if (OwnerPage != null) OwnerPage.输入多行文本(text, this);
+            return;
+        }
+
         // 计算相对于段落的光标索引
         int indexInParagraph = 获取段落光标索引(sender);
         // 找到当前索引所在的子元素集，并插入文本
@@ -936,8 +940,6 @@ public class 段落 : 布局元素
     #endregion
 
     #region 字段
-
-    private readonly string _占位标记 = "<ele>";
 
     private List<行内元素> _全部行内元素 = new List<行内元素>();
 

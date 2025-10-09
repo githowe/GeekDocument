@@ -119,8 +119,9 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override string ToString()
         {
-            int length = Math.Min(段落.文本.Length, 20);
-            return 段落.文本.Substring(0, length);
+            string text = 段落.获取文本().Replace("\u002b", "");
+            int length = Math.Min(text.Length, 20);
+            return text.Substring(0, length);
         }
 
         #endregion

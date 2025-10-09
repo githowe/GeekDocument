@@ -127,8 +127,43 @@ namespace GeekDocument.SubSystem.DocLibSystem
         private List<FileInfo> GetFileList(string folderPath)
         {
             List<FileInfo> fileList = new DirectoryInfo(folderPath).GetFiles().ToList();
+            // 使用自然排序
             fileList.Sort(_fileInfoComparer);
+            // 获取置顶名称列表
+            List<string> topNameList = LoadTopName(folderPath);
+            while (topNameList.Count > 0)
+            {
+                FileInfo? fileInfo = FindFile(fileList, topNameList.Last());
+                if (fileInfo != null)
+                {
+                    // 将找到的文件移至最前
+                    fileList.Remove(fileInfo);
+                    fileList.Insert(0, fileInfo);
+                }
+                topNameList.RemoveAt(topNameList.Count - 1);
+            }
             return fileList;
+        }
+
+        /// <summary>
+        /// 加载置顶名称列表
+        /// </summary>
+        private List<string> LoadTopName(string folderPath)
+        {
+            // 存在置顶名称配置文件
+            if (File.Exists(folderPath + "\\TopName.cfg"))
+                return File.ReadAllLines(folderPath + "\\TopName.cfg").ToList();
+            return new List<string>();
+        }
+
+        private FileInfo? FindFile(List<FileInfo> list, string name)
+        {
+            foreach (var file in list)
+            {
+                if (Path.GetFileNameWithoutExtension(file.FullName) == name)
+                    return file;
+            }
+            return null;
         }
 
         #endregion

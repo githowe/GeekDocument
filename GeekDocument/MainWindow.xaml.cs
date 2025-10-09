@@ -358,7 +358,7 @@ namespace GeekDocument
                 段落 title = new 段落
                 {
                     OwnerPage = 文档.页面,
-                    文本 = dialog.DocumentName,
+                    文本列表 = new List<string> { dialog.DocumentName },
                     字号 = 32,
                     首行缩进 = 文档.页面.首行缩进,
                     自定义首行缩进 = 0,

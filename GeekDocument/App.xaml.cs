@@ -7,6 +7,7 @@ using GeekDocument.SubSystem.EventSystem;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
+using GeekDocument.SubSystem.ResourceSystem;
 using GeekDocument.SubSystem.StyleSystem;
 using GeekDocument.SubSystem.TimeSystem;
 using System.IO;
@@ -36,6 +37,7 @@ namespace GeekDocument
             DocumentTree.Instance.Init();
             CacheManager.Instance.Init();
             StyleManager.Instance.Init();
+            CursorManager.Instance.Init();
             // 初始化系统服务
             FontManager.Init();
             DWriteTool.Instance.Init();

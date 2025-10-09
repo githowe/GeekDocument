@@ -49,7 +49,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 段落 段落 = new 段落
                 {
-                    文本 = item,
+                    文本列表 = new List<string> { item },
                     字体 = 字体,
                     字号 = 字号,
                     行间距 = 行间距,
@@ -217,8 +217,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (sender.光标索引 == 0)
             {
                 // 移动文本
-                新段落.文本 = sender.获取文本();
-                sender.文本 = "";
+                新段落.文本列表 = sender.获取文本().Split("\u002b").ToList();
+                sender.文本列表 = new List<string> { "" };
                 // 重新初始化
                 sender.Init();
                 新段落.Init();

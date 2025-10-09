@@ -12,7 +12,14 @@
 
   <ItemGroup>
     <None Remove="Assets\AppIcon.png" />
-    <None Remove="Assets\ElementTool\Table_Add.png" />
+    <None Remove="Assets\Cursor\Move.cur" />
+    <None Remove="Assets\Cursor\MoveSelected.cur" />
+    <None Remove="Assets\Cursor\ResizeX.cur" />
+    <None Remove="Assets\Cursor\ResizeY.cur" />
+    <None Remove="Assets\Cursor\Select.cur" />
+    <None Remove="Assets\Cursor\SelectCol.cur" />
+    <None Remove="Assets\Cursor\SelectRow.cur" />
+    <None Remove="Assets\ElementTool\DragMark.png" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
@@ -153,7 +160,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\ElementTool\Table_Add.png" />
+    <Resource Include="Assets\Cursor\Drag.cur" />
+    <Resource Include="Assets\Cursor\Move.cur" />
+    <Resource Include="Assets\Cursor\MoveSelected.cur" />
+    <Resource Include="Assets\Cursor\ResizeX.cur" />
+    <Resource Include="Assets\Cursor\ResizeY.cur" />
+    <Resource Include="Assets\Cursor\Select.cur" />
+    <Resource Include="Assets\Cursor\SelectCol.cur" />
+    <Resource Include="Assets\Cursor\SelectRow.cur" />
+    <Resource Include="Assets\ElementTool\DragMark.png" />
+    <Resource Include="Assets\ElementTool\InsertMark.png" />
     <Resource Include="Assets\Icon15\AlignBottom.png" />
     <Resource Include="Assets\Icon15\AlignCenter2.png" />
     <Resource Include="Assets\Icon15\AlignTop.png" />
