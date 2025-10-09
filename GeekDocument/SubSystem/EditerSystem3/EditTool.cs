@@ -59,6 +59,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
         {
             NewTree(Behaviors.Move, (_) =>
             {
+                _host.处理鼠标移动();
                 ResetTree();
             });
             Finish();

@@ -194,6 +194,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         #region 工具方法
 
+        public void 处理鼠标移动()
+        {
+            _page.MouseMove(GetMousePoint());
+        }
+
         public string 获取命中区域()
         {
             Point point = GetMousePoint();

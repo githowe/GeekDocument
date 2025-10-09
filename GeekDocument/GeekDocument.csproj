@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <None Remove="Assets\AppIcon.png" />
+    <None Remove="Assets\ElementTool\Table_Add.png" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
@@ -152,6 +153,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\ElementTool\Table_Add.png" />
     <Resource Include="Assets\Icon15\AlignBottom.png" />
     <Resource Include="Assets\Icon15\AlignCenter2.png" />
     <Resource Include="Assets\Icon15\AlignTop.png" />

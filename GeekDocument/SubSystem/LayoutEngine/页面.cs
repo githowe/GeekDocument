@@ -143,12 +143,28 @@ public class 页面 : IDocElement
         foreach (var 段落 in 段落列表) 段落.渲染(null);
     }
 
+    public void MouseMove(Point point)
+    {
+        // 更新直接命中元素
+        命中信息? info = 获取命中信息(point);
+        if (info == null) HitManager.Instance.直接命中元素 = null;
+        else HitManager.Instance.直接命中元素 = info.命中元素;
+        // 先处理元素的鼠标进入与鼠标离开
+        for (int index = 段落列表.Count - 1; index >= 0; index--)
+        {
+            段落 段落 = 段落列表[index];
+            段落.命中测试(point);
+        }
+        // 再处理元素的鼠标移动
+        foreach (var item in 段落列表) item.移动测试(point);
+    }
+
     public 命中信息? 获取命中信息(Point point)
     {
         命中信息? info = null;
         for (int index = 段落列表.Count - 1; index >= 0; index--)
         {
-            段落? 段落 = 段落列表[index];
+            段落 段落 = 段落列表[index];
             info = 段落.获取命中信息(point);
             if (info != null) break;
         }

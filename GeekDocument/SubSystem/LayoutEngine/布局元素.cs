@@ -4,6 +4,13 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine;
 
+public class MouseMoveArgs
+{
+    public Point Point { get; set; }
+
+    public bool Handled { get; set; } = false;
+}
+
 public abstract class 布局元素 : IDocElement
 {
     public virtual string Name { get; set; } = "未命名布局元素";
@@ -19,6 +26,20 @@ public abstract class 布局元素 : IDocElement
     public Action<IDocElement>? ChildrenChanged { get; set; } = null;
 
     public Action<IDocElement>? Removed { get; set; } = null;
+
+    public bool MouseHover
+    {
+        get => _mouseHover;
+        set
+        {
+            if (_mouseHover == value) return;
+            _mouseHover = value;
+            if (_mouseHover) MouseEnter();
+            else MouseLeave();
+        }
+    }
+
+    private bool _mouseHover = false;
 
     public void AddChild(布局元素 child)
     {
@@ -63,7 +84,18 @@ public abstract class 布局元素 : IDocElement
         return Parent.GetPath() + " > " + Name;
     }
 
+    public List<布局元素> GetAllParent()
+    {
+        List<布局元素> parentList = new List<布局元素>();
+        if (Parent == null) return parentList;
+        parentList.AddRange(Parent.GetAllParent());
+        parentList.Add(Parent);
+        return parentList;
+    }
+
     public virtual Rect GetViewRect() => Rect.Empty;
+
+    public virtual Rect GetHitTestRect() => GetViewRect();
 
     public virtual void 更新绘图对象(string reason) => Parent?.更新绘图对象(reason);
 
@@ -84,6 +116,54 @@ public abstract class 布局元素 : IDocElement
     public virtual void 渲染(DrawingContext? dc)
     {
         foreach (var item in Children) item.渲染(dc);
+    }
+
+    public virtual void MouseEnter()
+    {
+        // Console.WriteLine($"鼠标进入: {GetPath()}");
+    }
+
+    public virtual void MouseMove(MouseMoveArgs args) { }
+
+    public virtual void MouseLeave()
+    {
+        // Console.WriteLine($"鼠标离开: {GetPath()}");
+    }
+
+    public virtual void 命中测试(Point point)
+    {
+        // 先检测自己是否命中
+        Rect rect = GetHitTestRect();
+        if (rect.Contains(point))
+        {
+            // 获取直接命中元素
+            布局元素? 直接命中 = HitManager.Instance.直接命中元素;
+            // 进入这个分支，说明命中了自己或子元素，所以直接命中元素不应为空
+            if (直接命中 == null) throw new Exception("命中测试时，直接命中元素不应为空");
+            // 直接命中自己，则设置为悬停状态
+            if (直接命中 == this) MouseHover = true;
+            else
+            {
+                // 获取命中元素的全部父元素
+                List<布局元素> parentList = 直接命中.GetAllParent();
+                // 如果命中元素为自己的子元素，则设置为悬停状态
+                if (parentList.Contains(this)) MouseHover = true;
+                else MouseHover = false;
+            }
+        }
+        else MouseHover = false;
+        // 再处理子元素
+        for (int index = Children.Count - 1; index >= 0; index--)
+        {
+            布局元素? item = Children[index];
+            item.命中测试(point);
+        }
+    }
+
+    public virtual void 移动测试(Point point)
+    {
+        if (_mouseHover) MouseMove(new MouseMoveArgs() { Point = point });
+        foreach (var item in Children) item.移动测试(point);
     }
 
     public virtual 命中信息? 获取命中信息(Point point) => null;

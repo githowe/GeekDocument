@@ -61,6 +61,12 @@ namespace GeekDocument.SubSystem.ResourceSystem
             return GetImage($"pack://application:,,,/Assets/Icon24/{path}");
         }
 
+        public BitmapImage? GetElementTool(string name)
+        {
+            if (name == "") return null;
+            return GetImage($"pack://application:,,,/Assets/ElementTool/{name}.png");
+        }
+
         #endregion
 
         #region 字段

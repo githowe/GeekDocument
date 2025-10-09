@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using GeekDocument.SubSystem.ResourceSystem;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
@@ -11,6 +13,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             Name = "表格";
             Icon = "Table";
+            _insertHead = ImageResManager.Instance.GetElementTool("Table_Add");
+            _insertLine.Freeze();
         }
 
         #endregion
@@ -112,7 +116,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public override void 渲染(DrawingContext? dc)
         {
             // 绘制边框
-            DrawingContext self_dc = _表格绘图对象.RenderOpen();
+            DrawingContext self_dc = _表格图层.RenderOpen();
             绘制表格线(self_dc);
             self_dc.Close();
             // 渲染单元格
@@ -122,17 +126,23 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public override List<绘图对象> 获取绘图对象()
         {
             List<绘图对象> result = new List<绘图对象>();
-            result.Add(_表格绘图对象);
+            result.Add(_背景图层);
+            result.Add(_表格图层);
+            result.Add(_标记图层);
             foreach (var item in 单元格列表)
                 result.AddRange(item.获取绘图对象());
             return result;
         }
 
+        public override Rect GetHitTestRect() => new Rect(Left - 16, Top - 16, ActualWidth + 32, ActualHeight + 32);
+
         public override 命中信息? 获取命中信息(Point point)
         {
             Rect 拖动手柄区域 = new Rect(Left - 16, Top - 16, 16, 16);
-            Rect 表格上方 = new Rect(Left, Top - 16, ActualWidth + 3, 16);
-            Rect 表格左侧 = new Rect(Left - 16, Top, 16, ActualHeight + 3);
+            Rect 表格上方 = new Rect(Left, Top - 16, ActualWidth + 16, 16);
+            Rect 表格左侧 = new Rect(Left - 16, Top, 16, ActualHeight + 16);
+            Rect 表格右侧 = new Rect(Left + ActualWidth, Top, 16, ActualHeight + 16);
+            Rect 表格下方 = new Rect(Left, Top+ ActualHeight, ActualWidth + 16, 16);
             Rect 表格区域 = new Rect(Left, Top, ActualWidth, ActualHeight);
 
             if (拖动手柄区域.Contains(point))
@@ -163,6 +173,26 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                     命中元素 = this,
                     命中区域 = 表格左侧,
                     区域名称 = "表格左侧",
+                };
+            }
+            if (表格右侧.Contains(point))
+            {
+                return new 命中信息
+                {
+                    坐标 = point,
+                    命中元素 = this,
+                    命中区域 = 表格右侧,
+                    区域名称 = "表格右侧",
+                };
+            }
+            if (表格下方.Contains(point))
+            {
+                return new 命中信息
+                {
+                    坐标 = point,
+                    命中元素 = this,
+                    命中区域 = 表格下方,
+                    区域名称 = "表格下方",
                 };
             }
             if (表格区域.Contains(point))
@@ -223,6 +253,92 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
             // 无下一个单元格，从表格末尾移出光标
             else Parent?.从末尾移出光标(this);
+        }
+
+        public override void MouseEnter()
+        {
+            DrawingContext dc = _背景图层.RenderOpen();
+            Rect rect = GetHitTestRect();
+            dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(64, 0, 0, 0)), null, rect);
+            dc.Close();
+        }
+
+        public override void MouseMove(MouseMoveArgs args)
+        {
+            命中信息? info = 获取命中信息(args.Point);
+            if (info == null) return;
+
+            switch (info.区域名称)
+            {
+                case "拖动手柄区域":
+                    _标记图层.RenderOpen().Close();
+                    break;
+                case "表格上方":
+                    {
+                        List<DoubleRange> rangeList = 获取垂直线范围();
+                        DoubleRange? range = null;
+                        foreach (var item in rangeList)
+                        {
+                            if (item.Contains(args.Point.X))
+                            {
+                                range = item;
+                                break;
+                            }
+                        }
+                        if (range != null)
+                        {
+                            DrawingContext dc = _标记图层.RenderOpen();
+                            // 绘制插入图标
+                            double center = range.Start + 20;
+                            double imageLeft = center - 7;
+                            double iamgeTop = Top - 16;
+                            dc.DrawImage(_insertHead, new Rect(imageLeft, iamgeTop, 15, 15));
+                            // 绘制竖线
+                            dc.DrawLine(_insertLine, new Point(center + 0.5, Top - 1), new Point(center + 0.5, Top + ActualHeight));
+                            dc.Close();
+                        }
+                        else _标记图层.RenderOpen().Close();
+                    }
+                    break;
+                case "表格左侧":
+                    {
+                        List<DoubleRange> rangeList = 获取水平线范围();
+                        DoubleRange? range = null;
+                        foreach (var item in rangeList)
+                        {
+                            if (item.Contains(args.Point.Y))
+                            {
+                                range = item;
+                                break;
+                            }
+                        }
+                        if (range != null)
+                        {
+                            DrawingContext dc = _标记图层.RenderOpen();
+                            // 绘制插入图标
+                            double center = range.Start + 20;
+                            double imageLeft = Left - 16;
+                            double iamgeTop = center - 7;
+                            dc.DrawImage(_insertHead, new Rect(imageLeft, iamgeTop, 15, 15));
+                            // 绘制横线
+                            dc.DrawLine(_insertLine, new Point(Left - 1, center + 0.5), new Point(Left + ActualWidth, center + 0.5));
+                            dc.Close();
+                        }
+                        else _标记图层.RenderOpen().Close();
+                    }
+                    break;
+                default:
+                    _标记图层.RenderOpen().Close();
+                    break;
+            }
+
+            args.Handled = true;
+        }
+
+        public override void MouseLeave()
+        {
+            _背景图层.RenderOpen().Close();
+            _标记图层.RenderOpen().Close();
         }
 
         #endregion
@@ -376,6 +492,50 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
+        private List<DoubleRange> 获取垂直线范围()
+        {
+            List<DoubleRange> result = new List<DoubleRange>();
+            double x = Left;
+            result.Add(new DoubleRange
+            {
+                Start = x - 20,
+                End = x + 21,
+            });
+            foreach (var item in 全部列宽)
+            {
+                x += 边框粗细;
+                x += item;
+                result.Add(new DoubleRange
+                {
+                    Start = x - 20,
+                    End = x + 21,
+                });
+            }
+            return result;
+        }
+
+        private List<DoubleRange> 获取水平线范围()
+        {
+            List<DoubleRange> result = new List<DoubleRange>();
+            double y = Top;
+            result.Add(new DoubleRange
+            {
+                Start = y - 20,
+                End = y + 21,
+            });
+            foreach (var item in 全部行高)
+            {
+                y += 边框粗细;
+                y += item;
+                result.Add(new DoubleRange
+                {
+                    Start = y - 20,
+                    End = y + 21,
+                });
+            }
+            return result;
+        }
+
         #endregion
 
         #region 默认单元格参数
@@ -394,10 +554,15 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         private List<表格行> 行列表 = new List<表格行>();
         private List<表格列> 列列表 = new List<表格列>();
 
-        private readonly 绘图对象 _表格绘图对象 = new 绘图对象();
+        private readonly 绘图对象 _背景图层 = new 绘图对象();
+        private readonly 绘图对象 _表格图层 = new 绘图对象();
+        private readonly 绘图对象 _标记图层 = new 绘图对象();
 
         private Brush _borderBrush = new SolidColorBrush(Color.FromRgb(100, 100, 100));
         private Pen _borderPen = new Pen(new SolidColorBrush(Color.FromRgb(100, 100, 100)), 1);
+
+        private readonly BitmapImage _insertHead = null!;
+        private readonly Pen _insertLine = new Pen(new SolidColorBrush(Color.FromRgb(126, 190, 103)), 1);
 
         #endregion
     }
