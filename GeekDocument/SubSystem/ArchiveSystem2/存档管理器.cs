@@ -167,6 +167,8 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 行数 = 表格.行数,
                 列数 = 表格.列数,
                 边框粗细 = 表格.边框粗细,
+                行高列表 = 表格.全部行高,
+                列宽列表 = 表格.全部列宽,
             };
             表格元素 表格元素 = new 表格元素 { 属性 = 属性.ToString() };
             foreach (var item in 表格.单元格列表)
@@ -189,7 +191,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 行号 = 单元格.行号,
                 列号 = 单元格.列号,
                 宽度 = 单元格.Width,
-                最小高度 = 单元格.MinHeight,
+                最小高度 = 0,
                 内边距 = new 边线
                 {
                     Left = 单元格.Padding.Left,
@@ -478,11 +480,14 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 列数 = 属性.列数,
                 边框粗细 = 属性.边框粗细,
             };
-            foreach (var 单元格信息 in 表格元素.单元格列表)
-            {
-                result.单元格列表.Add(加载单元格数据(单元格信息));
-            }
             result.Init();
+            result.ClearCell();
+            result.加载行高(属性.行高列表);
+            result.加载列宽(属性.列宽列表);
+            List<单元格> cellList = new List<单元格>();
+            foreach (var 单元格信息 in 表格元素.单元格列表)
+                cellList.Add(加载单元格数据(单元格信息));
+            result.加载单元格(cellList);
             return result;
         }
 
@@ -497,14 +502,13 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 行号 = 属性.行号,
                 列号 = 属性.列号,
                 Width = 属性.宽度,
-                MinHeight = 属性.最小高度,
                 Padding = new Thickness(属性.内边距.Left, 属性.内边距.Top, 属性.内边距.Right, 属性.内边距.Bottom),
                 水平对齐 = (水平对齐方式)属性.水平对齐方式,
                 垂直对齐 = (垂直对齐方式)属性.垂直对齐方式,
                 段间距 = 属性.段间距,
             };
             foreach (var 段落信息 in 单元格元素.段落列表)
-                result.段落列表.Add(加载段落数据(段落信息));
+                result.添加段落(加载段落数据(段落信息));
             return result;
         }
 

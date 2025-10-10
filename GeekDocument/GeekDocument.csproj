@@ -39,8 +39,11 @@
     <None Remove="Assets\Icon15\Element\List.png" />
     <None Remove="Assets\Icon15\Element\ListItem.png" />
     <None Remove="Assets\Icon15\Element\Paragraph.png" />
+    <None Remove="Assets\Icon15\Element\Set.png" />
     <None Remove="Assets\Icon15\Element\Sqrt.png" />
     <None Remove="Assets\Icon15\Element\Table.png" />
+    <None Remove="Assets\Icon15\Element\TableCol.png" />
+    <None Remove="Assets\Icon15\Element\TableRow.png" />
     <None Remove="Assets\Icon15\Element\Text.png" />
     <None Remove="Assets\Icon15\EmptyFolder.png" />
     <None Remove="Assets\Icon15\File.png" />
@@ -208,8 +211,11 @@
     <Resource Include="Assets\Icon15\Element\List.png" />
     <Resource Include="Assets\Icon15\Element\ListItem.png" />
     <Resource Include="Assets\Icon15\Element\Paragraph.png" />
+    <Resource Include="Assets\Icon15\Element\Set.png" />
     <Resource Include="Assets\Icon15\Element\Sqrt.png" />
     <Resource Include="Assets\Icon15\Element\Table.png" />
+    <Resource Include="Assets\Icon15\Element\TableCol.png" />
+    <Resource Include="Assets\Icon15\Element\TableRow.png" />
     <Resource Include="Assets\Icon15\Element\Text.png" />
     <Resource Include="Assets\Icon15\EmptyFolder.png" />
     <Resource Include="Assets\Icon15\File.png" />

@@ -231,7 +231,7 @@ public class 段落元素
 
 public class 图片元素属性
 {
-    public 图片元素属性() { } 
+    public 图片元素属性() { }
 
     public 图片元素属性(string data)
     {
@@ -298,6 +298,12 @@ public class 表格元素属性
         行数 = int.Parse(list[0]);
         列数 = int.Parse(list[1]);
         边框粗细 = double.Parse(list[2]);
+        try
+        {
+            foreach (var item in list[3].Split(',')) 行高列表.Add(double.Parse(item));
+            foreach (var item in list[4].Split(',')) 列宽列表.Add(double.Parse(item));
+        }
+        catch (Exception) { }
     }
 
     public int 行数 { get; set; } = 0;
@@ -306,6 +312,10 @@ public class 表格元素属性
 
     public double 边框粗细 { get; set; } = 1;
 
+    public List<double> 行高列表 { get; set; } = new List<double>();
+
+    public List<double> 列宽列表 { get; set; } = new List<double>();
+
     public override string ToString()
     {
         List<string> list = new List<string>
@@ -313,6 +323,8 @@ public class 表格元素属性
             行数.ToString(),
             列数.ToString(),
             边框粗细.ToString(),
+            string.Join(",", 行高列表),
+            string.Join(",", 列宽列表),
         };
         return list.序列化并压缩();
     }

@@ -21,21 +21,16 @@ public class 单元格 : 布局元素, IComparable<单元格>
 
     public double Width { get; set; } = double.NaN;
 
-    public double MinHeight
-    {
-        get => _最小高度 + 垂直内边距;
-        set => _最小高度 = value - 垂直内边距;
-    }
-
     public double ActualWidth { get; set; } = double.NaN;
 
     public double ActualHeight
     {
         get
         {
-            double 最小高度 = _最小高度 + Padding.Top + Padding.Bottom;
+            表格 表格 = (表格)Parent;
+            double 最小高度 = 表格.获取固定行高(行号);
             double 内容高度 = _内容高度 + Padding.Top + Padding.Bottom;
-            return Math.Max(Math.Max(最小高度, 内容高度), _外框高度);
+            return Math.Max(Math.Max(最小高度, 内容高度), 表格.获取自适应行高(行号));
         }
     }
 
@@ -81,11 +76,11 @@ public class 单元格 : 布局元素, IComparable<单元格>
     {
         // 当前尺寸
         double oldWidth = ActualWidth;
-        double oldHeight = ActualHeight;
+        double oldHeight = _内容高度;
         // 重新测量
         测量();
         // 尺寸没有变化，则只需重新排列自身并渲染即可
-        if (ActualWidth == oldWidth && ActualHeight == oldHeight)
+        if (ActualWidth == oldWidth && _内容高度 == oldHeight)
         {
             排列();
             渲染(null);
@@ -137,11 +132,6 @@ public class 单元格 : 布局元素, IComparable<单元格>
     {
         段落列表.Add(段落);
         AddChild(段落);
-    }
-
-    public void 同步高度(double height)
-    {
-        if (ActualHeight < height) _外框高度 = height - 垂直内边距;
     }
 
     public void 移入光标至开头()
@@ -197,7 +187,5 @@ public class 单元格 : 布局元素, IComparable<单元格>
         return 命中段落;
     }
 
-    private double _最小高度 = 0;
     private double _内容高度 = 0;
-    private double _外框高度 = 0;
 }

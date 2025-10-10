@@ -42,6 +42,16 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public List<单元格> 单元格列表 { get; set; } = new List<单元格>();
 
+        public override List<IDocElement> ChildrenElement
+        {
+            get
+            {
+                List<IDocElement> result = new List<IDocElement> { _行集, _列集 };
+                result.AddRange(base.ChildrenElement);
+                return result;
+            }
+        }
+
         #endregion
 
         #region 布局元素核心方法
@@ -52,16 +62,21 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 生成行
             for (int line = 0; line < 行数; line++)
             {
-                表格行 行 = new 表格行 { 行号 = line };
+                表格行 行 = new 表格行
+                {
+                    行号 = line,
+                    行高 = 单元格高度,
+                    自适应行高 = 单元格高度
+                };
                 for (int list = 0; list < 列数; list++) 行.单元格列表.Add(null);
-                行列表.Add(行);
+                _行集.行列表.Add(行);
             }
             // 生成列
             for (int list = 0; list < 列数; list++)
             {
                 表格列 列 = new 表格列 { 列号 = list };
                 for (int line = 0; line < 行数; line++) 列.单元格列表.Add(null);
-                列列表.Add(列);
+                _列集.列列表.Add(列);
             }
             // 生成行高与列宽
             for (int counter = 0; counter < 行数; counter++)
@@ -73,7 +88,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 for (int list = 0; list < 列数; list++)
                 {
-                    段落 段落 = new 段落 { 首行缩进 = 0 };
+                    段落 段落 = new 段落
+                    {
+                        使用自定义首行缩进 = true,
+                        自定义首行缩进 = 0
+                    };
                     段落.Init();
                     设置单元格内容(line, list, 段落);
                 }
@@ -84,15 +103,74 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             _borderPen.Freeze();
         }
 
+        /// <summary>
+        /// 清空单元格。加载表格时调用此方法以加载存档中的单元格数据
+        /// </summary>
+        public void ClearCell()
+        {
+            // 置空单元格引用
+            for (int line = 0; line < 行数; line++)
+            {
+                for (int list = 0; list < 列数; list++)
+                {
+                    _行集.行列表[line].单元格列表[list] = null;
+                    _列集.列列表[list].单元格列表[line] = null;
+                }
+            }
+            // 清空单元格列表
+            单元格列表.Clear();
+            ClearChildren();
+        }
+
+        public void 加载行高(List<double> heightList)
+        {
+            if (heightList.Count == 0) return;
+
+            全部行高.Clear();
+            全部行高.AddRange(heightList);
+            for (int index = 0; index < 行数; index++)
+            {
+                _行集.行列表[index].行高 = 全部行高[index];
+                _行集.行列表[index].自适应行高 = 全部行高[index];
+            }
+        }
+
+        public void 加载列宽(List<double> widthList)
+        {
+            if (widthList.Count == 0) return;
+
+            全部列宽.Clear();
+            全部列宽.AddRange(widthList);
+        }
+
+        public void 加载单元格(List<单元格> cellList)
+        {
+            // 设置单元格内容
+            foreach (var cell in cellList)
+            {
+                // 引用单元格
+                _行集.行列表[cell.行号].单元格列表[cell.列号] = cell;
+                _列集.列列表[cell.列号].单元格列表[cell.行号] = cell;
+                // 添加到单元格列表
+                单元格列表.Add(cell);
+            }
+            单元格列表.Sort();
+            AddChildList(cellList.Cast<布局元素>().ToList());
+        }
+
         public override void 测量()
         {
             // 测量单元格
             foreach (var cell in 单元格列表) cell.测量();
             // 同步行高
-            foreach (var 行 in 行列表) 行.同步行高();
+            foreach (var 行 in _行集.行列表)
+            {
+                行.重置自适应行高();
+                行.同步行高();
+            }
             // 更新全部行高
             for (int index = 0; index < 行数; index++)
-                全部行高[index] = 行列表[index].行高;
+                全部行高[index] = _行集.行列表[index].自适应行高;
             // 计算表格实际尺寸
             ActualWidth = 全部列宽.Sum() + 边框粗细 * (列数 + 1);
             ActualHeight = 全部行高.Sum() + 边框粗细 * (行数 + 1);
@@ -382,13 +460,26 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #endregion
 
+        #region 公开方法
+
+        public double 获取固定行高(int 行)
+        {
+            if (行 < 0 || 行 >= 行数) return double.NaN;
+            return _行集.行列表[行].行高;
+        }
+
+        public double 获取自适应行高(int 行)
+        {
+            if (行 < 0 || 行 >= 行数) return double.NaN;
+            return _行集.行列表[行].自适应行高;
+        }
+
+        #endregion
+
         #region 私有方法
 
         private void 设置单元格内容(int 行, int 列, 段落 段落)
         {
-            if (行 < 0 || 行 >= 行数) return;
-            if (列 < 0 || 列 >= 列数) return;
-
             // 创建单元格
             单元格 cell = new 单元格
             {
@@ -396,13 +487,12 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 列号 = 列,
                 Padding = _cellPadding,
                 Width = 全部列宽[列],
-                MinHeight = 全部行高[行],
                 水平对齐 = _cellHorizontal,
                 垂直对齐 = _cellVertical,
             };
             // 引用单元格
-            行列表[行].单元格列表[列] = cell;
-            列列表[列].单元格列表[行] = cell;
+            _行集.行列表[行].单元格列表[列] = cell;
+            _列集.列列表[列].单元格列表[行] = cell;
             // 添加到单元格列表
             单元格列表.Add(cell);
             // 排序。按左上至右下顺序
@@ -426,7 +516,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         {
             // 先获取命中行
             int rowIndex = -1;
-            for (int index = 0; index < 行列表.Count; index++)
+            for (int index = 0; index < _行集.行列表.Count; index++)
             {
                 (double y1, double y2) = 计算行区域(index);
                 double y = point.Y;
@@ -441,7 +531,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 rowIndex = 0;
                 double 最小距离 = double.MaxValue;
-                for (int index = 0; index < 行列表.Count; index++)
+                for (int index = 0; index < _行集.行列表.Count; index++)
                 {
                     (double y1, double y2) = 计算行区域(index);
                     double distance = Math.Min(Math.Abs(point.Y - y1), Math.Abs(point.Y - y2));
@@ -454,7 +544,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
             // 再获取命中列
             int colIndex = -1;
-            for (int index = 0; index < 列列表.Count; index++)
+            for (int index = 0; index < _列集.列列表.Count; index++)
             {
                 (double x1, double x2) = 计算列区域(index);
                 double x = point.X;
@@ -469,7 +559,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 colIndex = 0;
                 double 最小距离 = double.MaxValue;
-                for (int index = 0; index < 列列表.Count; index++)
+                for (int index = 0; index < _列集.列列表.Count; index++)
                 {
                     (double x1, double x2) = 计算列区域(index);
                     double distance = Math.Min(Math.Abs(point.X - x1), Math.Abs(point.X - x2));
@@ -481,7 +571,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
                 }
             }
 
-            return 行列表[rowIndex].单元格列表[colIndex];
+            return _行集.行列表[rowIndex].单元格列表[colIndex];
         }
 
         public (double y1, double y2) 计算行区域(int 行)
@@ -577,8 +667,8 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         #region 字段
 
-        private List<表格行> 行列表 = new List<表格行>();
-        private List<表格列> 列列表 = new List<表格列>();
+        private readonly 表格行集 _行集 = new 表格行集();
+        private readonly 表格列集 _列集 = new 表格列集();
 
         private readonly 绘图对象 _背景图层 = new 绘图对象();
         private readonly 绘图对象 _表格图层 = new 绘图对象();
