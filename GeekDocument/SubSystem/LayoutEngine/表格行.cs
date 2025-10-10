@@ -5,6 +5,8 @@ namespace GeekDocument.SubSystem.LayoutEngine
 {
     public class 表格行 : IDocElement, IPropertyObject
     {
+        public 表格行() { }
+
         #region IDocElement 接口
 
         public string Name => "表格行";
@@ -31,20 +33,33 @@ namespace GeekDocument.SubSystem.LayoutEngine
 
         #region IPropertyObject 接口
 
-        public List<Property> PropertyList { get; } = new List<Property>()
+        public List<Property> PropertyList
         {
-            new Property() { Name="行号", Type="int", Value="0", ReadOnly=true },
-            new Property() { Name="行高", Type="double", Value="Auto", ReadOnly=true },
-        };
+            get
+            {
+                List<Property> result = new List<Property>();
+                result.Add(new Property("行号", "int", (行号 + 1).ToString(), true));
+                result.Add(new Property("固定行高", "double", 行高.ToString()));
+                result.Add(new Property("自适应行高", "double", 自适应行高.ToString(), true));
+                return result;
+            }
+        }
 
         public void SetProperty(string name, string value)
         {
-
+            switch (name)
+            {
+                case "固定行高":
+                    OwnerTable.设置行高(行号, double.Parse(value));
+                    break;
+            }
         }
 
         #endregion
 
         #region 属性
+
+        public 表格 OwnerTable { get; set; } = null!;
 
         public int 行号 { get; set; }
 

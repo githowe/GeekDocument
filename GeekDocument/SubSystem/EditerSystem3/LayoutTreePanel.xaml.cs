@@ -11,7 +11,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         public event Action<IDocElement?> HoverElementChanged;
 
-        public event Action<IDocElement?> SelectElementChanged;
+        public event Action<IPropertyObject?> SelectElementChanged;
 
         public void Init()
         {
@@ -20,6 +20,11 @@ namespace GeekDocument.SubSystem.EditerSystem3
             {
                 if (item == null) HoverElementChanged?.Invoke(null);
                 else HoverElementChanged?.Invoke(item.Content as IDocElement);
+            };
+            LayoutTree.SelectedChanged = () =>
+            {
+                if (LayoutTree.FirstSelected == null) SelectElementChanged?.Invoke(null);
+                else SelectElementChanged?.Invoke(LayoutTree.FirstSelected.Content as IPropertyObject);
             };
         }
 

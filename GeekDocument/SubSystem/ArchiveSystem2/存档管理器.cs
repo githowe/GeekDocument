@@ -167,7 +167,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 行数 = 表格.行数,
                 列数 = 表格.列数,
                 边框粗细 = 表格.边框粗细,
-                行高列表 = 表格.全部行高,
+                行高列表 = 表格.获取全部行高(),
                 列宽列表 = 表格.全部列宽,
             };
             表格元素 表格元素 = new 表格元素 { 属性 = 属性.ToString() };

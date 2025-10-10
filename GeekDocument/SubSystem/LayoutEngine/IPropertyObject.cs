@@ -5,6 +5,16 @@
     /// </summary>
     public class Property
     {
+        public Property() { }
+
+        public Property(string name, string type, string value, bool readOnly = false)
+        {
+            Name = name;
+            Type = type;
+            Value = value;
+            ReadOnly = readOnly;
+        }
+
         public string Name { get; set; } = "";
 
         public string Type { get; set; } = "";

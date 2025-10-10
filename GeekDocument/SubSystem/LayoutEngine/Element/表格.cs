@@ -64,6 +64,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             {
                 表格行 行 = new 表格行
                 {
+                    OwnerTable = this,
                     行号 = line,
                     行高 = 单元格高度,
                     自适应行高 = 单元格高度
@@ -74,7 +75,11 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 生成列
             for (int list = 0; list < 列数; list++)
             {
-                表格列 列 = new 表格列 { 列号 = list };
+                表格列 列 = new 表格列
+                {
+                    OwnerTable = this,
+                    列号 = list
+                };
                 for (int line = 0; line < 行数; line++) 列.单元格列表.Add(null);
                 _列集.列列表.Add(列);
             }
@@ -120,42 +125,6 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 清空单元格列表
             单元格列表.Clear();
             ClearChildren();
-        }
-
-        public void 加载行高(List<double> heightList)
-        {
-            if (heightList.Count == 0) return;
-
-            全部行高.Clear();
-            全部行高.AddRange(heightList);
-            for (int index = 0; index < 行数; index++)
-            {
-                _行集.行列表[index].行高 = 全部行高[index];
-                _行集.行列表[index].自适应行高 = 全部行高[index];
-            }
-        }
-
-        public void 加载列宽(List<double> widthList)
-        {
-            if (widthList.Count == 0) return;
-
-            全部列宽.Clear();
-            全部列宽.AddRange(widthList);
-        }
-
-        public void 加载单元格(List<单元格> cellList)
-        {
-            // 设置单元格内容
-            foreach (var cell in cellList)
-            {
-                // 引用单元格
-                _行集.行列表[cell.行号].单元格列表[cell.列号] = cell;
-                _列集.列列表[cell.列号].单元格列表[cell.行号] = cell;
-                // 添加到单元格列表
-                单元格列表.Add(cell);
-            }
-            单元格列表.Sort();
-            AddChildList(cellList.Cast<布局元素>().ToList());
         }
 
         public override void 测量()
@@ -473,6 +442,66 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (行 < 0 || 行 >= 行数) return double.NaN;
             return _行集.行列表[行].自适应行高;
         }
+
+        public List<double> 获取全部行高()
+        {
+            List<double> result = new List<double>();
+            foreach (var item in _行集.行列表)
+                result.Add(item.行高);
+            return result;
+        }
+
+        public void 加载行高(List<double> heightList)
+        {
+            if (heightList.Count == 0) return;
+
+            全部行高.Clear();
+            全部行高.AddRange(heightList);
+            for (int index = 0; index < 行数; index++)
+            {
+                _行集.行列表[index].行高 = 全部行高[index];
+                _行集.行列表[index].自适应行高 = 全部行高[index];
+            }
+        }
+
+        public void 加载列宽(List<double> widthList)
+        {
+            if (widthList.Count == 0) return;
+
+            全部列宽.Clear();
+            全部列宽.AddRange(widthList);
+        }
+
+        public void 加载单元格(List<单元格> cellList)
+        {
+            // 设置单元格内容
+            foreach (var cell in cellList)
+            {
+                // 引用单元格
+                _行集.行列表[cell.行号].单元格列表[cell.列号] = cell;
+                _列集.列列表[cell.列号].单元格列表[cell.行号] = cell;
+                // 添加到单元格列表
+                单元格列表.Add(cell);
+            }
+            单元格列表.Sort();
+            AddChildList(cellList.Cast<布局元素>().ToList());
+        }
+
+        public void 设置行高(int index, double height)
+        {
+            _行集.行列表[index].行高 = height;
+            重新测量();
+        }
+
+        public void 设置列宽(int index, double width)
+        {
+            全部列宽[index] = width;
+            表格列 列 = _列集.列列表[index];
+            foreach (var cell in 列.单元格列表) cell.Width = width;
+            重新测量();
+        }
+
+        public double 获取列宽(int index) => 全部列宽[index];
 
         #endregion
 

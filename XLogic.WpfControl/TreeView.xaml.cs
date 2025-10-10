@@ -17,6 +17,10 @@ namespace XLogic.WpfControl
         /// <summary>树根</summary>
         public TreeItem TreeRoot { get; set; } = new TreeItem();
 
+        public TreeItem? FirstSelected => _firstSelectedItem;
+
+        public List<TreeItem> SelectedList => _selectedItemList;
+
         #endregion
 
         #region 事件

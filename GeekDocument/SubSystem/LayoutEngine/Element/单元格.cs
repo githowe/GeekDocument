@@ -56,6 +56,7 @@ public class 单元格 : 布局元素, IComparable<单元格>
         foreach (var 段落 in 段落列表)
         {
             段落.MaxWidth = Width - 水平内边距;
+            if (段落.MaxWidth < 0) 段落.MaxWidth = 0;
             段落.测量();
         }
         // 设置实际宽度

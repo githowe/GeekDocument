@@ -56,6 +56,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
             Tool_OpenRight.Click += Tool_OpenRight_Click;
             Tool_CloseRight.Click += Tool_CloseRight_Click;
             Panel_LayoutTree.HoverElementChanged += Panel_LayoutTree_HoverElementChanged;
+            Panel_LayoutTree.SelectElementChanged += Panel_LayoutTree_SelectElementChanged;
         }
 
         public void LoadDocument(文档 文档)
@@ -136,6 +137,16 @@ namespace GeekDocument.SubSystem.EditerSystem3
         private void Panel_LayoutTree_HoverElementChanged(IDocElement? 元素)
         {
             _pageView.UpdateHoveredElement(元素);
+        }
+
+        private void Panel_LayoutTree_SelectElementChanged(IPropertyObject? obj)
+        {
+            if (obj == null) return;
+
+            PropertyPanelBox.Children.Clear();
+            CommonPropertyPanel panel = new CommonPropertyPanel { Instance = obj };
+            PropertyPanelBox.Children.Add(panel);
+            panel.Init();
         }
 
         private void Tool_Save_Click(object sender, RoutedEventArgs e)
