@@ -292,7 +292,7 @@ public class 页面 : IDocElement
             }
             // 添加最后一行
             段落 尾段落 = 克隆段落(sender);
-            尾段落.文本列表 = (lineList.Last() + 当前段落文本).Split("\u002b").ToList();
+            尾段落.文本列表 = (lineList.Last() + 当前段落文本).Split("\u200b").ToList();
             尾段落.内嵌元素列表 = 当前段落内嵌元素;
             尾段落.Init();
             新段落列表.Add(尾段落);
@@ -324,7 +324,7 @@ public class 页面 : IDocElement
             // 获取当前段落内容
             string 当前段落文本 = sender.获取文本();
             // 当前段落内容为当前内容加上第一行文本
-            sender.文本列表 = (当前段落文本 + lineList[0]).Split("\u002b").ToList();
+            sender.文本列表 = (当前段落文本 + lineList[0]).Split("\u200b").ToList();
             // 重新初始化当前段落
             sender.Init();
             // 添加中间行
@@ -341,7 +341,7 @@ public class 页面 : IDocElement
             尾段落.更新文本与内嵌元素(right);
             尾段落.Init();
             string 尾段落文本 = 尾段落.获取文本();
-            尾段落.文本列表 = (lineList.Last() + 尾段落文本).Split("\u002b").ToList();
+            尾段落.文本列表 = (lineList.Last() + 尾段落文本).Split("\u200b").ToList();
             尾段落.Init();
             新段落列表.Add(尾段落);
             // 插入新段落
@@ -445,7 +445,7 @@ public class 页面 : IDocElement
         if (sender.光标索引 == 0)
         {
             // 移动元素
-            新段落.文本列表 = sender.获取文本().Split("\u002b").ToList();
+            新段落.文本列表 = sender.获取文本().Split("\u200b").ToList();
             新段落.内嵌元素列表 = sender.获取内嵌元素();
             sender.文本列表 = new List<string> { "" };
             sender.内嵌元素列表.Clear();

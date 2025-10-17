@@ -119,7 +119,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override string ToString()
         {
-            string text = 段落.获取文本().Replace("\u002b", "");
+            string text = 段落.获取文本().Replace("\u200b", "");
             int length = Math.Min(text.Length, 20);
             return text.Substring(0, length);
         }

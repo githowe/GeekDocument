@@ -4,6 +4,7 @@ using GeekDocument.SubSystem.DirectWriteSystem;
 using GeekDocument.SubSystem.DocLibSystem;
 using GeekDocument.SubSystem.EditerSystem.Tool;
 using GeekDocument.SubSystem.EventSystem;
+using GeekDocument.SubSystem.ExportSystem;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.OptionSystem;
@@ -26,7 +27,7 @@ namespace GeekDocument
         private void App_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG
-            Kernel32Interop.AllocConsole();
+            // Kernel32Interop.AllocConsole();
 #endif
 
             // 创建必要文件夹
@@ -46,6 +47,7 @@ namespace GeekDocument
             ImageLoader.Instance.Init();
             AppWatch.Instance.Start();
             CodeTool.Instance.Init();
+            ExportTool.Instance.Init();
         }
     }
 }

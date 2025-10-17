@@ -355,7 +355,7 @@ public class 段落 : 布局元素
         foreach (var 集 in 元素集列表)
         {
             // 非字元素集，添加零宽字符
-            if (集.InnerElement) result += "\u002b";
+            if (集.InnerElement) result += "\u200b";
             // 字元素集，添加文本
             else result += 集.Text;
         }
@@ -406,11 +406,11 @@ public class 段落 : 布局元素
             // 非字元素，添加零宽字符
             else
             {
-                文本 += '\u002b';
+                文本 += '\u200b';
                 内嵌元素列表.Add(item);
             }
         }
-        文本列表 = 文本.Split("\u002b").ToList();
+        文本列表 = 文本.Split("\u200b").ToList();
     }
 
     public void 更新光标索引(元素行 line)

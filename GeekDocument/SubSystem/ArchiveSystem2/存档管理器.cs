@@ -380,7 +380,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 段落元素属性 属性 = new 段落元素属性(段落元素.属性);
                 result = new 段落
                 {
-                    文本列表 = 属性.文本.Split("\u002b").ToList(),
+                    // 文本列表 = 属性.文本.Split("\u002b").ToList(),
                     字体 = 属性.字体,
                     字号 = 属性.字号,
                     水平对齐 = (水平对齐方式)属性.水平对齐方式,
@@ -392,6 +392,12 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                     首行缩进 = 属性.首行缩进,
                     行间距 = 属性.行间距,
                 };
+                if (属性.文本.Contains("\u002b"))
+                    result.文本列表 = 属性.文本.Split("\u002b").ToList();
+                else if (属性.文本.Contains("\u200b"))
+                    result.文本列表 = 属性.文本.Split("\u200b").ToList();
+                else
+                    result.文本列表 = new List<string> { 属性.文本 };
             }
             // 1.1
             else if (段落元素信息.Version == "1.1")
@@ -399,7 +405,7 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                 段落元素属性2 属性 = new 段落元素属性2(段落元素.属性);
                 result = new 段落
                 {
-                    文本列表 = 属性.文本.Split("\u002b").ToList(),
+                    // 文本列表 = 属性.文本.Split("\u002b").ToList(),
                     字体 = 属性.字体,
                     字号 = 属性.字号,
                     水平对齐 = (水平对齐方式)属性.水平对齐方式,
@@ -414,6 +420,12 @@ namespace GeekDocument.SubSystem.ArchiveSystem2
                     使用自定义段间距 = 属性.使用自定义段间距,
                     自定义段间距 = 属性.自定义段间距,
                 };
+                if (属性.文本.Contains("\u002b"))
+                    result.文本列表 = 属性.文本.Split("\u002b").ToList();
+                else if (属性.文本.Contains("\u200b"))
+                    result.文本列表 = 属性.文本.Split("\u200b").ToList();
+                else
+                    result.文本列表 = new List<string> { 属性.文本 };
             }
             if (result == null) throw new Exception("加载段落数据失败");
 

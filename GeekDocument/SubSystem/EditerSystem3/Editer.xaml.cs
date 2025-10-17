@@ -1,5 +1,6 @@
 ﻿using GeekDocument.SubSystem.ArchiveSystem2;
 using GeekDocument.SubSystem.EditerSystem3.PropertyPanel;
+using GeekDocument.SubSystem.ExportSystem;
 using GeekDocument.SubSystem.FileSystem;
 using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
@@ -173,6 +174,30 @@ namespace GeekDocument.SubSystem.EditerSystem3
         {
         }
 
+        private void Tool_Export_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = FM.Instance.OpenExportFileDialog(DocumentName);
+            if (filePath == "") return;
+
+            string extension = Path.GetExtension(filePath);
+            switch (extension)
+            {
+                case ".pdf":
+                case ".docx":
+                case ".md":
+                case ".html":
+                case ".txt":
+                case ".png":
+                    WM.ShowTip("暂不支持导出格式：" + extension);
+                    return;
+                case ".bdoc":
+                    string path = Path.GetDirectoryName(filePath);
+                    string name = Path.GetFileNameWithoutExtension(filePath);
+                    ExportTool.Instance.Export(_doc.页面, ExportFormat.Bdoc, path, name);
+                    break;
+            }
+        }
+
         private void Tool_List_Click(object sender, RoutedEventArgs e)
         {
             列表 列表 = new 列表();
@@ -206,7 +231,7 @@ namespace GeekDocument.SubSystem.EditerSystem3
 
         private void Tool_Code_Click(object sender, RoutedEventArgs e)
         {
-            代码 代码 = new 代码();
+            代码 代码 = new 代码 { 源码 = "" };
             代码.Init();
             _pageView.插入代码(代码);
         }

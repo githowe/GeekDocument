@@ -1,0 +1,80 @@
+.paper {
+    font-family: 霞鹜文楷, 苹方, 微软雅黑;
+    transform: translate3d(0, 0, 0);
+    width: 800px;
+    margin: 0 auto;
+}
+
+.header_01 {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.header_02 {
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 26px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.header_03 {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.header_04 {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 22px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.inlineElement {
+    display: inline-block;
+    border: 0px solid #000;
+    margin: 0;
+}
+
+.emptyParagraph {
+    height: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.paragraph {
+    font-size: 16px;
+    line-height: 20px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: justify;
+}
+
+.custom-square-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.custom-square-list li {
+    position: relative;
+    padding-left: 32px;
+}
+
+.custom-square-list li::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: black;
+    display: inline-block;
+}

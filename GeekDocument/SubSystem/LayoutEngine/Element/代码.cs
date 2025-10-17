@@ -217,7 +217,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (sender.光标索引 == 0)
             {
                 // 移动文本
-                新段落.文本列表 = sender.获取文本().Split("\u002b").ToList();
+                新段落.文本列表 = sender.获取文本().Split("\u200b").ToList();
                 sender.文本列表 = new List<string> { "" };
                 // 重新初始化
                 sender.Init();

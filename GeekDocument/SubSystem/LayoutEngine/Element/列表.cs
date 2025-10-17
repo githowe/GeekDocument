@@ -3,29 +3,6 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 项信息
-    {
-        public 项信息() { }
-
-        public 项信息(int deep, 段落 段落)
-        {
-            段落.Init();
-            Deep = deep;
-            this.段落 = 段落;
-        }
-
-        public int Deep { get; set; } = 0;
-
-        public 段落 段落 { get; set; } = null!;
-
-        public override string ToString()
-        {
-            string text = 段落.获取文本().Replace("\u002b", "");
-            int length = Math.Min(text.Length, 20);
-            return $"{Deep} - {text.Substring(0, length)}";
-        }
-    }
-
     public class 列表 : 行内元素
     {
         #region 构造方法
@@ -244,7 +221,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             if (sender.段落.光标索引 == 0)
             {
                 // 移动元素
-                新段落.文本列表 = sender.段落.获取文本().Split("\u002b").ToList();
+                新段落.文本列表 = sender.段落.获取文本().Split("\u200b").ToList();
                 新段落.内嵌元素列表 = sender.段落.获取内嵌元素();
                 新段落.Init();
                 // 置空旧项内容

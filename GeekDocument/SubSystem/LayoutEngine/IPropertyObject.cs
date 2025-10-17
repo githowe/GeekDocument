@@ -15,6 +15,8 @@
             ReadOnly = readOnly;
         }
 
+        public string GroupName { get; set; } = "常规";
+
         public string Name { get; set; } = "";
 
         public string Type { get; set; } = "";

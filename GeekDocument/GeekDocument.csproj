@@ -20,6 +20,7 @@
     <None Remove="Assets\Cursor\SelectCol.cur" />
     <None Remove="Assets\Cursor\SelectRow.cur" />
     <None Remove="Assets\ElementTool\DragMark.png" />
+    <None Remove="Assets\File\article.css" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
@@ -173,6 +174,7 @@
     <Resource Include="Assets\Cursor\SelectRow.cur" />
     <Resource Include="Assets\ElementTool\DragMark.png" />
     <Resource Include="Assets\ElementTool\InsertMark.png" />
+    <Resource Include="Assets\File\Css\article.css" />
     <Resource Include="Assets\Icon15\AlignBottom.png" />
     <Resource Include="Assets\Icon15\AlignCenter2.png" />
     <Resource Include="Assets\Icon15\AlignTop.png" />

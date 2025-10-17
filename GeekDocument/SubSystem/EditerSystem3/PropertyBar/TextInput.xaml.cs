@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace GeekDocument.SubSystem.EditerSystem3.PropertyBar
 {
@@ -8,7 +7,8 @@ namespace GeekDocument.SubSystem.EditerSystem3.PropertyBar
         public TextInput()
         {
             InitializeComponent();
-            Input_Value.TextChanged += OnTextChanged;
+            Input_Value.KeyDown += Input_Value_KeyDown;
+            Input_Value.LostFocus += Input_Value_LostFocus;
         }
 
         public string Text { get; set; } = "";
@@ -37,8 +37,22 @@ namespace GeekDocument.SubSystem.EditerSystem3.PropertyBar
             Block_Title.Foreground = _default;
         }
 
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        private void Input_Value_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+            {
+                if (Input_Value.Text == Text) return;
+
+                TextChanged?.Invoke(Input_Value.Text);
+                Text = Input_Value.Text;
+
+                e.Handled = true;
+            }
+        }
+
+        private void Input_Value_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (Input_Value.Text == Text) return;
             TextChanged?.Invoke(Input_Value.Text);
             Text = Input_Value.Text;
         }
