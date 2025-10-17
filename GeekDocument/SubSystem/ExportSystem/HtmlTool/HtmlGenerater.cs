@@ -16,8 +16,29 @@
                 Href = "article.css"
             };
             head.AddSubNode(link);
+            link = new 链接节点
+            {
+                Href = "Prism.css"
+            };
+            head.AddSubNode(link);
+            // 添加脚本元素至头元素
+            脚本节点 script = new 脚本节点
+            {
+                Src = "Prism.js"
+            };
+            head.AddSubNode(script);
+            script = new 脚本节点
+            {
+                Src = "article.js"
+            };
+            head.AddSubNode(script);
             // 添加主体元素
             HtmlNode body = new HtmlNode("body");
+            body.PropertyList.Add(new NodeProperty
+            {
+                Name = "onload",
+                Value = "pageLoaded()"
+            });
             _rootNode.AddSubNode(body);
             // 添加段落盒子至主体元素
             body.AddSubNode(_paragraphBox);

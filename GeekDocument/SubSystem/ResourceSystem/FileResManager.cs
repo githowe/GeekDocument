@@ -26,6 +26,18 @@ namespace GeekDocument.SubSystem.ResourceSystem
             }
         }
 
+        public string GetJsFile(string name)
+        {
+            Uri uri = new Uri($"pack://application:,,,/Assets/File/Js/{name}.js");
+            using (Stream stream = Application.GetResourceStream(uri).Stream)
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+
         #endregion
     }
 }

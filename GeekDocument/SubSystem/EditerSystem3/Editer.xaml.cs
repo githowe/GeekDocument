@@ -180,22 +180,31 @@ namespace GeekDocument.SubSystem.EditerSystem3
             if (filePath == "") return;
 
             string extension = Path.GetExtension(filePath);
+            string path = Path.GetDirectoryName(filePath);
+            string name = Path.GetFileNameWithoutExtension(filePath);
+            ExportFormat format = ExportFormat.Html;
             switch (extension)
             {
                 case ".pdf":
+                    format = ExportFormat.PDF;
+                    break;
                 case ".docx":
+                    format = ExportFormat.Word;
+                    break;
                 case ".md":
-                case ".html":
+                    format = ExportFormat.Markdown;
+                    break;
                 case ".txt":
+                    format = ExportFormat.Text;
+                    break;
                 case ".png":
-                    WM.ShowTip("暂不支持导出格式：" + extension);
-                    return;
+                    format = ExportFormat.Image;
+                    break;
                 case ".bdoc":
-                    string path = Path.GetDirectoryName(filePath);
-                    string name = Path.GetFileNameWithoutExtension(filePath);
-                    ExportTool.Instance.Export(_doc.页面, ExportFormat.Bdoc, path, name);
+                    format = ExportFormat.Bdoc;
                     break;
             }
+            ExportTool.Instance.Export(_doc.页面, format, path, name);
         }
 
         private void Tool_List_Click(object sender, RoutedEventArgs e)

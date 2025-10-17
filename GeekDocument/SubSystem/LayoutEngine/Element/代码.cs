@@ -240,7 +240,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             else
             {
                 新段落.Init();
-                _段落列表.Insert(段落索引 + 1, 新段落);
+                _段落列表.Insert(段落索引 + 1, 新段落); 
                 AddChild(新段落);
                 处理元素更新();
             }

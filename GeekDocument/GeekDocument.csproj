@@ -21,6 +21,9 @@
     <None Remove="Assets\Cursor\SelectRow.cur" />
     <None Remove="Assets\ElementTool\DragMark.png" />
     <None Remove="Assets\File\article.css" />
+    <None Remove="Assets\File\Css\Prism.css" />
+    <None Remove="Assets\File\Js\article.js" />
+    <None Remove="Assets\File\Js\Prism.js" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
@@ -175,6 +178,9 @@
     <Resource Include="Assets\ElementTool\DragMark.png" />
     <Resource Include="Assets\ElementTool\InsertMark.png" />
     <Resource Include="Assets\File\Css\article.css" />
+    <Resource Include="Assets\File\Css\Prism.css" />
+    <Resource Include="Assets\File\Js\article.js" />
+    <Resource Include="Assets\File\Js\Prism.js" />
     <Resource Include="Assets\Icon15\AlignBottom.png" />
     <Resource Include="Assets\Icon15\AlignCenter2.png" />
     <Resource Include="Assets\Icon15\AlignTop.png" />

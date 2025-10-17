@@ -52,6 +52,15 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 {
 
                 }
+                else if (element is 代码 代码)
+                {
+                    代码节点 node = new 代码节点
+                    {
+                        Element = 代码
+                    };
+                    node.Init();
+                    _innerElementList.Add(node);
+                }
             }
         }
 

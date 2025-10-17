@@ -1,5 +1,12 @@
 ﻿namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
 {
+    public class NodeProperty
+    {
+        public string Name { get; set; } = string.Empty;
+
+        public string Value { get; set; } = string.Empty;
+    }
+
     public class HtmlNode
     {
         #region 构造方法
@@ -13,6 +20,8 @@
         #region 属性
 
         public string Markup { get; set; } = string.Empty;
+
+        public List<NodeProperty> PropertyList { get; set; } = new List<NodeProperty>();
 
         public string InnerText { get; set; } = string.Empty;
 
@@ -83,8 +92,15 @@
         /// </summary>
         protected string GenerateStartTag()
         {
-            if (!string.IsNullOrEmpty(Class)) return $"<{Markup} class=\"{Class}\">";
-            return $"<{Markup}>";
+            string tag = $"<{Markup}";
+            if (!string.IsNullOrEmpty(Class))
+                tag += $" class=\"{Class}\"";
+            foreach (var prop in PropertyList)
+            {
+                tag += $" {prop.Name}=\"{prop.Value}\"";
+            }
+            tag += ">";
+            return tag;
         }
 
         /// <summary>
