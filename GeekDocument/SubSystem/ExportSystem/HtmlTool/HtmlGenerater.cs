@@ -34,6 +34,7 @@
             head.AddSubNode(script);
             // 添加主体元素
             HtmlNode body = new HtmlNode("body");
+            body.Class = "back";
             body.PropertyList.Add(new NodeProperty
             {
                 Name = "onload",

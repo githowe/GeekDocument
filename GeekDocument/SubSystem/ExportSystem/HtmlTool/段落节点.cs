@@ -19,6 +19,26 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
 
         public override void Init()
         {
+            // 对齐方式
+            Style style = new Style();
+            switch (Element.水平对齐)
+            {
+                case 水平对齐方式.Left:
+                    style.StyleItemList.Add(new Item_Enum("text-align", "left"));
+                    break;
+                case 水平对齐方式.Center:
+                    style.StyleItemList.Add(new Item_Enum("text-align", "center"));
+                    break;
+                case 水平对齐方式.Right:
+                    style.StyleItemList.Add(new Item_Enum("text-align", "right"));
+                    break;
+            }
+            // 首行缩进
+            double indent = Element.获取真实首行缩进();
+            if (indent > 0 && Element.水平对齐 != 水平对齐方式.Center) style.StyleItemList.Add(new Item_Double("text-indent", indent));
+            if (style.StyleItemList.Count > 0)
+                PropertyList.Add(new NodeProperty { Name = "style", Value = style.ToLine() });
+            _textAlign = style.ToLine();
             // 获取内嵌元素列表
             List<行内元素> elementList = Element.获取内嵌元素();
             // 没有内嵌元素
@@ -33,7 +53,12 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
             {
                 if (element is 图片 图片)
                 {
-
+                    图片节点 node = new 图片节点
+                    {
+                        Element = 图片
+                    };
+                    node.Init();
+                    _innerElementList.Add(node);
                 }
                 else if (element is 列表 列表)
                 {
@@ -121,10 +146,13 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                     if (index < lineList.Count) builder.Append(lineList[index]);
                 }
                 // 返回结果
+                if (_textAlign != "")
+                    return $"{GenerateIndent()}<div style=\"{_textAlign}\">{builder}</div>";
                 return $"{GenerateIndent()}<div>{builder}</div>";
             }
         }
 
         private readonly List<HtmlNode> _innerElementList = new List<HtmlNode>();
+        private string _textAlign = "";
     }
 }

@@ -44,6 +44,9 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 case "Java":
                     Class = "language-java";
                     break;
+                case "Python":
+                    Class = "language-python";
+                    break;
                 case "Regex":
                     Class = "language-regex";
                     break;

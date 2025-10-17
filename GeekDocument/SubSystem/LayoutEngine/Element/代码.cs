@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace GeekDocument.SubSystem.LayoutEngine.Element
 {
-    public class 代码 : 行内元素
+    public class 代码 : 行内元素, IPropertyObject
     {
         #region 构造方法
 
@@ -161,6 +161,30 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         public override void 移入光标至末尾()
         {
             _段落列表.Last().移动光标至末尾();
+        }
+
+        #endregion
+
+        #region IPropertyObject 接口
+
+        public List<Property> PropertyList
+        {
+            get
+            {
+                List<Property> result = new List<Property>();
+                result.Add(new Property("语言", "string", 语言, false));
+                return result;
+            }
+        }
+
+        public void SetProperty(string name, string value)
+        {
+            switch (name)
+            {
+                case "语言":
+                    语言 = value;
+                    break;
+            }
         }
 
         #endregion

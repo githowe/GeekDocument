@@ -373,6 +373,13 @@ public class 段落 : 布局元素
         return result;
     }
 
+    public double 获取真实首行缩进()
+    {
+        if (禁用缩进) return 0;
+        if (使用自定义首行缩进) return 自定义首行缩进;
+        return 首行缩进;
+    }
+
     public List<图片> 提取图片元素()
     {
         List<图片> result = new List<图片>();
@@ -397,7 +404,7 @@ public class 段落 : 布局元素
 
     public void 更新文本与内嵌元素(List<行内元素> newList)
     {
-       string 文本 = "";
+        string 文本 = "";
         内嵌元素列表.Clear();
         foreach (var item in newList)
         {

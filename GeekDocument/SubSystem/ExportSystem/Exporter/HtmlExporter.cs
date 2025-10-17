@@ -1,4 +1,5 @@
 ﻿using GeekDocument.SubSystem.ExportSystem.HtmlTool;
+using GeekDocument.SubSystem.ImageSystem;
 using GeekDocument.SubSystem.LayoutEngine;
 using GeekDocument.SubSystem.ResourceSystem;
 using System.IO;
@@ -50,6 +51,18 @@ namespace GeekDocument.SubSystem.ExportSystem.Exporter
                 string jsContent = FileResManager.Instance.GetJsFile("article");
                 File.WriteAllText(jsFilePath, jsContent);
             }
+            // 生成图片文件
+            foreach (var imageHash in ExportImageManager.Instance.ImageHashList)
+            {
+                // 查找图片数据
+                ImageFileData? imageData = ImageManager.Instance.FindFileData(imageHash);
+                if (imageData == null) continue;
+                // 写入图片文件
+                string imageFilePath = Path.Combine(path, imageHash + "." + imageData.Type);
+                if (File.Exists(imageFilePath)) continue;
+                File.WriteAllBytes(imageFilePath, imageData.Data);
+            }
+            ExportImageManager.Instance.Clear();
         }
     }
 }

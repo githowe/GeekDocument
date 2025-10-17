@@ -18,6 +18,7 @@ namespace GeekDocument.SubSystem.EditerSystem3.PropertyPanel
                 {
                     case "int":
                     case "double":
+                    case "string":
                         AddDoubleProperty(item.Name, item.Value, item.ReadOnly);
                         break;
                 }
