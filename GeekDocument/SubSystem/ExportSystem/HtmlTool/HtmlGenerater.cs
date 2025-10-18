@@ -55,6 +55,18 @@
             _paragraphBox.AddSubNode(node);
         }
 
+        /// <summary>
+        /// 添加结束段落。该段落没有任何内容，仅用于修复页面底端的间距问题，没有此段落，页面底端会多出一段间距
+        /// </summary>
+        public void AddEndParagraph()
+        {
+            结束段落 endParagraph = new 结束段落
+            {
+                Parent = _rootNode
+            };
+            _paragraphBox.AddSubNode(endParagraph);
+        }
+
         public List<string> GenerateLineList()
         {
             List<string> result = new List<string>();

@@ -147,8 +147,8 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 }
                 // 返回结果
                 if (_textAlign != "")
-                    return $"{GenerateIndent()}<div style=\"{_textAlign}\">{builder}</div>";
-                return $"{GenerateIndent()}<div>{builder}</div>";
+                    return $"{GenerateIndent()}<div class=\"paragraph\" style=\"{_textAlign}\">{builder}</div>";
+                return $"{GenerateIndent()}<div class=\"paragraph\">{builder}</div>";
             }
         }
 

@@ -22,6 +22,7 @@ namespace GeekDocument.SubSystem.ExportSystem.Exporter
                 node.Init();
                 generater.AddParagraph(node);
             }
+            generater.AddEndParagraph();
             // 生成行列表，写入文件
             List<string> lines = generater.GenerateLineList();
             string text = string.Join("\n", lines);

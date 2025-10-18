@@ -52,8 +52,8 @@
 
 .emptyParagraph {
     height: 16px;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .paragraph {
@@ -62,6 +62,13 @@
     margin-top: 16px;
     margin-bottom: 16px;
     text-align: justify;
+}
+
+.endParagraph {
+    font-size: 0;
+    line-height: 0;
+    margin-top: -16px;
+    margin-bottom: 0;
 }
 
 .custom-square-list {
