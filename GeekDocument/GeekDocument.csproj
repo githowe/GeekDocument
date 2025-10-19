@@ -20,10 +20,9 @@
     <None Remove="Assets\Cursor\SelectCol.cur" />
     <None Remove="Assets\Cursor\SelectRow.cur" />
     <None Remove="Assets\ElementTool\DragMark.png" />
-    <None Remove="Assets\File\article.css" />
-    <None Remove="Assets\File\Css\Prism.css" />
-    <None Remove="Assets\File\Js\article.js" />
-    <None Remove="Assets\File\Js\Prism.js" />
+    <None Remove="Resource\HtmlRes\Css\Prism.css" />
+    <None Remove="Resource\HtmlRes\Js\article.js" />
+    <None Remove="Resource\HtmlRes\Js\Prism.js" />
     <None Remove="Assets\Font\simsun.ttc" />
     <None Remove="Assets\Icon15\AlignBottom.png" />
     <None Remove="Assets\Icon15\AlignCenter.png" />
@@ -90,6 +89,73 @@
     <None Remove="Assets\WindowIcon\Setting.png" />
     <None Remove="Assets\WindowIcon\Sqrt.png" />
     <None Remove="Assets\WindowIcon\Table.png" />
+    <None Remove="Resource\HtmlRes\katex\contrib\auto-render.js" />
+    <None Remove="Resource\HtmlRes\katex\contrib\copy-tex.js" />
+    <None Remove="Resource\HtmlRes\katex\contrib\mathtex-script-type.js" />
+    <None Remove="Resource\HtmlRes\katex\contrib\mhchem.js" />
+    <None Remove="Resource\HtmlRes\katex\contrib\render-a11y-string.js" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.ttf" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.woff" />
+    <None Remove="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.woff2" />
+    <None Remove="Resource\HtmlRes\katex\katex.css" />
+    <None Remove="Resource\HtmlRes\katex\katex.js" />
     <None Remove="SubSystem\DocumentSystem\Image\Delete.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Folder.png" />
     <None Remove="SubSystem\DocumentSystem\Image\Mark.png" />
@@ -164,6 +230,207 @@
 
   <ItemGroup>
     <Content Include="Assets\AppIcon.ico" />
+    <Content Include="Resource\HtmlRes\katex\contrib\auto-render.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\contrib\copy-tex.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\contrib\mathtex-script-type.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\contrib\mhchem.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\contrib\render-a11y-string.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_AMS-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Bold.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Caligraphic-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Bold.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Fraktur-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Bold.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-BoldItalic.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Italic.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Main-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-BoldItalic.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Math-Italic.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Bold.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Italic.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_SansSerif-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Script-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size1-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size2-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size3-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Size4-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\fonts\KaTeX_Typewriter-Regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\katex.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\katex\katex.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -177,10 +444,18 @@
     <Resource Include="Assets\Cursor\SelectRow.cur" />
     <Resource Include="Assets\ElementTool\DragMark.png" />
     <Resource Include="Assets\ElementTool\InsertMark.png" />
-    <Resource Include="Assets\File\Css\article.css" />
-    <Resource Include="Assets\File\Css\Prism.css" />
-    <Resource Include="Assets\File\Js\article.js" />
-    <Resource Include="Assets\File\Js\Prism.js" />
+    <Content Include="Resource\HtmlRes\Css\article.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\Css\Prism.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\Js\article.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\HtmlRes\Js\Prism.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Assets\Icon15\AlignBottom.png" />
     <Resource Include="Assets\Icon15\AlignCenter2.png" />
     <Resource Include="Assets\Icon15\AlignTop.png" />

@@ -6,7 +6,7 @@
 
         public override List<string> ToLineList()
         {
-            return new List<string> { $"{GenerateIndent()}<script src=\"{Src}\"></script>" };
+            return new List<string> { $"{GenerateIndent()}<script defer src=\"{Src}\"></script>" };
         }
     }
 }

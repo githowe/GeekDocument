@@ -71,7 +71,11 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 }
                 else if (element is 公式 公式)
                 {
-
+                    公式节点 node = new 公式节点
+                    {
+                        Element = 公式
+                    };
+                    _innerElementList.Add(node);
                 }
                 else if (element is 表格 表格)
                 {

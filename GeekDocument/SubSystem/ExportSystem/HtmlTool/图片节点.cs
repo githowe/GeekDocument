@@ -26,7 +26,7 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
             string src = $"{Element.SourceHash}.{imageData.Type}";
             // 生成样式
             Style style = new Style();
-            style.StyleItemList.Add(new Item_Enum("vertical-align", "bottom"));
+            style.StyleItemList.Add(new Item_Enum("vertical-align", "middle"));
             if (Element.ImageWidth != -1)
                 style.StyleItemList.Add(new Item_Double("width", Element.ImageWidth));
             if (Element.ImageHeight != -1)

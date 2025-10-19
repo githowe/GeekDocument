@@ -13,23 +13,33 @@
             // 添加链接元素至头元素
             链接节点 link = new 链接节点
             {
-                Href = "article.css"
+                Href = "htmlres/css/article.css"
             };
             head.AddSubNode(link);
             link = new 链接节点
             {
-                Href = "Prism.css"
+                Href = "htmlres/css/Prism.css"
+            };
+            head.AddSubNode(link);
+            link = new 链接节点
+            {
+                Href = "htmlres/katex/katex.css"
             };
             head.AddSubNode(link);
             // 添加脚本元素至头元素
             脚本节点 script = new 脚本节点
             {
-                Src = "Prism.js"
+                Src = "htmlres/js/Prism.js"
             };
             head.AddSubNode(script);
             script = new 脚本节点
             {
-                Src = "article.js"
+                Src = "htmlres/katex/katex.js"
+            };
+            head.AddSubNode(script);
+            script = new 脚本节点
+            {
+                Src = "htmlres/js/article.js"
             };
             head.AddSubNode(script);
             // 添加主体元素

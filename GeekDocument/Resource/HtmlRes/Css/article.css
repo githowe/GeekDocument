@@ -52,14 +52,14 @@
 
 .emptyParagraph {
     height: 16px;
-    margin-top: 16px;
-    margin-bottom: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 .paragraph {
     font-size: 16px;
     line-height: 20px;
-    margin-top: 16px;
+    margin-top: 0px;
     margin-bottom: 16px;
     text-align: justify;
 }
@@ -69,6 +69,13 @@
     line-height: 0;
     margin-top: -16px;
     margin-bottom: 0;
+}
+
+.formula {
+    font-size: 20px;
+    vertical-align: middle;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .custom-square-list {

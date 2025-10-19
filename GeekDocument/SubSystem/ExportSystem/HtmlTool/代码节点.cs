@@ -50,6 +50,9 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 case "Regex":
                     Class = "language-regex";
                     break;
+                case "Text":
+                    Class = "language-text";
+                    break;
             }
         }
 

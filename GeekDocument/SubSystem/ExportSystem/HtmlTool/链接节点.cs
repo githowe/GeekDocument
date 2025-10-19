@@ -10,7 +10,7 @@
 
         public override List<string> ToLineList()
         {
-            return new List<string> { $"{GenerateIndent()}<link rel=\"{Rel}\" type=\"{Type}\" href=\"{Href}\" />" };
+            return new List<string> { $"{GenerateIndent()}<link rel=\"{Rel}\" type=\"{Type}\" href=\"{Href}\"/>" };
         }
     }
 }

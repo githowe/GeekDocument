@@ -28,30 +28,7 @@ namespace GeekDocument.SubSystem.ExportSystem.Exporter
             string text = string.Join("\n", lines);
             File.WriteAllText(Path.Combine(path, name + ".html"), text);
             // 复制资源文件
-            string cssFilePath = Path.Combine(path, "article.css");
-            if (!File.Exists(cssFilePath))
-            {
-                string cssContent = FileResManager.Instance.GetCssFile("article");
-                File.WriteAllText(cssFilePath, cssContent);
-            }
-            cssFilePath = Path.Combine(path, "Prism.css");
-            if (!File.Exists(cssFilePath))
-            {
-                string cssContent = FileResManager.Instance.GetCssFile("Prism");
-                File.WriteAllText(cssFilePath, cssContent);
-            }
-            string jsFilePath = Path.Combine(path, "Prism.js");
-            if (!File.Exists(jsFilePath))
-            {
-                string jsContent = FileResManager.Instance.GetJsFile("Prism");
-                File.WriteAllText(jsFilePath, jsContent);
-            }
-            jsFilePath = Path.Combine(path, "article.js");
-            if (!File.Exists(jsFilePath))
-            {
-                string jsContent = FileResManager.Instance.GetJsFile("article");
-                File.WriteAllText(jsFilePath, jsContent);
-            }
+            FileResManager.Instance.CopyFolder("HtmlRes", path);
             // 生成图片文件
             foreach (var imageHash in ExportImageManager.Instance.ImageHashList)
             {

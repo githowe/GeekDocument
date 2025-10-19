@@ -1,4 +1,0 @@
-﻿function pageLoaded()
-{
-    Prism.highlightAll();
-}
