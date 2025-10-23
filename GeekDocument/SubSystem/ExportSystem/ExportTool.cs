@@ -11,6 +11,7 @@ namespace GeekDocument.SubSystem.ExportSystem
         public void Init()
         {
             _exporterDict.Add(ExportFormat.Html, new Exporter.HtmlExporter());
+            _exporterDict.Add(ExportFormat.Bdoc, new Exporter.BdocExporter());
         }
 
         public void Export(页面 page, ExportFormat format, string path, string name)

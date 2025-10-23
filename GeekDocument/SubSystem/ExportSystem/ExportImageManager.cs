@@ -12,6 +12,8 @@
 
         #endregion
 
+        public string ImageUrl { get; set; } = "";
+
         public List<string> ImageHashList { get; set; } = new List<string>();
 
         public void Clear()

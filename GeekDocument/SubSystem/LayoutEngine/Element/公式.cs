@@ -1,4 +1,6 @@
 ﻿using GeekDocument.SubSystem.ImageSystem;
+using GeekDocument.SubSystem.ResourceSystem;
+using GeekDocument.SubSystem.WindowSystem;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -40,16 +42,30 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
 
         public override void Init()
         {
-            // 将公式渲染为图片
-            XamlMath.TexFormulaParser 解析器 = WpfTeXFormulaParser.Instance;
-            XamlMath.TexFormula 公式 = 解析器.Parse(Latex);
-            byte[] sourceData = 公式.RenderToPng(Size, 0, 0, "Arial");
-            // 加载图片数据
-            ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(sourceData, "png");
-            SourceWidth = imageInfo.Width;
-            SourceHeight = imageInfo.Height;
-            PixelData = imageInfo.FrameList[0].PixelData;
-            UpdateColor(255, 255, 255);
+            try
+            {
+                // 将公式渲染为图片
+                XamlMath.TexFormulaParser 解析器 = WpfTeXFormulaParser.Instance;
+                XamlMath.TexFormula 公式 = 解析器.Parse(Latex);
+                byte[] sourceData = 公式.RenderToPng(Size, 0, 0, "Arial");
+                // 加载图片数据
+                ImageInfo? imageInfo = ImageLoader.Instance.LoadImageFile(sourceData, "png");
+                SourceWidth = imageInfo.Width;
+                SourceHeight = imageInfo.Height;
+                PixelData = imageInfo.FrameList[0].PixelData;
+                UpdateColor(255, 255, 255);
+            }
+            catch (Exception ex)
+            {
+                WM.ShowErrorTip("公式渲染失败：" + ex.Message);
+                _errorImage = ImageResManager.Instance.GetIcon16("ErrorArea.png");
+                if (_errorImage == null) return;
+                SourceWidth = _errorImage.PixelWidth;
+                SourceHeight = _errorImage.PixelHeight;
+                PixelData = new byte[SourceWidth * SourceHeight * 4];
+                _errorImage.CopyPixels(PixelData, SourceWidth * 4, 0);
+            }
+
             // 初始化显示器
             InitDisplay();
             // 公式添加边距以区分正文
@@ -127,6 +143,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
         #region 字段
 
         private WriteableBitmap? _display = null;
+        private BitmapImage? _errorImage = null!;
 
         #endregion
     }

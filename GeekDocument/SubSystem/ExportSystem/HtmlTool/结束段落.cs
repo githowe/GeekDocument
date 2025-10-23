@@ -7,5 +7,7 @@
             Markup = "p";
             Class = "endParagraph";
         }
+
+        public override string ToLine() => "<p class=\"endParagraph\"></p>";
     }
 }

@@ -20,6 +20,7 @@
     <None Remove="Assets\Cursor\SelectCol.cur" />
     <None Remove="Assets\Cursor\SelectRow.cur" />
     <None Remove="Assets\ElementTool\DragMark.png" />
+    <None Remove="Assets\Icon16\ErrorArea.png" />
     <None Remove="Resource\HtmlRes\Css\Prism.css" />
     <None Remove="Resource\HtmlRes\Js\article.js" />
     <None Remove="Resource\HtmlRes\Js\Prism.js" />
@@ -517,6 +518,7 @@
     <Resource Include="Assets\Icon16\CloseFile.png" />
     <Resource Include="Assets\Icon16\Copy.png" />
     <Resource Include="Assets\Icon16\Delete.png" />
+    <Resource Include="Assets\Icon16\ErrorArea.png" />
     <Resource Include="Assets\Icon16\Export.png" />
     <Resource Include="Assets\Icon16\Folder.png" />
     <Resource Include="Assets\Icon16\Import.png" />

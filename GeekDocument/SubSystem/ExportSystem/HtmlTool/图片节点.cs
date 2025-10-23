@@ -32,7 +32,7 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
             if (Element.ImageHeight != -1)
                 style.StyleItemList.Add(new Item_Double("height", Element.ImageHeight));
             // 返回图片标签
-            return $"<img src={src} style=\"{style.ToLine()}\" alt=\"\">";
+            return $"<a href=\"{ExportImageManager.Instance.ImageUrl}{src}\" download=\"{src}\" target=\"_blank\"><img src=\"{ExportImageManager.Instance.ImageUrl}{src}\" style=\"{style.ToLine()}\" alt=\"\"></a>";
         }
     }
 }
