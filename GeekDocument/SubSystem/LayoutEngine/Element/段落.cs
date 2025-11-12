@@ -24,8 +24,6 @@ public class 段落 : 布局元素
 
     #region 属性
 
-    // public string 文本 { get; set; } = "";
-
     public List<string> 文本列表 { get; set; } = new List<string> { "" };
 
     public List<行内元素> 内嵌元素列表 { get; set; } = new List<行内元素>();
@@ -503,7 +501,10 @@ public class 段落 : 布局元素
         // 存在换行符，交给段落容器处理
         if (text.Contains('\n'))
         {
+            // 当前段落容器为页面
             if (OwnerPage != null) OwnerPage.输入多行文本(text, this);
+            // 当前段落容器为代码块
+            else if (Parent is 代码 代码) 代码.输入多行文本(text, this);
             return;
         }
 

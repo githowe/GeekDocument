@@ -229,14 +229,7 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 获取当前段落索引
             int 段落索引 = _段落列表.IndexOf(sender);
             // 克隆段落
-            段落 新段落 = new 段落
-            {
-                水平对齐 = sender.水平对齐,
-                字体 = sender.字体,
-                字号 = sender.字号,
-                禁用缩进 = true,
-                行间距 = sender.行间距
-            };
+            段落 新段落 = 克隆段落(sender);
 
             if (sender.光标索引 == 0)
             {
@@ -278,6 +271,97 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             foreach (var item in _段落列表)
                 _源码行列表.Add(item.获取文本());
             源码 = string.Join("\n", _源码行列表);
+        }
+
+        public void 输入多行文本(string text, 段落 sender)
+        {
+            List<string> lineList = text.Split('\n').ToList();
+            int 段落索引 = _段落列表.IndexOf(sender);
+
+            if (sender.光标索引 == 0)
+            {
+                // 获取当前段落内容
+                string 当前段落文本 = sender.获取文本();
+                // 当前段落内容更新为第一行文本
+                sender.文本列表 = new List<string> { lineList[0] };
+                // 重新初始化当前段落
+                sender.Init();
+                // 添加中间行
+                List<段落> 新段落列表 = new List<段落>();
+                for (int index = 1; index < lineList.Count - 1; index++)
+                {
+                    段落 新段落 = 克隆段落(sender);
+                    新段落.文本列表 = new List<string> { lineList[index] };
+                    新段落.Init();
+                    新段落列表.Add(新段落);
+                }
+                // 添加最后一行
+                段落 尾段落 = 克隆段落(sender);
+                尾段落.文本列表 = new List<string> { lineList.Last() + 当前段落文本 };
+                尾段落.Init();
+                新段落列表.Add(尾段落);
+                // 插入新段落
+                _段落列表.InsertRange(段落索引 + 1, 新段落列表);
+                AddChildList(新段落列表.Cast<布局元素>().ToList());
+                处理元素更新();
+                尾段落.移动光标至(lineList.Last().Length);
+            }
+            else if (sender.光标索引 < sender.全部行内元素.Count)
+            {
+                // 获取当前段落全部元素
+                List<行内元素> 当前段落全部元素 = new List<行内元素>(sender.全部行内元素);
+                // 从光标索引处分割元素列表
+                List<行内元素> left = 当前段落全部元素.Take(sender.光标索引).ToList();
+                List<行内元素> right = 当前段落全部元素.Skip(sender.光标索引).ToList();
+                // 更新当前段落的文本与内嵌元素
+                sender.更新文本与内嵌元素(left);
+                sender.Init();
+                // 获取当前段落内容
+                string 当前段落文本 = sender.获取文本();
+                // 当前段落内容为当前内容加上第一行文本
+                sender.文本列表 = new List<string> { 当前段落文本 + lineList[0] };
+                // 重新初始化当前段落
+                sender.Init();
+                // 添加中间行
+                List<段落> 新段落列表 = new List<段落>();
+                for (int index = 1; index < lineList.Count - 1; index++)
+                {
+                    段落 新段落 = 克隆段落(sender);
+                    新段落.文本列表 = new List<string> { lineList[index] };
+                    新段落.Init();
+                    新段落列表.Add(新段落);
+                }
+                // 添加最后一行
+                段落 尾段落 = 克隆段落(sender);
+                尾段落.更新文本与内嵌元素(right);
+                尾段落.Init();
+                string 尾段落文本 = 尾段落.获取文本();
+                尾段落.文本列表 = new List<string> { lineList.Last() + 尾段落文本 };
+                尾段落.Init();
+                新段落列表.Add(尾段落);
+                // 插入新段落
+                _段落列表.InsertRange(段落索引 + 1, 新段落列表);
+                AddChildList(新段落列表.Cast<布局元素>().ToList());
+                处理元素更新();
+                尾段落.移动光标至(lineList.Last().Length);
+            }
+            else
+            {
+                // 每行创建一个新段落
+                List<段落> 新段落列表 = new List<段落>();
+                foreach (var line in lineList)
+                {
+                    段落 新段落 = 克隆段落(sender);
+                    新段落.文本列表 = new List<string> { line };
+                    新段落.Init();
+                    新段落列表.Add(新段落);
+                }
+                // 插入新段落
+                _段落列表.InsertRange(段落索引 + 1, 新段落列表);
+                AddChildList(新段落列表.Cast<布局元素>().ToList());
+                处理元素更新();
+                新段落列表.Last().移动光标至(lineList.Last().Length);
+            }
         }
 
         #endregion
@@ -322,6 +406,19 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             // 代码的子元素全是段落，所以添加或删除段落时，必然会更新尺寸，所以直接重新测量然后通知父元素
             测量();
             Parent?.重新测量();
+        }
+
+        private 段落 克隆段落(段落 source)
+        {
+            段落 新段落 = new 段落
+            {
+                水平对齐 = source.水平对齐,
+                字体 = source.字体,
+                字号 = source.字号,
+                禁用缩进 = true,
+                行间距 = source.行间距
+            };
+            return 新段落;
         }
 
         #endregion

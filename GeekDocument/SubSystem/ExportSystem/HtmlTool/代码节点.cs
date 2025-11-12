@@ -23,15 +23,19 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                     break;
                 case "C#":
                 case "CSharp":
+                case "CS":
                     Class = "language-cs";
                     break;
                 case "CSS":
                     Class = "language-css";
                     break;
                 case "JavaScript":
+                case "Js":
                     Class = "language-javascript";
                     break;
                 case "Bash":
+                case "Command":
+                case "Cmd":
                     Class = "language-bash";
                     break;
                 case "C":
@@ -45,6 +49,7 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                     Class = "language-java";
                     break;
                 case "Python":
+                case "Py":
                     Class = "language-python";
                     break;
                 case "Regex":
