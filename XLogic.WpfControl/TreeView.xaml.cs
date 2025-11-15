@@ -31,6 +31,9 @@ namespace XLogic.WpfControl
         /// <summary>选中项已改变</summary>
         public Action? SelectedChanged { get; set; } = null;
 
+        /// <summary>双击项</summary>
+        public Action<TreeItem>? DoubleClickItem { get; set; } = null;
+
         #endregion
 
         #region 公开方法
@@ -208,7 +211,7 @@ namespace XLogic.WpfControl
 
         private void OnDoubleClick(TreeItem treeItem)
         {
-
+            DoubleClickItem?.Invoke(treeItem);
         }
 
         #endregion

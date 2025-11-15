@@ -38,7 +38,7 @@ namespace GeekDocument.SubSystem.ImageSystem.Gif
             // 延时数组。全部帧的延时都存储在该数组中，单位为毫秒
             int[] delayArray = new int[frameCount];
             // 设置默认延时
-            Array.Fill(delayArray, 20);
+            Array.Fill(delayArray, 100);
 
             try
             {
@@ -52,6 +52,13 @@ namespace GeekDocument.SubSystem.ImageSystem.Gif
                 }
             }
             catch (Exception) { throw new Exception("获取延时属性异常"); }
+
+            // 修复零延时
+            for (int index = 0; index < frameCount; index++)
+            {
+                if (delayArray[index] == 0)
+                    delayArray[index] = 100;
+            }
 
             // 当前时间戳
             int timestamp = 0;

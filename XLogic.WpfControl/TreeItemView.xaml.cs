@@ -87,19 +87,24 @@ namespace XLogic.WpfControl
             if (Instance == null) return;
 
             OnItemHited?.Invoke(Instance);
-            // 如果是可展开项，并进行了双击
-            if (Instance.CanExpand && e.ClickCount == 2)
+            // 双击
+            if (e.ClickCount == 2)
             {
-                if (Arrow.IsChecked == true)
+                // 可展开项
+                if (Instance.CanExpand)
                 {
-                    Instance.IsExpanded = false;
-                    OnItemFurl?.Invoke();
+                    if (Arrow.IsChecked == true)
+                    {
+                        Instance.IsExpanded = false;
+                        OnItemFurl?.Invoke();
+                    }
+                    else if (Arrow.IsChecked == false)
+                    {
+                        Instance.IsExpanded = true;
+                        OnItemExpand?.Invoke();
+                    }
                 }
-                else if (Arrow.IsChecked == false)
-                {
-                    Instance.IsExpanded = true;
-                    OnItemExpand?.Invoke();
-                }
+                else OnDoubleClick?.Invoke(Instance);
             }
 
             e.Handled = true;

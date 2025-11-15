@@ -50,10 +50,21 @@ namespace GeekDocument
 
             Panel_DocLib.Init();
             Panel_DocLib.LoadDocumentLib();
+            Panel_DocLib.DoubleClickItem = DocumentDoubclick;
 
             KeyDown += MainWindow_KeyDown;
             KeyUp += MainWindow_KeyUp;
             TextInput += MainWindow_TextInput;
+        }
+
+        private void DocumentDoubclick(string docPath)
+        {
+            if (DocManager.Instance.DocumentOpened(docPath))
+            {
+                WM.ShowErrorTip($"文档“{Path.GetFileName(docPath)}”已打开");
+                return;
+            }
+            OpenDocument(docPath);
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -365,7 +376,17 @@ namespace GeekDocument
                     使用自定义首行缩进 = true,
                 };
                 title.Init();
-                文档.添加段落(title);
+                // 文档.添加段落(title);
+                // 添加正文段落
+                段落 text = new 段落
+                {
+                    OwnerPage = 文档.页面,
+                    文本列表 = new List<string> { "" },
+                    字号 = 16,
+                    首行缩进 = 文档.页面.首行缩进,
+                };
+                text.Init();
+                文档.添加段落(text);
                 // 在磁盘中新建文件
                 string filePath = $"{dialog.DocumentPath}\\{dialog.DocumentName}.gdoc";
                 FileStream fileStream = File.Create(filePath);

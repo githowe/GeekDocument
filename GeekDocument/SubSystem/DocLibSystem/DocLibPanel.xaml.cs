@@ -1,4 +1,6 @@
 ﻿using GeekDocument.SubSystem.CacheSystem;
+using GeekDocument.SubSystem.OptionSystem;
+using System.IO;
 using System.Windows.Controls;
 using XLogic.WpfControl;
 
@@ -7,6 +9,8 @@ namespace GeekDocument.SubSystem.DocLibSystem
     public partial class DocLibPanel : UserControl
     {
         public DocLibPanel() => InitializeComponent();
+
+        public Action<string>? DoubleClickItem { get; set; } = null;
 
         public void Init() => DocTree.Init();
 
@@ -27,6 +31,8 @@ namespace GeekDocument.SubSystem.DocLibSystem
 
             // 监听项事件
             foreach (var item in DocTree.TreeRoot.ItemList) ListenTreeItem(item);
+            // 监听树事件
+            DocTree.DoubleClickItem = Tree_DoubleClickItem;
         }
 
         /// <summary>
@@ -61,6 +67,19 @@ namespace GeekDocument.SubSystem.DocLibSystem
             item.ItemCollapsed = TreeItem_Collapsed;
             // 监听子项
             foreach (var subItem in item.ItemList) ListenTreeItem(subItem);
+        }
+
+        private void Tree_DoubleClickItem(TreeItem item)
+        {
+            string path = GetItemFullPath(item) + ".gdoc";
+            DoubleClickItem?.Invoke(path);
+        }
+
+        private string GetItemFullPath(TreeItem item)
+        {
+            if (item.Parent == null) return "";
+            if (item.Content is DocumentLib lib) return lib.Path;
+            return Path.Combine(GetItemFullPath(item.Parent), item.Text);
         }
 
         private void RemoveListen(TreeItem item)

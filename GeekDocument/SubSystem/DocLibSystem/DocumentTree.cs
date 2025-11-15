@@ -72,6 +72,7 @@ namespace GeekDocument.SubSystem.DocLibSystem
             {
                 TreeItem libRoot = new TreeItem
                 {
+                    Content = lib,
                     Parent = Root,
                     Icon = ImageResManager.Instance.GetIcon15("Lib.png"),
                     Text = lib.Name,
