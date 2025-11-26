@@ -48,6 +48,8 @@ public class 单元格 : 布局元素, IComparable<单元格>
 
     public List<段落> 段落列表 { get; set; } = new List<段落>();
 
+    public 段落 段落 => 段落列表.First();
+
     public override Rect GetViewRect() => new Rect(Left, Top, ActualWidth, ActualHeight);
 
     public override void 测量()

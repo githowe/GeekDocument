@@ -71,6 +71,13 @@
     margin-bottom: 0;
 }
 
+.cellParagraph {
+    font-size: 16px;
+    line-height: 16px;
+    text-align: justify;
+    margin: 0;
+}
+
 .formula {
     font-size: 20px;
     vertical-align: middle;
@@ -98,4 +105,22 @@
     height: 4px;
     background-color: white;
     display: inline-block;
+}
+
+.normalTable {
+    border-collapse: collapse;
+    display: inline-table;
+}
+
+.normalTable th, .normalTable td {
+    border: 1px solid rgb(64, 64, 64);
+    padding: 8px;
+}
+
+.headRow {
+    background-color: rgb(64, 64, 64);
+}
+
+.evenRow {
+    background-color: rgb(42, 42, 42);
 }

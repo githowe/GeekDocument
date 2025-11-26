@@ -52,6 +52,10 @@ namespace GeekDocument.SubSystem.LayoutEngine.Element
             }
         }
 
+        public List<表格行> 全部行 => _行集.行列表;
+
+        public List<表格列> 全部列 => _列集.列列表;
+
         #endregion
 
         #region 布局元素核心方法

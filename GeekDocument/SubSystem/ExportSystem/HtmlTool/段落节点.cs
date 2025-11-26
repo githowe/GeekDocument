@@ -15,7 +15,11 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
 
         public 段落 Element { get; set; } = null!;
 
+        /// <summary>列表项内容</summary>
         public bool ListItemContent { get; set; } = false;
+
+        /// <summary>单元格内容</summary>
+        public bool CellContent { get; set; } = false;
 
         public override void Init()
         {
@@ -79,7 +83,12 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
                 }
                 else if (element is 表格 表格)
                 {
-
+                    表格节点 node = new 表格节点
+                    {
+                        Element = 表格
+                    };
+                    node.Init();
+                    _innerElementList.Add(node);
                 }
                 else if (element is 代码 代码)
                 {
@@ -95,25 +104,29 @@ namespace GeekDocument.SubSystem.ExportSystem.HtmlTool
 
         public override string ToLine()
         {
-            if (Element.全部行内元素.Count == 0) Class = "emptyParagraph";
-            else
+            if (!CellContent)
             {
-                switch (Element.字号)
+                if (Element.全部行内元素.Count == 0) Class = "emptyParagraph";
+                else
                 {
-                    case 24:
-                        Class = "header_01";
-                        break;
-                    case 22:
-                        Class = "header_02";
-                        break;
-                    case 20:
-                        Class = "header_03";
-                        break;
-                    case 18:
-                        Class = "header_04";
-                        break;
+                    switch (Element.字号)
+                    {
+                        case 24:
+                            Class = "header_01";
+                            break;
+                        case 22:
+                            Class = "header_02";
+                            break;
+                        case 20:
+                            Class = "header_03";
+                            break;
+                        case 18:
+                            Class = "header_04";
+                            break;
+                    }
                 }
             }
+            else Class = "cellParagraph";
 
             string startTag = GenerateStartTag();
             string endTag = GenerateEndTag();
